@@ -1,0 +1,16 @@
+
+<!DOCTYPE html>
+<html>
+<head><title>Chat</title></head>
+<body>
+  <h2>Chat com IA</h2>
+  {% for msg in history %}
+    <p><b>Você:</b> {{ msg.user }}</p>
+    <p><b>IA:</b> {{ msg.ai }}</p>
+  {% endfor %}
+  <form method="post" action="/ask">
+    <textarea name="question" required></textarea>
+    <button type="submit">Enviar</button>
+  </form>
+</body>
+</html>
