@@ -1,7 +1,6 @@
 import os
-from llama_index import SimpleDirectoryReader, GPTVectorStoreIndex, ServiceContext
+from llama_index.core import SimpleDirectoryReader, GPTVectorStoreIndex, ServiceContext, StorageContext
 from llama_index.embeddings.openai import OpenAIEmbedding
-from llama_index.storage.storage_context import StorageContext
 
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 INDEX_DIR = "storage"
