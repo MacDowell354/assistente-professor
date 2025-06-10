@@ -2,9 +2,9 @@ import os
 from llama_index.core import (
     SimpleDirectoryReader,
     GPTVectorStoreIndex,
-    ServiceContext,
     StorageContext,
     load_index_from_storage,
+    Settings,
 )
 from llama_index.embeddings.openai import OpenAIEmbedding
 
@@ -16,23 +16,23 @@ api_key = os.getenv("OPENAI_API_KEY")
 if not api_key:
     raise ValueError("❌ OPENAI_API_KEY não encontrada nas variáveis de ambiente.")
 
-# Define embedding
+# Define embedding e aplica globalmente
 embed_model = OpenAIEmbedding(
     model="text-embedding-3-small",
     api_key=api_key,
 )
-service_context = ServiceContext.from_defaults(embed_model=embed_model)
+Settings.embed_model = embed_model
 
 # Lógica para carregar ou gerar o índice
 def load_or_build_index():
     if os.path.exists(INDEX_FILE):
         print("📁 Índice encontrado. Carregando...")
         storage_context = StorageContext.from_defaults(persist_dir=INDEX_DIR)
-        return load_index_from_storage(storage_context, service_context=service_context)
+        return load_index_from_storage(storage_context)
     else:
         print("🛠️ Índice não encontrado. Construindo novo...")
         docs = SimpleDirectoryReader(input_files=["transcricoes.txt"]).load_data()
-        index = GPTVectorStoreIndex.from_documents(docs, service_context=service_context)
+        index = GPTVectorStoreIndex.from_documents(docs)
         index.storage_context.persist(persist_dir=INDEX_DIR)
         return index
 
