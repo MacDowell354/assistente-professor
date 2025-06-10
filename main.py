@@ -2,12 +2,15 @@
 import os
 import json
 from datetime import datetime, timedelta
-from fastapi import FastAPI, Request, Form, Depends, status
+from typing import Optional
+from fastapi import FastAPI, Request, Form, Depends
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from jose import JWTError, jwt
 from passlib.context import CryptContext
-from typing import Optional
+
+from search_engine import retrieve_relevant_context
+from gpt_utils import generate_answer
 
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
@@ -65,7 +68,19 @@ def chat_get(request: Request, user: str = Depends(get_current_user)):
 async def ask(request: Request, question: Optional[str] = Form(None), user: str = Depends(get_current_user)):
     if not question:
         return RedirectResponse(url="/chat", status_code=302)
+
+    form_data = await request.form()
+    history_str = form_data.get("history", "[]")
+    try:
+        history = json.loads(history_str)
+    except Exception:
+        history = []
+
+    context = retrieve_relevant_context(question)
+    answer = generate_answer(question, context=context, history=history)
+
+    new_history = history + [{"user": question, "ai": answer}]
     return templates.TemplateResponse("chat.html", {
         "request": request,
-        "history": [{"user": question, "ai": "Resposta simulada para: " + question}]
+        "history": new_history
     })
