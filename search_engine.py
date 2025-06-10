@@ -1,6 +1,6 @@
 
 import os
-from llama_index import load_index_from_storage
+from llama_index.core import load_index_from_storage
 from llama_index.embeddings.openai import OpenAIEmbedding
 from llama_index.core.settings import Settings
 from llama_index.storage.storage_context import StorageContext
