@@ -1,5 +1,5 @@
 import os
-from llama_index.core import SimpleDirectoryReader, GPTVectorStoreIndex, ServiceContext, StorageContext
+from llama_index.core import SimpleDirectoryReader, GPTVectorStoreIndex, StorageContext, Settings
 from llama_index.embeddings.openai import OpenAIEmbedding
 
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
@@ -9,17 +9,19 @@ embedding_model = OpenAIEmbedding(
     model="text-embedding-3-small",
     api_key=OPENAI_API_KEY
 )
-service_context = ServiceContext.from_defaults(embed_model=embedding_model)
+
+# Aplica o embedding globalmente
+Settings.embed_model = embedding_model
 
 def build_index():
     if not os.path.isdir(INDEX_DIR):
         os.makedirs(INDEX_DIR, exist_ok=True)
         docs = SimpleDirectoryReader(input_files=["transcricoes.txt"]).load_data()
-        index = GPTVectorStoreIndex.from_documents(docs, service_context=service_context)
+        index = GPTVectorStoreIndex.from_documents(docs)
         storage_context = StorageContext.from_defaults(persist_dir=INDEX_DIR)
         index.storage_context = storage_context
         index.save_to_disk(os.path.join(INDEX_DIR, "index.json"))
-        print(f"✅ Índice FAISS gerado em '{INDEX_DIR}' com {len(docs)} documentos.")
+        print(f"✅ Índice gerado em '{INDEX_DIR}' com {len(docs)} documentos.")
     else:
         print(f"📁 Índice já existe em '{INDEX_DIR}', pulando geração.")
 
