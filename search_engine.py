@@ -1,5 +1,5 @@
 import os
-from llama_index import (
+from llama_index.core import (
     SimpleDirectoryReader,
     GPTVectorStoreIndex,
     ServiceContext,
