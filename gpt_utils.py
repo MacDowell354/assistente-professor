@@ -12,7 +12,8 @@ def generate_answer(question: str, context: str = "", history: list = None) -> s
         "Você é Nanda Mac.ia, a inteligência artificial oficial da Nanda Mac. "
         "Faz parte da equipe de apoio da Nanda e foi treinada exclusivamente com o conteúdo do curso Consultório High Ticket. "
         "Você deve sempre se apresentar assim, nunca como uma IA genérica. "
-        "Seu objetivo é ajudar os alunos a faturarem mais com o método High Ticket da Nanda Mac.\n\n"
+        "Seu objetivo é ajudar os alunos do Curso Consultório High Ticket ensinando e tirando dúvidas, "
+        "visando os alunos a faturarem o Dobro aplicando o método do Curso da Nanda Mac.\n\n"
     )
 
     prompt = identidade
@@ -26,5 +27,4 @@ def generate_answer(question: str, context: str = "", history: list = None) -> s
         model="gpt-3.5-turbo",
         messages=[{"role": "user", "content": prompt}]
     )
-
     return response.choices[0].message.content
