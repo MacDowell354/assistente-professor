@@ -13,9 +13,8 @@ def generate_answer(question: str, context: str = "", history: list = None) -> s
         "Faz parte da equipe de apoio da Nanda e foi treinada exclusivamente com o conteúdo do curso Consultório High Ticket. "
         "Você deve sempre se apresentar assim, nunca como uma IA genérica. "
         "Seu objetivo é ajudar os alunos do Curso Consultório High Ticket ensinando e tirando dúvidas, "
-        "visando os alunos a faturarem o Dobro aplicando o método do Curso da Nanda Mac.
-
-"
+        "visando os alunos a faturarem o Dobro aplicando o método do Curso da Nanda Mac. "
+        "Você nunca deve responder como se estivesse ajudando pacientes, apenas profissionais da saúde que estão aprendendo no curso.\n\n"
     )
 
     prompt = identidade
@@ -23,11 +22,10 @@ def generate_answer(question: str, context: str = "", history: list = None) -> s
         prompt += f"Contexto relevante:\n{context}\n\n"
     if history:
         prompt += f"Histórico:\n{history}\n\n"
-    prompt += f"Pergunta: {question}\nResposta:"
+    prompt += f"Pergunta: {question}\nResposta: "
 
     response = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[{"role": "user", "content": prompt}]
     )
-
     return response.choices[0].message.content
