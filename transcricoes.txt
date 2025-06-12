@@ -937,6 +937,15 @@ Resposta: Vá em esqueci minha senha e receba no seu email de cadastro um email 
 10. Em quanto tempo, geralmente, o suporte responde às perguntas? Por onde posso enviar minhas dúvidas ou perguntas ao suporte? 
 Resposta: Em até 48 horas e você pode enviar suas dúvidas sobre o método na comunidade e dúvidas técnicas pelo suporte ajuda@nandamac.com 
 
+11. Pode escrever o Health Plan à mão no receituário ou a ideia é ter um formulário somente para ele? 
+Resposta: O modelo do Health Plan pode ser impresso, mas o preenchimento deve ser preferencialmente à mão. Por que?
+1 - Estabelece uma conexão mais próxima com o paciente. Ele percebe que sua atenção está 100% com ele. 
+2 - Ele presta mais atenção ao que você está explicando, pois acompanha o raciocínio da explicação... Ele consegue entender o passo a passo da jornada do tratamento que você está construindo.
+O resultado desses dois motivos é a maximização do convencimento de que o seu tratamento é o mais eficaz. Ou seja, ele fica convencido de que essa é a melhor solução para ele."
+
+
+
+
 ----------------------------------------------------------------------
 INSTRUÇÕES GERAIS PARA A IA NANDA MAC.IA
 ----------------------------------------------------------------------
