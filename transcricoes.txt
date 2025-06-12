@@ -943,12 +943,26 @@ Resposta: O modelo do Health Plan pode ser impresso, mas o preenchimento deve se
 2 - Ele presta mais atenção ao que você está explicando, pois acompanha o raciocínio da explicação... Ele consegue entender o passo a passo da jornada do tratamento que você está construindo.
 O resultado desses dois motivos é a maximização do convencimento de que o seu tratamento é o mais eficaz. Ou seja, ele fica convencido de que essa é a melhor solução para ele."
 
-12. Olá ,Boa noite ! Estou navegando pelo módulo da secretaria  e tenho uma dúvida:  Entendemos ,logicamente , que a aparência deve estar condizente com o tipo de ambiente então , o que acham da.secreyaria usar um vestuário com modelo que nós queremos  ?
+12. Olá ,Boa noite ! Estou navegando pelo módulo da secretaria  e tenho uma dúvida:  Entendemos ,logicamente , que a aparência deve estar condizente com o tipo de ambiente então , o que acham da secretaria usar um vestuário com modelo que nós queremos  ?
 Resposta: "Perfeito! É imprescindível que a aparência da secretária esteja condizente com o ambiente do consultório, transmitindo qualidade e profissionalismo. O uso de um ""uniforme"" um ""padrão de vestuário"" é super recomendável. Essa ação acerta em cheio dois objetivos:
 1 - Garante que sua secretária estará alinhada com o seu posicionamento.
 2 - Facilita a vida da secretária, que não precisará pensar com qual roupa ela irá para o trabalho.
-Mas olha, é muito importante que você siga o senso estético High Ticket não polêmico para fazer essa escolha. Assista as aulas XXX e XXX para garantir sucesso no posicionamento da secretária.
+Mas olha, é muito importante que você siga o senso estético High Ticket não polêmico para fazer essa escolha. Assista as aulas XXX e XXX para garantir sucesso no posicionamento da secretária."
 
+13. "Ola.. Sou fisioterapeuta especialista em terapia manual, com nicho em dores crônicas, ansiedade e  saúde mulher 40+. Foco é conectar com profissionais que eu não conheço. Para enviar mensagem para ginecologistas do prédio aonde tenho consultório para apresentar meu trabalho       
+Vi algumas mensagens citadas pensei em algo assim: 
+“Oi Dra. \[nome\], tudo bem? Eu sou a Dra. Ana Lucia Motta Fisioterapeuta, com foco em dores crônicas e menopausa e venho estudando muito sobre a relação do sistema fascial, emoções e saúde mulher 40+.
+Vi seu conteúdo e achei muito interessante a forma como você aborda esses temas. Estou me aproximando de profissionais que também atuam nessa linha, para trocar ideias e, quem sabe, construirmos conexões futuras. Também estou localizada no edifício Helbor.  Eventualmente preciso encaminhar meus pacientes para ginecologistas mas não fico à vontade para passar indicação sem antes entrar em contato para conhecer um pouco sobre  o trabalho. Gostaria de saber se podemos marcar um horário para conversar.""
+Me coloco à disposição caso tenha interesse, e ficaria feliz em manter esse contato!”
+Sera que e muito?
+Resposta:"A segunda parte da sua mensagem está muito boa (a que fala sobre ""Eventualmente eu preciso encaminhar meu pacientes...), mas o início e o fim está muito ""apelativo"", quase um implorar para que ele te chem para um café... ""Me coloco à disposição... Ficaria feliz..."" é bem apelativo. 
+É preciso fazer uma mensagem profissional, com posicionamento firme.
+Esse é o modelo que sugiro para você:
+“Oi Dra. \[nome\], tudo bem? Eu sou a Dra. Ana Lucia Motta Fisioterapeuta, com foco em dores crônicas e menopausa.
+Vi seu conteúdo e achei interessante a forma como você aborda esses temas. 
+Gostaria de conhecer mais sobre sua área de atuação, pois atendo a pacientes que precisam de profissionais como você.
+Estamos no mesmo prédio. Seria possível falarmos por 10 minutos às xx horas no dia x ou no dia x?"""
+ 
 
 ----------------------------------------------------------------------
 INSTRUÇÕES GERAIS PARA A IA NANDA MAC.IA
