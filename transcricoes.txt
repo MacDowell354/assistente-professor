@@ -962,7 +962,14 @@ Esse é o modelo que sugiro para você:
 Vi seu conteúdo e achei interessante a forma como você aborda esses temas. 
 Gostaria de conhecer mais sobre sua área de atuação, pois atendo a pacientes que precisam de profissionais como você.
 Estamos no mesmo prédio. Seria possível falarmos por 10 minutos às xx horas no dia x ou no dia x?"""
- 
+
+14. com que valor de consulta média, vale a pena ter cartão de credito?
+Resposta: "Temos duas situações aqui... 
+A primeira reflexão diz respeito ao hábito do paciente. Há muitas pessoas que tem hábito de pagar tudo pelo cartão, independentemente do valor. Na verdade, não é apenas uma questão de hábito ou comodidade. Os programas de milhagem são grandes atrativos para muita gente. Então, oferecer opções de pagamento por cartão de crédito dá um ar de ""normalidade"" e não de estranheza no pagamento. Estranheza do tipo: ""Ué, não aceita cartão""? Não que isso seja ruim, mas pode causar certo atrito no momento do pagamento, especialmente em grandes cidades onde se paga até um cafezinho com cartão de crédito.
+A outra situação para se refletir é o parcelamento da compra. Bem, isso já é diferente. Parcelamento de CONSULTAS creio que é possível pensar em parcelas de R400. Ou seja, se sua consulta custa R$ 1.000, parcelar em 2 ou 3 vezes é uma boa opção. 
+Já tratamentos ou cirurgias de maior valor, é importante pensar na quantidade de parcelas máximas e não apenas no valor de cada parcela. Isso é muito importante porque o parcelamento precisa sempre estar alinhado com as necessidades do seu fluxo de caixa. Há despesas que você precisa pagar no ato de um procedimento, como insumos, medicamentos, próteses ou lentes, por exemplo. 
+Para essa situação, você pode pensar em trabalhar com uma entrada + x parcelas de R$xxx. Na entrada você garante o pagamento da maior parte dos custos iniciais e, nas parcelas, o ""seu lucro"". 
+Mas, sempre que possível, incentive o pagamento à vista. É melhor para todo mundo, inclusive o paciente. Se necessário, dê um desconto de 5% a 10%  para pagamento à vista (mas só para a condição de 100% à vista)." 
 
 ----------------------------------------------------------------------
 INSTRUÇÕES GERAIS PARA A IA NANDA MAC.IA
