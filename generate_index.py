@@ -5,25 +5,31 @@ from llama_index.embeddings.openai import OpenAIEmbedding
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 INDEX_DIR = "storage"
 
+# Configura o modelo de embedding do OpenAI
 embedding_model = OpenAIEmbedding(
     model="text-embedding-3-small",
     api_key=OPENAI_API_KEY
 )
-
-# Aplica o embedding globalmente
 Settings.embed_model = embedding_model
 
 def build_index():
-    if not os.path.isdir(INDEX_DIR):
-        os.makedirs(INDEX_DIR, exist_ok=True)
-        docs = SimpleDirectoryReader(input_files=["transcricoes.txt"]).load_data()
-        index = GPTVectorStoreIndex.from_documents(docs)
-        storage_context = StorageContext.from_defaults(persist_dir=INDEX_DIR)
-        index.storage_context = storage_context
-        index.save_to_disk(os.path.join(INDEX_DIR, "index.json"))
-        print(f"✅ Índice gerado em '{INDEX_DIR}' com {len(docs)} documentos.")
-    else:
-        print(f"📁 Índice já existe em '{INDEX_DIR}', pulando geração.")
+    # Sempre cria a pasta de índice (caso não exista)
+    os.makedirs(INDEX_DIR, exist_ok=True)
+
+    # Carrega os dados da transcrição
+    docs = SimpleDirectoryReader(input_files=["transcricoes.txt"]).load_data()
+
+    # Cria o índice a partir dos documentos
+    index = GPTVectorStoreIndex.from_documents(docs)
+
+    # Define o contexto de armazenamento com persistência
+    storage_context = StorageContext.from_defaults(persist_dir=INDEX_DIR)
+    index.storage_context = storage_context
+
+    # Salva o índice no disco
+    index.save_to_disk(os.path.join(INDEX_DIR, "index.json"))
+
+    print(f"✅ Índice gerado em '{INDEX_DIR}' com {len(docs)} documentos.")
 
 if __name__ == "__main__":
     build_index()
