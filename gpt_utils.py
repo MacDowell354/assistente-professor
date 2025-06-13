@@ -28,11 +28,11 @@ def generate_answer(question: str, context: str = "", history: str = None, tipo_
         "explicacao": (
             "Explique com base no conteúdo das aulas transcritas. "
             "Utilize uma linguagem clara e didática, como se estivesse ensinando um aluno profissional da saúde. "
-            "Evite respostas vagas ou genéricas e sempre ensine passo a passo."
+            "Evite respostas vagas ou genéricas. Seja sempre passo a passo."
         ),
         "faq": (
             "Essa pergunta é comum entre os alunos do curso. "
-            "Use as transcrições para responder de forma clara, prática e focada em aplicação no consultório. "
+            "Use as transcrições para responder de forma clara, prática e focada na aplicação no consultório. "
             "Inclua exemplos reais ou sugestões práticas ensinadas no curso, se possível."
         ),
         "revisao": (
@@ -46,6 +46,13 @@ def generate_answer(question: str, context: str = "", history: str = None, tipo_
         "correcao": (
             "Se a pergunta estiver confusa ou demonstrar má interpretação do conteúdo, "
             "explique gentilmente onde está o erro e reforce a explicação correta com base na aula correspondente."
+        ),
+        "capitacao_sem_marketing_digital": (
+            "No curso Consultório High Ticket, captar pacientes high ticket não envolve o uso de tráfego pago, "
+            "parcerias com influenciadores, redes sociais ou marketing digital tradicional. "
+            "Explique com base no conteúdo do curso como a captação deve ser feita através do posicionamento, experiência do paciente, senso estético e autoridade. "
+            "Corrija qualquer interpretação equivocada que sugira o uso de anúncios, posts ou estratégias digitais externas. "
+            "Seja clara, objetiva e mostre que os alunos não precisam ser 'doutores blogueiros' para atrair pacientes de valor."
         )
     }
 
