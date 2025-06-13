@@ -64,7 +64,12 @@ def chat_get(request: Request, user: str = Depends(get_current_user)):
     return templates.TemplateResponse("chat.html", {"request": request, "history": []})
 
 @app.post("/ask", response_class=HTMLResponse)
-async def ask(request: Request, question: Optional[str] = Form(None), user: str = Depends(get_current_user)):
+async def ask(
+    request: Request,
+    question: Optional[str] = Form(None),
+    tipo_de_prompt: Optional[str] = Form("explicacao"),
+    user: str = Depends(get_current_user)
+):
     if not question:
         return RedirectResponse(url="/chat", status_code=302)
 
@@ -76,7 +81,7 @@ async def ask(request: Request, question: Optional[str] = Form(None), user: str 
         history = []
 
     context = retrieve_relevant_context(question)
-    answer = generate_answer(question, context=context, history=history)
+    answer = generate_answer(question, context=context, history=history, tipo_de_prompt=tipo_de_prompt)
 
     new_history = history + [{"user": question, "ai": answer}]
     return templates.TemplateResponse("chat.html", {
