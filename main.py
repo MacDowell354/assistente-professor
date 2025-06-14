@@ -10,14 +10,13 @@ from passlib.context import CryptContext
 
 from search_engine import retrieve_relevant_context
 from gpt_utils import generate_answer
-from db_logs import registrar_log  # ✅ log no SQLite
-from logs_route import router as logs_router  # ✅ agora seguro com auth_utils
-
+from db_logs import registrar_log
+from logs_route import router as logs_router
 
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
 
-app.include_router(logs_router)  # ✅ registra a rota protegida /logs
+app.include_router(logs_router)  # ✅ ativa rota /logs
 
 SECRET_KEY = "segredo-teste"
 ALGORITHM = "HS256"
@@ -88,7 +87,6 @@ async def ask(
     context = retrieve_relevant_context(question)
     answer = generate_answer(question, context=context, history=history, tipo_de_prompt=tipo_de_prompt)
 
-    # ✅ Registrar log no banco
     registrar_log(
         username=user,
         pergunta=question,
@@ -102,3 +100,26 @@ async def ask(
         "request": request,
         "history": new_history
     })
+
+# ✅ Criação automática da tabela logs se não existir
+import sqlite3
+
+def inicializar_banco_logs():
+    conn = sqlite3.connect("logs.db")
+    cursor = conn.cursor()
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS logs (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT,
+            pergunta TEXT,
+            resposta TEXT,
+            tipo_prompt TEXT,
+            contexto TEXT,
+            data_hora TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
+    conn.commit()
+    conn.close()
+    print("✅ Tabela 'logs' verificada/criada com sucesso.")
+
+inicializar_banco_logs()
