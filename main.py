@@ -5,23 +5,23 @@ from typing import Optional
 from fastapi import FastAPI, Request, Form, Depends
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
-from jose import JWTError, jwt
 from passlib.context import CryptContext
+from jose import JWTError, jwt
 
 from search_engine import retrieve_relevant_context
 from gpt_utils import generate_answer
 from db_logs import registrar_log
-from logs_route import router as logs_router
+from logs_route import router as logs_router  # Rota de visualização/exportação dos logs
 
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
 
-app.include_router(logs_router)  # ✅ ativa rota /logs
+app.include_router(logs_router)  # ✅ Ativa a rota /logs e /logs/exportar
 
+# Autenticação
 SECRET_KEY = "segredo-teste"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
-
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 fake_users = {"aluno1": pwd_context.hash("N4nd@M4c#2025")}
 
@@ -35,16 +35,6 @@ def create_access_token(data: dict):
     expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     to_encode.update({"exp": expire})
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
-
-def get_current_user(request: Request):
-    token = request.cookies.get("token")
-    if not token:
-        raise RedirectResponse("/login")
-    try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        return payload.get("sub")
-    except JWTError:
-        raise RedirectResponse("/login")
 
 @app.get("/")
 def root():
@@ -62,6 +52,8 @@ def login_post(request: Request, username: str = Form(...), password: str = Form
     response = RedirectResponse(url="/chat", status_code=302)
     response.set_cookie(key="token", value=token, httponly=True)
     return response
+
+from auth_utils import get_current_user
 
 @app.get("/chat", response_class=HTMLResponse)
 def chat_get(request: Request, user: str = Depends(get_current_user)):
@@ -100,26 +92,3 @@ async def ask(
         "request": request,
         "history": new_history
     })
-
-# ✅ Criação automática da tabela logs se não existir
-import sqlite3
-
-def inicializar_banco_logs():
-    conn = sqlite3.connect("logs.db")
-    cursor = conn.cursor()
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS logs (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            username TEXT,
-            pergunta TEXT,
-            resposta TEXT,
-            tipo_prompt TEXT,
-            contexto TEXT,
-            data_hora TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
-    """)
-    conn.commit()
-    conn.close()
-    print("✅ Tabela 'logs' verificada/criada com sucesso.")
-
-inicializar_banco_logs()
