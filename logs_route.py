@@ -4,7 +4,7 @@ import sqlite3
 import csv
 import io
 
-from main import get_current_user
+from auth_utils import get_current_user
 
 router = APIRouter()
 
