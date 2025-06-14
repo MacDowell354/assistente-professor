@@ -4,7 +4,7 @@ import sqlite3
 import csv
 import io
 
-from main import get_current_user  # usa a autenticação segura
+from auth_utils import get_current_user
 
 router = APIRouter()
 
@@ -26,7 +26,6 @@ def visualizar_logs(request: Request, user: str = Depends(get_current_user)):
     html += "</table></body></html>"
 
     return HTMLResponse(content=html)
-
 
 @router.get("/logs/exportar")
 def exportar_logs_csv(user: str = Depends(get_current_user)):
