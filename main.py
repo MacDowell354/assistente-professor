@@ -11,12 +11,13 @@ from passlib.context import CryptContext
 from search_engine import retrieve_relevant_context
 from gpt_utils import generate_answer
 from db_logs import registrar_log  # ✅ log no SQLite
+from logs_route import router as logs_router  # ✅ agora seguro com auth_utils
 
 
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
 
-#app.include_router(logs_router)  # ✅ registra a rota protegida /logs
+app.include_router(logs_router)  # ✅ registra a rota protegida /logs
 
 SECRET_KEY = "segredo-teste"
 ALGORITHM = "HS256"
