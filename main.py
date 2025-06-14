@@ -10,6 +10,7 @@ from passlib.context import CryptContext
 
 from search_engine import retrieve_relevant_context
 from gpt_utils import generate_answer
+from db_logs import registrar_log  # ✅ Novo: importar função de log
 
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
@@ -82,6 +83,15 @@ async def ask(
 
     context = retrieve_relevant_context(question)
     answer = generate_answer(question, context=context, history=history, tipo_de_prompt=tipo_de_prompt)
+
+    # ✅ Registrar log no banco
+    registrar_log(
+        username=user,
+        pergunta=question,
+        resposta=answer,
+        contexto=context,
+        tipo_prompt=tipo_de_prompt
+    )
 
     new_history = history + [{"user": question, "ai": answer}]
     return templates.TemplateResponse("chat.html", {
