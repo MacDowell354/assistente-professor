@@ -4,7 +4,7 @@ import sqlite3
 import csv
 import io
 
-from auth_utils import get_current_user
+from main import get_current_user  # usa a autenticação segura
 
 router = APIRouter()
 
