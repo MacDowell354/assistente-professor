@@ -77,7 +77,7 @@
       {% for msg in history %}
         <div class="message">
           <p class="user">Você: {{ msg.user }}</p>
-          <p class="ia">IA: {{ msg.ai }}</p>
+          <p class="ia">IA: {{ msg.ai | safe }}</p>
         </div>
       {% endfor %}
     {% endif %}
