@@ -7,16 +7,18 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from passlib.context import CryptContext
 from jose import JWTError, jwt
+import markdown2  # ✅ Import para renderizar Markdown como HTML
 
 from search_engine import retrieve_relevant_context
 from gpt_utils import generate_answer
 from db_logs import registrar_log
-from logs_route import router as logs_router  # Rota de visualização/exportação dos logs
+from logs_route import router as logs_router
+from auth_utils import get_current_user
 
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
 
-app.include_router(logs_router)  # ✅ Ativa a rota /logs e /logs/exportar
+app.include_router(logs_router)
 
 # Autenticação
 SECRET_KEY = "segredo-teste"
@@ -53,8 +55,6 @@ def login_post(request: Request, username: str = Form(...), password: str = Form
     response.set_cookie(key="token", value=token, httponly=True)
     return response
 
-from auth_utils import get_current_user
-
 @app.get("/chat", response_class=HTMLResponse)
 def chat_get(request: Request, user: str = Depends(get_current_user)):
     return templates.TemplateResponse("chat.html", {"request": request, "history": []})
@@ -77,17 +77,20 @@ async def ask(
         history = []
 
     context = retrieve_relevant_context(question)
-    answer = generate_answer(question, context=context, history=history, tipo_de_prompt=tipo_de_prompt)
+    answer_markdown = generate_answer(question, context=context, history=history, tipo_de_prompt=tipo_de_prompt)
+
+    # ✅ Converte Markdown para HTML
+    answer_html = markdown2.markdown(answer_markdown)
 
     registrar_log(
         username=user,
         pergunta=question,
-        resposta=answer,
+        resposta=answer_html,
         contexto=context,
         tipo_prompt=tipo_de_prompt
     )
 
-    new_history = history + [{"user": question, "ai": answer}]
+    new_history = history + [{"user": question, "ai": answer_html}]
     return templates.TemplateResponse("chat.html", {
         "request": request,
         "history": new_history
