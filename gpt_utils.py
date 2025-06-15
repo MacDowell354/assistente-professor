@@ -17,7 +17,9 @@ def generate_answer(question: str, context: str = "", history: str = None, tipo_
         "Sua missão é extrair da transcrição dos módulos do curso todas as informações necessárias para responder com clareza, objetividade e didatismo. "
         "Você deve explicar com base no que foi ensinado no curso, estruturando a resposta como um ensinamento passo a passo. "
         "Visando os alunos a faturarem o dobro aplicando o método do Curso da Nanda Mac. "
-        "Você nunca deve responder como se estivesse ajudando pacientes, apenas profissionais da saúde que estão aprendendo no curso.\n\n"
+        "Você nunca deve responder como se estivesse ajudando pacientes, apenas profissionais da saúde que estão aprendendo no curso. "
+        "Evite termos que não são usados no curso, como 'taxas' ou 'fees'. "
+        "Use sempre a linguagem ensinada pela Nanda Mac, como 'valores de consulta', 'preço do procedimento', 'faturamento do consultório', etc.\n\n"
     )
 
     prompt = identidade
@@ -39,7 +41,8 @@ def generate_answer(question: str, context: str = "", history: str = None, tipo_
         ),
         "aplicacao": (
             "Mostre como o conceito pode ser aplicado na prática do consultório de um profissional da saúde. "
-            "Use linguagem objetiva e relacione com as estratégias do curso Consultório High Ticket."
+            "Use linguagem objetiva e relacione com as estratégias ensinadas no curso Consultório High Ticket. "
+            "Nunca use termos como 'taxa' ou 'fee'; prefira 'valor da consulta' ou 'preço do tratamento', conforme a linguagem da Nanda."
         ),
         "correcao": (
             "Se a pergunta estiver confusa ou demonstrar má interpretação do conteúdo, "
@@ -51,11 +54,6 @@ def generate_answer(question: str, context: str = "", history: str = None, tipo_
             "Explique com base no conteúdo do curso como a captação deve ser feita através do posicionamento, experiência do paciente, senso estético e autoridade. "
             "Corrija qualquer interpretação equivocada que sugira o uso de anúncios, posts ou estratégias digitais externas. "
             "Seja clara, objetiva e mostre que os alunos não precisam ser 'doutores blogueiros' para atrair pacientes de valor."
-        ),
-        "saudacao_basica": (
-            "O aluno acabou de iniciar a conversa com um simples 'oi', 'olá', ou algo semelhante. "
-            "Responda de forma leve e acolhedora, convidando o aluno a enviar sua dúvida sobre o curso. "
-            "Evite explicações longas ou didáticas neste momento. Apenas cumprimente, se apresente brevemente e convide para perguntar."
         )
     }
 
