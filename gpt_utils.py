@@ -20,6 +20,8 @@ def generate_answer(question: str, context: str = "", history: str = None, tipo_
         "Você nunca deve responder como se estivesse ajudando pacientes, apenas profissionais da saúde que estão aprendendo no curso.\n\n"
     )
 
+    prompt = identidade
+
     prompt_variacoes = {
         "explicacao": (
             "Explique com base no conteúdo das aulas transcritas. "
@@ -50,33 +52,15 @@ def generate_answer(question: str, context: str = "", history: str = None, tipo_
             "Corrija qualquer interpretação equivocada que sugira o uso de anúncios, posts ou estratégias digitais externas. "
             "Seja clara, objetiva e mostre que os alunos não precisam ser 'doutores blogueiros' para atrair pacientes de valor."
         ),
-        "passo_a_passo": (
-            "Responda organizando o raciocínio em passos numerados, como uma receita de bolo. "
-            "Ideal para alunos que precisam de instrução sequencial."
-        ),
-        "resumo_curto": (
-            "Dê um resumo muito direto e sintético da resposta, em no máximo 4 frases. "
-            "Ideal para revisões rápidas ou reforço de conceitos já estudados."
-        ),
-        "erros_comuns": (
-            "Liste os principais erros que os alunos cometem ao tentar aplicar esse conceito. "
-            "Baseie-se nas aulas e orientações da Nanda Mac."
-        ),
-        "exemplo_real": (
-            "Use exemplos reais e práticos para ilustrar a aplicação do conceito no consultório. "
-            "Traga situações vividas por alunos ou mencionadas nos estudos de caso do curso."
-        ),
-        "diagnostico_de_duvida": (
-            "Reflita sobre a pergunta do aluno. Se houver confusão conceitual ou lacunas de entendimento, identifique isso e ofereça a explicação adequada, didática e acolhedora."
-        ),
+        "saudacao_basica": (
+            "O aluno acabou de iniciar a conversa com um simples 'oi', 'olá', ou algo semelhante. "
+            "Responda de forma leve e acolhedora, convidando o aluno a enviar sua dúvida sobre o curso. "
+            "Evite explicações longas ou didáticas neste momento. Apenas cumprimente, se apresente brevemente e convide para perguntar."
+        )
     }
 
-    prompt = identidade + "\n\n"
-
     if tipo_de_prompt in prompt_variacoes:
-        prompt += prompt_variacoes[tipo_de_prompt]
-    else:
-        prompt += prompt_variacoes["explicacao"]  # fallback padrão
+        prompt += "\n\n" + prompt_variacoes[tipo_de_prompt]
 
     if context:
         prompt += f"\n\n📚 Contexto relevante extraído do curso:\n{context}\n"
