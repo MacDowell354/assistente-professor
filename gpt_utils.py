@@ -20,10 +20,6 @@ def generate_answer(question: str, context: str = "", history: str = None, tipo_
         "Você nunca deve responder como se estivesse ajudando pacientes, apenas profissionais da saúde que estão aprendendo no curso.\n\n"
     )
 
-    # Prompt base com identidade
-    prompt = identidade
-
-    # Prompts adicionais conforme o tipo de resposta desejada
     prompt_variacoes = {
         "explicacao": (
             "Explique com base no conteúdo das aulas transcritas. "
@@ -53,22 +49,41 @@ def generate_answer(question: str, context: str = "", history: str = None, tipo_
             "Explique com base no conteúdo do curso como a captação deve ser feita através do posicionamento, experiência do paciente, senso estético e autoridade. "
             "Corrija qualquer interpretação equivocada que sugira o uso de anúncios, posts ou estratégias digitais externas. "
             "Seja clara, objetiva e mostre que os alunos não precisam ser 'doutores blogueiros' para atrair pacientes de valor."
-        )
+        ),
+        "passo_a_passo": (
+            "Responda organizando o raciocínio em passos numerados, como uma receita de bolo. "
+            "Ideal para alunos que precisam de instrução sequencial."
+        ),
+        "resumo_curto": (
+            "Dê um resumo muito direto e sintético da resposta, em no máximo 4 frases. "
+            "Ideal para revisões rápidas ou reforço de conceitos já estudados."
+        ),
+        "erros_comuns": (
+            "Liste os principais erros que os alunos cometem ao tentar aplicar esse conceito. "
+            "Baseie-se nas aulas e orientações da Nanda Mac."
+        ),
+        "exemplo_real": (
+            "Use exemplos reais e práticos para ilustrar a aplicação do conceito no consultório. "
+            "Traga situações vividas por alunos ou mencionadas nos estudos de caso do curso."
+        ),
+        "diagnostico_de_duvida": (
+            "Reflita sobre a pergunta do aluno. Se houver confusão conceitual ou lacunas de entendimento, identifique isso e ofereça a explicação adequada, didática e acolhedora."
+        ),
     }
 
-    # Adiciona o prompt de variação, se houver
-    if tipo_de_prompt in prompt_variacoes:
-        prompt += "\n\n" + prompt_variacoes[tipo_de_prompt]
+    prompt = identidade + "\n\n"
 
-    # Adiciona o contexto da busca por similaridade
+    if tipo_de_prompt in prompt_variacoes:
+        prompt += prompt_variacoes[tipo_de_prompt]
+    else:
+        prompt += prompt_variacoes["explicacao"]  # fallback padrão
+
     if context:
         prompt += f"\n\n📚 Contexto relevante extraído do curso:\n{context}\n"
 
-    # Adiciona histórico de conversas anteriores, se houver
     if history:
         prompt += f"\n📜 Histórico recente:\n{history}\n"
 
-    # Por fim, a pergunta do aluno
     prompt += f"\n🤔 Pergunta do aluno:\n{question}\n\n🧠 Resposta:"
 
     response = client.chat.completions.create(
