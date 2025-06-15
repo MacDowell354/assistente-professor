@@ -20,56 +20,55 @@ def generate_answer(question: str, context: str = "", history: str = None, tipo_
         "Você nunca deve responder como se estivesse ajudando pacientes, apenas profissionais da saúde que estão aprendendo no curso.\n\n"
     )
 
-    prompt = identidade
-
     prompt_variacoes = {
         "explicacao": (
+            "**📝 Explicação Didática:**\n"
             "Explique com base no conteúdo das aulas transcritas. "
-            "Utilize uma linguagem clara e didática, como se estivesse ensinando um aluno profissional da saúde. "
-            "Evite respostas vagas ou genéricas. Seja sempre passo a passo."
+            "Use linguagem clara e passo a passo, como um professor do curso Consultório High Ticket."
         ),
         "faq": (
-            "Essa pergunta é comum entre os alunos do curso. "
-            "Use as transcrições para responder de forma clara, prática e focada na aplicação no consultório. "
-            "Inclua exemplos reais ou sugestões práticas ensinadas no curso, se possível."
+            "**❓ Resposta a Dúvida Frequente:**\n"
+            "Essa é uma pergunta comum dos alunos. "
+            "Responda com base no curso, de forma prática e objetiva, com exemplos se possível."
         ),
         "revisao": (
-            "Dê uma revisão rápida e didática sobre esse conceito, conforme foi ensinado nas aulas. "
-            "Evite detalhes irrelevantes. Seja direto, como se fosse uma revisão pré-prova."
+            "**📚 Revisão Rápida:**\n"
+            "Resuma o conceito conforme ensinado no curso, como uma revisão para fixação."
         ),
         "aplicacao": (
-            "Mostre como o conceito pode ser aplicado na prática do consultório de um profissional da saúde. "
-            "Use linguagem objetiva e relacione com as estratégias do curso Consultório High Ticket."
+            "**🔧 Aplicação Prática no Consultório:**\n"
+            "Explique como aplicar o conteúdo no consultório de forma prática, segundo o método da Nanda Mac."
         ),
         "correcao": (
-            "Se a pergunta estiver confusa ou demonstrar má interpretação do conteúdo, "
-            "explique gentilmente onde está o erro e reforce a explicação correta com base na aula correspondente."
+            "**⚠️ Correção e Reforço Didático:**\n"
+            "Se identificar erro na pergunta, corrija de forma gentil e reforce a explicação correta."
         ),
         "capitacao_sem_marketing_digital": (
-            "No curso Consultório High Ticket, captar pacientes high ticket não envolve o uso de tráfego pago, "
-            "parcerias com influenciadores, redes sociais ou marketing digital tradicional. "
-            "Explique com base no conteúdo do curso como a captação deve ser feita através do posicionamento, experiência do paciente, senso estético e autoridade. "
-            "Corrija qualquer interpretação equivocada que sugira o uso de anúncios, posts ou estratégias digitais externas. "
-            "Seja clara, objetiva e mostre que os alunos não precisam ser 'doutores blogueiros' para atrair pacientes de valor."
+            "**🚫 Captação sem Marketing Digital:**\n"
+            "Mostre como captar pacientes high ticket sem usar redes sociais, tráfego pago ou anúncios. "
+            "Enfatize os pilares ensinados: posicionamento, experiência, senso estético e autoridade offline."
         ),
         "precificacao": (
-            "Explique a precificação como é ensinada no curso Consultório High Ticket. "
-            "Apresente o conceito de Health Plan, sua importância para aumentar o faturamento e como ele ajuda a fidelizar pacientes. "
-            "Mostre que a precificação estruturada é uma ferramenta estratégica para posicionamento e crescimento do consultório. "
-            "A explicação deve ser clara, baseada na metodologia da Nanda Mac, com exemplos práticos e linguagem que motive o aluno a aplicar o método."
+            "**💰 Estratégia de Precificação Inteligente:**\n"
+            "Explique passo a passo como definir o valor de consulta e procedimentos, com base nas aulas. "
+            "Inclua fatores como: percepção de valor, experiência do paciente, diferenciação e posicionamento. "
+            "Evite responder com preços ou comparações de mercado. Foque nos critérios ensinados no curso."
         )
     }
+
+    # 🧠 Construção do prompt para o modelo
+    prompt = identidade
 
     if tipo_de_prompt in prompt_variacoes:
         prompt += "\n\n" + prompt_variacoes[tipo_de_prompt]
 
     if context:
-        prompt += f"\n\n📚 Contexto relevante extraído do curso:\n{context}\n"
+        prompt += f"\n\n📚 *Trecho do curso extraído para contexto:*\n{context}\n"
 
     if history:
-        prompt += f"\n📜 Histórico recente:\n{history}\n"
+        prompt += f"\n📜 *Histórico de conversa com o aluno:*\n{history}\n"
 
-    prompt += f"\n🤔 Pergunta do aluno:\n{question}\n\n🧠 Resposta:"
+    prompt += f"\n🤔 *Pergunta do aluno:*\n{question}\n\n🧠 *Resposta clara, objetiva e didática:*"
 
     response = client.chat.completions.create(
         model="gpt-3.5-turbo",
