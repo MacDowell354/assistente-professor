@@ -11,48 +11,61 @@
       background-color: #f9fafb;
       display: flex;
       justify-content: center;
-      align-items: center;
-      padding: 40px;
+      align-items: flex-start;
+      padding: 40px 20px;
     }
     .chat-container {
-      background: #fff;
-      border-radius: 12px;
+      background: #ffffff;
+      border-radius: 16px;
       padding: 30px;
-      max-width: 700px;
+      max-width: 800px;
       width: 100%;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.07);
     }
     h2 {
       text-align: center;
       color: #4f46e5;
-      margin-bottom: 20px;
+      margin-bottom: 30px;
+      font-size: 24px;
     }
     .message {
-      margin-bottom: 20px;
+      margin-bottom: 30px;
+      line-height: 1.6;
     }
-    .message p {
-      margin: 5px 0;
+    .user {
+      background-color: #eef2ff;
+      padding: 12px 16px;
+      border-radius: 10px;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #1e3a8a;
     }
-    .user { color: #111827; font-weight: bold; }
-    .ia { color: #6b7280; }
+    .ia {
+      background-color: #f3f4f6;
+      padding: 12px 16px;
+      border-radius: 10px;
+      color: #374151;
+    }
     textarea {
       width: 100%;
-      padding: 12px;
-      border-radius: 8px;
+      padding: 14px;
+      border-radius: 10px;
       border: 1px solid #d1d5db;
       resize: none;
-      font-size: 14px;
-      margin-bottom: 10px;
+      font-size: 15px;
+      margin-bottom: 15px;
     }
     button {
       width: 100%;
       background-color: #4f46e5;
-      color: #fff;
-      padding: 12px;
+      color: #ffffff;
+      padding: 14px;
       border: none;
-      border-radius: 8px;
+      border-radius: 10px;
       font-weight: bold;
+      font-size: 16px;
       cursor: pointer;
+      transition: background-color 0.3s ease;
     }
     button:hover {
       background-color: #4338ca;
@@ -64,20 +77,21 @@
     <h2>🤖 IA - Nanda Mac</h2>
 
     <div class="message">
-      <p class="ia"><strong>IA - Nanda Mac:</strong> Olá! 😊 Seja muito bem-vindo ao seu espaço de aprendizado!<br><br>
-      Eu sou a <strong>Nanda Mac.ia</strong>, sua professora virtual aqui no curso <em>Consultório High Ticket</em>. 
-      Estou aqui para caminhar com você e esclarecer todas as suas dúvidas com base nas aulas do curso, como uma <strong>professora dedicada e experiente</strong>.<br><br>
-      Meu objetivo é te ajudar a aplicar o método da Nanda com clareza, segurança e foco nos resultados. 
-      Então fique à vontade: envie sua pergunta e vamos juntos transformar seu consultório em um modelo de excelência e faturamento. 🚀<br><br>
-      Pode perguntar o que quiser, que eu te explico como se estivéssemos em uma aula particular. 😉
-      </p>
+      <div class="ia">
+        <strong>IA - Nanda Mac:</strong><br><br>
+        Olá! 😊 Seja muito bem-vindo ao seu espaço de aprendizado!<br><br>
+        Eu sou a <strong>Nanda Mac.ia</strong>, sua professora virtual aqui no curso <em>Consultório High Ticket</em>.<br>
+        Estou aqui para caminhar com você e esclarecer todas as suas dúvidas com base nas aulas do curso, como uma <strong>professora dedicada e experiente</strong>.<br><br>
+        Meu objetivo é te ajudar a aplicar o método da Nanda com clareza, segurança e foco nos resultados.<br><br>
+        Pode perguntar o que quiser, que eu te explico como se estivéssemos em uma aula particular. 😉🚀
+      </div>
     </div>
 
     {% if history %}
       {% for msg in history %}
         <div class="message">
-          <p class="user">Você: {{ msg.user }}</p>
-          <p class="ia">IA: {{ msg.ai | safe }}</p>
+          <div class="user">Você: {{ msg.user }}</div>
+          <div class="ia">{{ msg.ai | safe }}</div>
         </div>
       {% endfor %}
     {% endif %}
