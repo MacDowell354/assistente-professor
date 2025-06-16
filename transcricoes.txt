@@ -1050,13 +1050,12 @@ Hoje, após ter criado o primeiro e pioneiro conceito de Consultório High Ticke
 
 ----------------------------------------------------------------------
 
-### PERGUNTA FREQUENTE: Pedido de receita via WhatsApp sem retorno em consulta
-
-Quando um paciente solicita uma nova receita pelo WhatsApp, mas o correto é agendar uma nova consulta, a orientação do curso Consultório High Ticket é agir com empatia e firmeza profissional.
+PERGUNTA FREQUENTE: O que responder quando o paciente pede receita por WhatsApp sem nova consulta?
+Quando um paciente solicita uma nova receita via WhatsApp, mas o correto é agendar uma nova consulta, a orientação do curso Consultório High Ticket é agir com empatia e firmeza profissional.
 
 🟪 MODELO DE RESPOSTA (Secretária ou atendimento):
 
-"Oi [nome], tudo bem?
+Oi [nome], tudo bem?
 
 Conforme foi conversado na consulta com o Dr(a) [nome], ele(a) vai precisar te ver em uma nova consulta, onde possa te avaliar novamente.
 
@@ -1064,14 +1063,26 @@ Só assim vai poder prescrever uma nova receita com total segurança e responsab
 
 Os próximos horários disponíveis na agenda do Dr(a) são [hora e data] ou [hora e data].
 
-Qual desses fica melhor para você?"
+Qual desses fica melhor para você?
+
+
+Conforme foi conversado na consulta com o Dr(a) [nome], ele(a) vai precisar te ver em uma nova consulta, onde possa te avaliar novamente.
+
+Só assim vai poder prescrever uma nova receita com total segurança e responsabilidade.
+
+Os próximos horários disponíveis na agenda do Dr(a) são [hora e data] ou [hora e data].
+
+Qual desses fica melhor para você?
 
 🟩 ORIENTAÇÃO GERAL:
 
-- Nunca envie receitas por mensagem sem reavaliação do profissional.
-- Evite entrar em justificativas técnicas: seja clara, objetiva e acolhedora.
-- Mostre que a decisão é parte do processo clínico e não algo pessoal.
-- Incentive o paciente a agendar e destaque os horários disponíveis.
+Nunca envie receitas por mensagem sem reavaliação do profissional.
 
-Essa abordagem fortalece a autoridade do consultório e evita desgastes futuros, além de garantir o cuidado ético e de qualidade com o paciente.
+Evite entrar em justificativas técnicas: seja clara, objetiva e acolhedora.
+
+Mostre que a decisão é parte do processo clínico e não algo pessoal.
+
+Incentive o paciente a agendar e destaque os horários disponíveis.
+
+Essa abordagem fortalece a autoridade do consultório, evita desgastes futuros e garante o cuidado ético e de qualidade com o paciente.
 
