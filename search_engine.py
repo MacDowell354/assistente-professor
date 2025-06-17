@@ -43,14 +43,26 @@ index = load_or_build_index()
 def retrieve_relevant_context(question: str, top_k: int = 3) -> str:
     engine = index.as_query_engine(similarity_top_k=top_k)
     response = engine.query(question)
-    response_str = str(response).strip()
+    response_str = str(response).strip().lower()
 
-    # ✅ Verifica se a resposta está vazia ou genérica
-    if not response_str or response_str.lower() in ["", "none", "null"]:
+    # ✅ Verifica vazio ou nulo
+    if not response_str or response_str in ["", "none", "null"]:
         return ""
 
-    # 🔒 Restringe retornos genéricos irrelevantes
-    if "não tenho certeza" in response_str.lower() or "desculpe" in response_str.lower():
+    # 🚫 Bloqueia conteúdos genéricos ou fora do escopo do curso
+    termos_proibidos = [
+        "instagram", "vídeos para instagram", "celular para gravar",
+        "smartphone", "tiktok", "post viral", "gravar vídeos",
+        "microfone", "câmera", "edição de vídeo", "hashtags", "stories",
+        "marketing de conteúdo", "produção de vídeo", "influencer"
+    ]
+
+    for termo in termos_proibidos:
+        if termo in response_str:
+            return ""
+
+    # Também bloqueia frases genéricas
+    if "não tenho certeza" in response_str or "desculpe" in response_str:
         return ""
 
-    return response_str
+    return str(response)
