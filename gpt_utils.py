@@ -57,7 +57,16 @@ def generate_answer(question: str, context: str = "", history: str = None, tipo_
         )
     }
 
-    # Constrói o prompt com base na variação
+    # Se o contexto vier vazio, a pergunta está fora do escopo do curso
+    if not context:
+        return (
+            "Essa pergunta é muito boa, mas no momento ela está <strong>fora do conteúdo abordado nas aulas do curso Consultório High Ticket</strong>. "
+            "Isso pode indicar uma oportunidade de melhoria do nosso material! 😊<br><br>"
+            "Vamos sinalizar esse tema para a equipe pedagógica avaliar a inclusão em versões futuras do curso. "
+            "Enquanto isso, recomendamos focar nos ensinamentos já disponíveis para ter os melhores resultados possíveis no consultório."
+        )
+
+    # Constrói o prompt normalmente
     prompt = identidade + prompt_variacoes.get(tipo_de_prompt, "")
 
     if context:
