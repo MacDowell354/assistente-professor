@@ -16,14 +16,14 @@ api_key = os.getenv("OPENAI_API_KEY")
 if not api_key:
     raise ValueError("❌ OPENAI_API_KEY não encontrada nas variáveis de ambiente.")
 
-# Define embedding e aplica globalmente
+# Define o embedding model
 embed_model = OpenAIEmbedding(
     model="text-embedding-3-small",
     api_key=api_key,
 )
 Settings.embed_model = embed_model
 
-# Lógica para carregar ou gerar o índice
+# Carrega ou cria o índice
 def load_or_build_index():
     if os.path.exists(INDEX_FILE):
         print("📁 Índice encontrado. Carregando...")
@@ -39,8 +39,18 @@ def load_or_build_index():
 # Inicializa o índice
 index = load_or_build_index()
 
-# Função pública para responder perguntas
+# Função para buscar contexto relevante da pergunta
 def retrieve_relevant_context(question: str, top_k: int = 3) -> str:
     engine = index.as_query_engine(similarity_top_k=top_k)
     response = engine.query(question)
-    return str(response)
+    response_str = str(response).strip()
+
+    # ✅ Verifica se a resposta está vazia ou genérica
+    if not response_str or response_str.lower() in ["", "none", "null"]:
+        return ""
+
+    # 🔒 Restringe retornos genéricos irrelevantes
+    if "não tenho certeza" in response_str.lower() or "desculpe" in response_str.lower():
+        return ""
+
+    return response_str
