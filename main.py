@@ -6,7 +6,7 @@ from fastapi import FastAPI, Request, Form, Depends
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from passlib.context import CryptContext
-from jose import JWTError, jwt
+from jose import jwt
 import markdown2
 
 from search_engine import retrieve_relevant_context
@@ -21,7 +21,7 @@ app = FastAPI()
 templates = Jinja2Templates(directory="templates")
 app.include_router(logs_router)
 
-# Autenticação
+# 🔐 Autenticação
 SECRET_KEY = "segredo-teste"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
@@ -64,7 +64,6 @@ def chat_get(request: Request, user: str = Depends(get_current_user)):
 async def ask(
     request: Request,
     question: Optional[str] = Form(None),
-    tipo_de_prompt: Optional[str] = Form(None),
     user: str = Depends(get_current_user)
 ):
     if not question:
@@ -77,18 +76,17 @@ async def ask(
     except Exception:
         history = []
 
-    # 🔍 Recupera o contexto baseado na transcrição do curso
+    # 🔍 Recupera o contexto com base na transcrição
     context = retrieve_relevant_context(question)
 
-    # 🧠 Detecta automaticamente o tipo de prompt, se não fornecido
-    if not tipo_de_prompt:
-        tipo_de_prompt = inferir_tipo_de_prompt(question)
+    # 🧠 Inferência automática do tipo de prompt
+    tipo_de_prompt = inferir_tipo_de_prompt(question)
 
-    # 📝 Registra automaticamente perguntas sobre Health Plan
+    # 📝 Registra se for relacionado a Health Plan
     if tipo_de_prompt == "health_plan":
         registrar_healthplan(pergunta=question, usuario=user)
 
-    # 💬 Gera resposta com base no curso
+    # 🧠 Gera resposta
     answer_markdown = generate_answer(
         question=question,
         context=context,
@@ -96,10 +94,10 @@ async def ask(
         tipo_de_prompt=tipo_de_prompt
     )
 
-    # 🖥️ Converte para HTML
+    # 🖥️ Renderiza markdown como HTML
     answer_html = markdown2.markdown(answer_markdown)
 
-    # 🧾 Log geral
+    # 🧾 Salva log da conversa
     registrar_log(
         username=user,
         pergunta=question,
