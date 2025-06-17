@@ -17,14 +17,49 @@ def generate_answer(question: str, context: str = "", history: str = None, tipo_
     )
 
     prompt_variacoes = {
-        "explicacao": "...",
-        "faq": "...",
-        "revisao": "...",
-        "aplicacao": "...",
-        "correcao": "...",
-        "capitacao_sem_marketing_digital": "...",
-        "precificacao": "...",
-        "health_plan": "..."
+        "explicacao": (
+            "<strong>Objetivo:</strong> Explicar com base no conteúdo das aulas. Use uma linguagem clara e didática, "
+            "estruturada em tópicos ou passos. Evite respostas genéricas. Mostre o conteúdo como se fosse uma aula.<br><br>"
+        ),
+        "faq": (
+            "<strong>Objetivo:</strong> Responder uma dúvida frequente entre os alunos do curso. "
+            "Use explicações práticas, baseadas nos ensinamentos da Nanda Mac. "
+            "Se possível, traga exemplos do consultório, sem usar marketing digital, e aplique o método passo a passo. "
+            "Seja clara e ajude o aluno a enxergar como isso se aplica à rotina real."
+        ),
+        "revisao": (
+            "<strong>Objetivo:</strong> Fazer uma revisão rápida e eficiente. "
+            "Enfatize os pontos centrais ensinados no curso com clareza. "
+            "Evite aprofundamento excessivo — pense como uma revisão antes da aplicação prática. "
+            "Organize em tópicos curtos ou bullets quando possível."
+        ),
+        "aplicacao": (
+            "<strong>Objetivo:</strong> Ensinar como aplicar o conceito no dia a dia do consultório. "
+            "Use exemplos realistas e mostre o passo a passo como se estivesse ajudando o aluno a executar a técnica. "
+            "Sempre use o método da Nanda Mac como referência principal. "
+            "Evite termos técnicos demais. Foque em ações práticas e concretas."
+        ),
+        "correcao": (
+            "<strong>Objetivo:</strong> Corrigir gentilmente qualquer erro ou confusão na pergunta do aluno. "
+            "Mantenha o tom acolhedor, elogie o esforço do aluno e explique o conceito correto com base no curso. "
+            "Reforce a explicação com um exemplo direto e didático. Nunca deixe o aluno constrangido."
+        ),
+        "capitacao_sem_marketing_digital": (
+            "<strong>Contexto:</strong> O método da Nanda Mac <u>não depende de redes sociais ou tráfego pago</u>. "
+            "Explique como o aluno pode atrair pacientes de alto valor usando <strong>posicionamento, experiência do paciente, senso estético e autoridade offline</strong>. "
+            "Corrija visões equivocadas que envolvam anúncios, parcerias digitais ou Instagram. "
+            "Mostre como profissionais faturam alto apenas com posicionamento estratégico e experiência memorável no consultório."
+        ),
+        "precificacao": (
+            "<strong>Objetivo:</strong> Explicar o conceito de precificação estratégica ensinado no curso. "
+            "Apresente o Health Plan como ferramenta, seus benefícios e como aplicá-lo no consultório. "
+            "Use uma estrutura passo a passo, com destaque para a importância da mentalidade high ticket."
+        ),
+        "health_plan": (
+            "<strong>Objetivo:</strong> Ajudar o aluno a montar o Health Plan seguindo o método da Nanda Mac. "
+            "Explique de forma direta, clara e prática como organizar o plano, usando os blocos: Situação Atual, Objetivo, Plano de Tratamento, Previsão de Retorno, Investimento. "
+            "A linguagem deve ser simples, realista e orientada ao consultório. Nunca use termos genéricos ou acadêmicos. Dê exemplos para facilitar."
+        )
     }
 
     # 🚫 Fora do escopo se não houver contexto
@@ -36,6 +71,7 @@ def generate_answer(question: str, context: str = "", history: str = None, tipo_
             "Enquanto isso, recomendamos focar nos ensinamentos já disponíveis para ter os melhores resultados possíveis no consultório."
         )
 
+    # Constrói o prompt completo
     prompt = identidade + prompt_variacoes.get(tipo_de_prompt, "")
 
     if context:
