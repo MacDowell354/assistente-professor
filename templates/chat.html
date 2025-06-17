@@ -63,14 +63,6 @@
       font-size: 15px;
       margin-bottom: 15px;
     }
-    select {
-      width: 100%;
-      padding: 10px;
-      border-radius: 10px;
-      border: 1px solid #d1d5db;
-      font-size: 15px;
-      margin-bottom: 15px;
-    }
     button {
       width: 100%;
       background-color: #4f46e5;
@@ -118,20 +110,7 @@
 
     <form method="post" action="/ask">
       <input type="hidden" name="history" value='{{ history | tojson }}'>
-
       <textarea name="question" rows="3" placeholder="Digite sua pergunta..." required></textarea>
-
-      <select name="tipo_de_prompt">
-        <option value="explicacao">Explicação (padrão)</option>
-        <option value="faq">Dúvida frequente</option>
-        <option value="revisao">Revisão rápida</option>
-        <option value="aplicacao">Aplicação prática</option>
-        <option value="correcao">Correção de erro</option>
-        <option value="capitacao_sem_marketing_digital">Captação sem marketing digital</option>
-        <option value="precificacao">Precificação estratégica</option>
-        <option value="health_plan">Health Plan</option>
-      </select>
-
       <button type="submit">Enviar</button>
     </form>
   </div>
