@@ -7,6 +7,7 @@ if not api_key:
 
 client = OpenAI(api_key=api_key)
 
+# Função principal
 def generate_answer(question: str, context: str = "", history: str = None, tipo_de_prompt: str = "explicacao") -> str:
     identidade = (
         "<strong>Você é Nanda Mac.ia</strong>, a inteligência artificial oficial da Nanda Mac. "
@@ -41,56 +42,4 @@ def generate_answer(question: str, context: str = "", history: str = None, tipo_
         ),
         "correcao": (
             "<strong>Objetivo:</strong> Corrigir gentilmente qualquer erro ou confusão na pergunta do aluno. "
-            "Mantenha o tom acolhedor, elogie o esforço do aluno e explique o conceito correto com base no curso. "
-            "Reforce a explicação com um exemplo direto e didático. Nunca deixe o aluno constrangido."
-        ),
-        "capitacao_sem_marketing_digital": (
-            "<strong>Contexto:</strong> O método da Nanda Mac <u>não depende de redes sociais ou tráfego pago</u>. "
-            "Explique como o aluno pode atrair pacientes de alto valor usando <strong>posicionamento, experiência do paciente, senso estético e autoridade offline</strong>. "
-            "Corrija visões equivocadas que envolvam anúncios, parcerias digitais ou Instagram. "
-            "Mostre como profissionais faturam alto apenas com posicionamento estratégico e experiência memorável no consultório."
-        ),
-        "precificacao": (
-            "<strong>Objetivo:</strong> Explicar o conceito de precificação estratégica ensinado no curso. "
-            "Apresente o Health Plan como ferramenta, seus benefícios e como aplicá-lo no consultório. "
-            "Use uma estrutura passo a passo, com destaque para a importância da mentalidade high ticket."
-        ),
-        "health_plan": (
-            "<strong>Objetivo:</strong> Ajudar o aluno a montar o Health Plan seguindo o método da Nanda Mac. "
-            "Explique de forma direta, clara e prática como organizar o plano, usando os blocos: Situação Atual, Objetivo, Plano de Tratamento, Previsão de Retorno, Investimento. "
-            "A linguagem deve ser simples, realista e orientada ao consultório. Nunca use termos genéricos ou acadêmicos. Dê exemplos para facilitar."
-        )
-    }
-
-    # 🚫 Fora do escopo se não houver contexto
-    if not context or context.strip() == "":
-        return (
-            "Essa pergunta é muito boa, mas no momento ela está <strong>fora do conteúdo abordado nas aulas do curso Consultório High Ticket</strong>. "
-            "Isso pode indicar uma oportunidade de melhoria do nosso material! 😊<br><br>"
-            "Vamos sinalizar esse tema para a equipe pedagógica avaliar a inclusão em versões futuras do curso. "
-            "Enquanto isso, recomendamos focar nos ensinamentos já disponíveis para ter os melhores resultados possíveis no consultório."
-        )
-
-    # Constrói o prompt completo
-    prompt = identidade + prompt_variacoes.get(tipo_de_prompt, "")
-
-    if context:
-        prompt += f"<br><br><strong>📚 Contexto relevante do curso:</strong><br>{context}<br>"
-
-    if history:
-        prompt += f"<br><strong>📜 Histórico anterior:</strong><br>{history}<br>"
-
-    prompt += f"<br><strong>🤔 Pergunta do aluno:</strong><br>{question}<br><br><strong>🧠 Resposta:</strong><br>"
-
-    # 🔁 Define modelo baseado no tipo de prompt
-    if tipo_de_prompt in ["health_plan", "aplicacao", "precificacao", "capitacao_sem_marketing_digital"]:
-        modelo_escolhido = "gpt-4"
-    else:
-        modelo_escolhido = "gpt-3.5-turbo"
-
-    response = client.chat.completions.create(
-        model=modelo_escolhido,
-        messages=[{"role": "user", "content": prompt}]
-    )
-
-    return response.choices[0].message.content
+            "Mantenha o tom acolhedor, elogie o esforço do aluno e explique o conceit
