@@ -7,21 +7,21 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from passlib.context import CryptContext
 from jose import JWTError, jwt
-import markdown2  # ✅ Renderização de Markdown para HTML
+import markdown2
 
 from search_engine import retrieve_relevant_context
 from gpt_utils import generate_answer
 from db_logs import registrar_log
 from logs_route import router as logs_router
 from auth_utils import get_current_user
+from prompt_router import inferir_tipo_de_prompt
+from healthplan_log import registrar_healthplan
 
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
-
-# Rota para visualização de logs
 app.include_router(logs_router)
 
-# 🔐 Autenticação
+# Autenticação
 SECRET_KEY = "segredo-teste"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
@@ -64,7 +64,7 @@ def chat_get(request: Request, user: str = Depends(get_current_user)):
 async def ask(
     request: Request,
     question: Optional[str] = Form(None),
-    tipo_de_prompt: Optional[str] = Form("explicacao"),
+    tipo_de_prompt: Optional[str] = Form(None),
     user: str = Depends(get_current_user)
 ):
     if not question:
@@ -80,7 +80,15 @@ async def ask(
     # 🔍 Recupera o contexto baseado na transcrição do curso
     context = retrieve_relevant_context(question)
 
-    # 🧠 Gera resposta com base no curso (ou avisa se estiver fora do escopo)
+    # 🧠 Detecta automaticamente o tipo de prompt, se não fornecido
+    if not tipo_de_prompt:
+        tipo_de_prompt = inferir_tipo_de_prompt(question)
+
+    # 📝 Registra automaticamente perguntas sobre Health Plan
+    if tipo_de_prompt == "health_plan":
+        registrar_healthplan(pergunta=question, usuario=user)
+
+    # 💬 Gera resposta com base no curso
     answer_markdown = generate_answer(
         question=question,
         context=context,
@@ -88,10 +96,10 @@ async def ask(
         tipo_de_prompt=tipo_de_prompt
     )
 
-    # ✅ Converte a resposta em HTML para exibição no chat
+    # 🖥️ Converte para HTML
     answer_html = markdown2.markdown(answer_markdown)
 
-    # 📥 Salva log no banco
+    # 🧾 Log geral
     registrar_log(
         username=user,
         pergunta=question,
@@ -100,7 +108,6 @@ async def ask(
         tipo_prompt=tipo_de_prompt
     )
 
-    # 📜 Atualiza histórico da conversa
     new_history = history + [{"user": question, "ai": answer_html}]
     return templates.TemplateResponse("chat.html", {
         "request": request,
