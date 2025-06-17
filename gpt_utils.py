@@ -62,16 +62,17 @@ def generate_answer(question: str, context: str = "", history: str = None, tipo_
         )
     }
 
-    # 🚫 Fora do escopo se não houver contexto
-    if not context or context.strip() == "":
+    termos_fora_escopo = ["instagram", "reels", "vídeo", "gravar", "celular"]
+    if not context or len(context.strip()) < 50 or any(palavra in question.lower() for palavra in termos_fora_escopo):
         return (
+            "<div class='aviso'>"
             "Essa pergunta é muito boa, mas no momento ela está <strong>fora do conteúdo abordado nas aulas do curso Consultório High Ticket</strong>. "
             "Isso pode indicar uma oportunidade de melhoria do nosso material! 😊<br><br>"
             "Vamos sinalizar esse tema para a equipe pedagógica avaliar a inclusão em versões futuras do curso. "
             "Enquanto isso, recomendamos focar nos ensinamentos já disponíveis para ter os melhores resultados possíveis no consultório."
+            "</div>"
         )
 
-    # Constrói o prompt completo
     prompt = identidade + prompt_variacoes.get(tipo_de_prompt, "")
 
     if context:
@@ -82,11 +83,7 @@ def generate_answer(question: str, context: str = "", history: str = None, tipo_
 
     prompt += f"<br><strong>🤔 Pergunta do aluno:</strong><br>{question}<br><br><strong>🧠 Resposta:</strong><br>"
 
-    # 🔁 Define modelo baseado no tipo de prompt
-    if tipo_de_prompt in ["health_plan", "aplicacao", "precificacao", "capitacao_sem_marketing_digital"]:
-        modelo_escolhido = "gpt-4"
-    else:
-        modelo_escolhido = "gpt-3.5-turbo"
+    modelo_escolhido = "gpt-4" if tipo_de_prompt in ["health_plan", "aplicacao", "precificacao", "capitacao_sem_marketing_digital"] else "gpt-3.5-turbo"
 
     response = client.chat.completions.create(
         model=modelo_escolhido,
