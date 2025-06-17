@@ -23,8 +23,11 @@ def build_index():
     # Cria o índice a partir dos documentos
     index = GPTVectorStoreIndex.from_documents(docs)
 
+    # Define o contexto de armazenamento com persistência
+    storage_context = StorageContext.from_defaults(persist_dir=INDEX_DIR)
+
     # Salva o índice no disco
-    index.save_to_disk(os.path.join(INDEX_DIR, "index.json"))
+    storage_context.persist(persist_dir=INDEX_DIR)
 
     print(f"✅ Índice gerado em '{INDEX_DIR}' com {len(docs)} documentos.")
 
