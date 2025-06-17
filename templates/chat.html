@@ -46,6 +46,14 @@
       border-radius: 10px;
       color: #374151;
     }
+    .aviso {
+      background-color: #fff7ed;
+      border: 1px solid #f97316;
+      padding: 12px 16px;
+      border-radius: 10px;
+      color: #92400e;
+      font-weight: 500;
+    }
     textarea {
       width: 100%;
       padding: 14px;
@@ -91,7 +99,11 @@
       {% for msg in history %}
         <div class="message">
           <div class="user">Você: {{ msg.user }}</div>
-          <div class="ia">{{ msg.ai | safe }}</div>
+          {% if "fora do conteúdo abordado nas aulas do curso Consultório High Ticket" in msg.ai %}
+            <div class="ia aviso">{{ msg.ai | safe }}</div>
+          {% else %}
+            <div class="ia">{{ msg.ai | safe }}</div>
+          {% endif %}
         </div>
       {% endfor %}
     {% endif %}
