@@ -54,6 +54,11 @@ def generate_answer(question: str, context: str = "", history: str = None, tipo_
             "<strong>Objetivo:</strong> Explicar o conceito de precificação estratégica ensinado no curso. "
             "Apresente o Health Plan como ferramenta, seus benefícios e como aplicá-lo no consultório. "
             "Use uma estrutura passo a passo, com destaque para a importância da mentalidade high ticket."
+        ),
+        "health_plan": (
+            "<strong>Objetivo:</strong> Ajudar o aluno a montar o Health Plan seguindo o método da Nanda Mac. "
+            "Explique de forma direta, clara e prática como organizar o plano, usando os blocos: Situação Atual, Objetivo, Plano de Tratamento, Previsão de Retorno, Investimento. "
+            "A linguagem deve ser simples, realista e orientada ao consultório. Nunca use termos genéricos ou acadêmicos. Dê exemplos para facilitar."
         )
     }
 
