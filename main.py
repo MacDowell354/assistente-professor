@@ -7,7 +7,7 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from passlib.context import CryptContext
 from jose import JWTError, jwt
-import markdown2  # ✅ Import para renderizar Markdown como HTML
+import markdown2  # ✅ Renderização de Markdown para HTML
 
 from search_engine import retrieve_relevant_context
 from gpt_utils import generate_answer
@@ -18,9 +18,10 @@ from auth_utils import get_current_user
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
 
+# Rota para visualização de logs
 app.include_router(logs_router)
 
-# Autenticação
+# 🔐 Autenticação
 SECRET_KEY = "segredo-teste"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
@@ -76,12 +77,21 @@ async def ask(
     except Exception:
         history = []
 
+    # 🔍 Recupera o contexto baseado na transcrição do curso
     context = retrieve_relevant_context(question)
-    answer_markdown = generate_answer(question, context=context, history=history, tipo_de_prompt=tipo_de_prompt)
 
-    # ✅ Converte Markdown para HTML
+    # 🧠 Gera resposta com base no curso (ou avisa se estiver fora do escopo)
+    answer_markdown = generate_answer(
+        question=question,
+        context=context,
+        history=history,
+        tipo_de_prompt=tipo_de_prompt
+    )
+
+    # ✅ Converte a resposta em HTML para exibição no chat
     answer_html = markdown2.markdown(answer_markdown)
 
+    # 📥 Salva log no banco
     registrar_log(
         username=user,
         pergunta=question,
@@ -90,6 +100,7 @@ async def ask(
         tipo_prompt=tipo_de_prompt
     )
 
+    # 📜 Atualiza histórico da conversa
     new_history = history + [{"user": question, "ai": answer_html}]
     return templates.TemplateResponse("chat.html", {
         "request": request,
