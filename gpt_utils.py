@@ -57,8 +57,8 @@ def generate_answer(question: str, context: str = "", history: str = None, tipo_
         )
     }
 
-    # Se o contexto vier vazio, a pergunta está fora do escopo do curso
-    if not context:
+    # 🚫 Bloqueio definitivo: fora do escopo se não houver contexto
+    if not context or context.strip() == "":
         return (
             "Essa pergunta é muito boa, mas no momento ela está <strong>fora do conteúdo abordado nas aulas do curso Consultório High Ticket</strong>. "
             "Isso pode indicar uma oportunidade de melhoria do nosso material! 😊<br><br>"
@@ -66,7 +66,7 @@ def generate_answer(question: str, context: str = "", history: str = None, tipo_
             "Enquanto isso, recomendamos focar nos ensinamentos já disponíveis para ter os melhores resultados possíveis no consultório."
         )
 
-    # Constrói o prompt normalmente
+    # Constrói o prompt completo
     prompt = identidade + prompt_variacoes.get(tipo_de_prompt, "")
 
     if context:
