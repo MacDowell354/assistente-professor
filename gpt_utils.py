@@ -1,7 +1,6 @@
 import os
 from openai import OpenAI
 
-# 🔐 Carrega a chave da API da OpenAI
 api_key = os.getenv("OPENAI_API_KEY")
 if not api_key:
     raise ValueError("❌ Variável de ambiente OPENAI_API_KEY não encontrada.")
@@ -57,9 +56,13 @@ def generate_answer(question: str, context: str = "", history: str = None, tipo_
             "Use uma estrutura passo a passo, com destaque para a importância da mentalidade high ticket."
         ),
         "health_plan": (
-            "<strong>Objetivo:</strong> Ajudar o aluno a montar o Health Plan seguindo o método da Nanda Mac. "
-            "Explique de forma direta, clara e prática como organizar o plano, usando os blocos: Situação Atual, Objetivo, Plano de Tratamento, Previsão de Retorno, Investimento. "
-            "A linguagem deve ser simples, realista e orientada ao consultório. Nunca use termos genéricos ou acadêmicos. Dê exemplos para facilitar."
+            "<strong>Objetivo:</strong> Ensinar o aluno a montar o Health Plan com a estrutura exata da Nanda Mac:<br><br>"
+            "<strong>➡ Situação Atual:</strong> Ajude o aluno a descrever claramente o que o paciente está vivenciando no momento.<br>"
+            "<strong>➡ Objetivo:</strong> Explique o que se espera alcançar com o tratamento. Seja direto e específico.<br>"
+            "<strong>➡ Plano de Tratamento:</strong> Mostre quais passos e recursos o aluno vai aplicar no consultório.<br>"
+            "<strong>➡ Previsibilidade de Retorno:</strong> Oriente como agendar o retorno, reforçando segurança e continuidade.<br>"
+            "<strong>➡ Investimento:</strong> Mostre como apresentar o valor com confiança e clareza.<br><br>"
+            "Sempre use exemplos realistas e linguagem direta, como a Nanda ensina. Nunca use termos genéricos ou acadêmicos."
         )
     }
 
