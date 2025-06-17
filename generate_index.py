@@ -14,14 +14,19 @@ embedding_model = OpenAIEmbedding(
 Settings.embed_model = embedding_model
 
 def build_index():
+    # Garante que a pasta de índice existe
     os.makedirs(INDEX_DIR, exist_ok=True)
 
+    # Lê os documentos de transcrição
     docs = SimpleDirectoryReader(input_files=["transcricoes.txt"]).load_data()
 
+    # Cria contexto de armazenamento persistente
     storage_context = StorageContext.from_defaults(persist_dir=INDEX_DIR)
+
+    # Gera o índice
     index = GPTVectorStoreIndex.from_documents(docs, storage_context=storage_context)
 
-    # ✅ Aqui está a nova forma correta de salvar:
+    # Salva o índice no disco
     index.storage_context.persist()
 
     print(f"✅ Índice gerado em '{INDEX_DIR}' com {len(docs)} documentos.")
