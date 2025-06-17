@@ -5,13 +5,15 @@ def inferir_tipo_de_prompt(pergunta: str) -> str:
         "health plan" in pergunta_lower
         or "plano de tratamento" in pergunta_lower
         or "meu health plan" in pergunta_lower
+        or "fazer meu health plan" in pergunta_lower
+        or "fazer meu plano" in pergunta_lower
         or "dúvida no health" in pergunta_lower
         or "dúvida no plano" in pergunta_lower
         or "como montar meu health" in pergunta_lower
         or "como montar meu plano" in pergunta_lower
+        or "criar meu plano" in pergunta_lower
         or "montar health plan" in pergunta_lower
         or "montar plano" in pergunta_lower
-        or "criar meu plano" in pergunta_lower
         or ("sou pediatra" in pergunta_lower and "health" in pergunta_lower)
         or ("sou psicóloga" in pergunta_lower and "ansiedade" in pergunta_lower)
     ):
