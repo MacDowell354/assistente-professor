@@ -86,6 +86,18 @@ def generate_answer(question: str, context: str = "", history: str = None, tipo_
 
     prompt += f"<br><strong>🤔 Pergunta do aluno:</strong><br>{question}<br><br><strong>🧠 Resposta:</strong><br>"
 
+    # 🏥 Se for health plan e a pergunta mencionar cirurgia, adiciona modelo de investimento cirúrgico
+    termos_cirurgia = ["cirurgia", "cirúrgico", "hospital", "anestesia", "plástica", "equipe médica"]
+    if tipo_de_prompt == "health_plan" and any(t in question.lower() for t in termos_cirurgia):
+        prompt += (
+            "<br><br><strong>💰 Investimento (modelo para cirurgias):</strong><br>"
+            "O valor total do tratamento cirúrgico, considerando todos os envolvidos — equipe médica, anestesia e hospital — pode chegar até R$ X.XXX,00.<br><br>"
+            "Esse valor já considera uma margem de segurança, pois alguns custos, como os valores cobrados pelo hospital ou pela equipe de anestesia, podem sofrer variações que não estão sob o meu controle.<br><br>"
+            "Mas pode ficar tranquila: esse é o teto máximo que você pagaria, e ele já contempla todas as etapas necessárias para a realização do seu procedimento com segurança e qualidade.<br><br>"
+            "Caso haja alguma redução nesses custos, você será informada — mas jamais ultrapassaremos esse valor combinado.<br><br>"
+            "O mais importante aqui é que você esteja segura para seguir com tranquilidade e clareza em todo o processo.<br>"
+        )
+
     # 🔁 Seleciona o modelo ideal
     if tipo_de_prompt in ["health_plan", "aplicacao", "precificacao", "capitacao_sem_marketing_digital"]:
         modelo_escolhido = "gpt-4"
