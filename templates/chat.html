@@ -1,135 +1,150 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Chat com IA - Nanda Mac</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>IA - Nanda Mac</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      font-family: 'Segoe UI', sans-serif;
-      background-color: #f9fafb;
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      padding: 40px 20px;
+      font-family: 'Inter', sans-serif;
+      background-color: #f8f9fb;
+      margin: 0;
+      padding: 0;
+      color: #333;
     }
-    .chat-container {
-      background: #ffffff;
+
+    .container {
+      max-width: 720px;
+      margin: 2rem auto;
+      background: white;
       border-radius: 16px;
-      padding: 30px;
-      max-width: 800px;
-      width: 100%;
-      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.07);
+      box-shadow: 0 0 12px rgba(0,0,0,0.05);
+      padding: 2rem;
     }
-    h2 {
+
+    .header {
       text-align: center;
-      color: #4f46e5;
-      margin-bottom: 30px;
-      font-size: 24px;
+      margin-bottom: 1.5rem;
     }
-    .message {
-      margin-bottom: 30px;
-      line-height: 1.6;
+
+    .header h1 {
+      font-size: 1.8rem;
+      color: #6c3de2;
+      margin: 0;
     }
-    .user {
-      background-color: #eef2ff;
-      padding: 12px 16px;
-      border-radius: 10px;
-      margin-bottom: 8px;
+
+    .header .emoji {
+      font-size: 1.5rem;
+    }
+
+    .intro {
+      background-color: #f1f3f8;
+      padding: 1.25rem;
+      border-radius: 12px;
+      margin-bottom: 1.5rem;
+    }
+
+    .intro p {
+      margin: 0.6rem 0;
+      line-height: 1.5;
+    }
+
+    .chat-box {
+      max-height: 400px;
+      overflow-y: auto;
+      margin-bottom: 1.5rem;
+    }
+
+    .message.user {
+      background-color: #e7e5fd;
+      padding: 0.75rem;
+      border-radius: 12px;
+      margin-bottom: 0.75rem;
+      color: #372aa0;
       font-weight: 600;
-      color: #1e3a8a;
     }
-    .ia {
-      background-color: #f3f4f6;
-      padding: 12px 16px;
-      border-radius: 10px;
-      color: #374151;
+
+    .message.assistant {
+      background-color: #fffefb;
+      padding: 0.9rem;
+      border-left: 4px solid #ffeb99;
+      border-radius: 12px;
+      margin-bottom: 0.75rem;
     }
-    .aviso {
-      background-color: #fff7ed;
-      border: 1px solid #f97316;
-      padding: 12px 16px;
-      border-radius: 10px;
-      color: #92400e;
+
+    .thinking {
+      background-color: #fff4cc;
+      padding: 0.75rem;
+      border-radius: 8px;
+      color: #6a4d00;
+      margin-bottom: 1rem;
       font-weight: 500;
+      font-style: italic;
     }
-    .pensando {
-      background-color: #fef3c7;
-      border: 1px solid #facc15;
-      padding: 12px 16px;
-      border-radius: 10px;
-      color: #92400e;
-      font-weight: 500;
-      margin-top: 10px;
+
+    form {
+      display: flex;
+      flex-direction: column;
     }
+
     textarea {
-      width: 100%;
-      padding: 14px;
-      border-radius: 10px;
-      border: 1px solid #d1d5db;
       resize: none;
-      font-size: 15px;
-      margin-bottom: 15px;
+      padding: 1rem;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+      margin-bottom: 1rem;
     }
+
     button {
-      width: 100%;
-      background-color: #4f46e5;
-      color: #ffffff;
-      padding: 14px;
+      background-color: #6c3de2;
+      color: white;
+      padding: 0.8rem;
+      font-size: 1rem;
       border: none;
-      border-radius: 10px;
-      font-weight: bold;
-      font-size: 16px;
+      border-radius: 8px;
       cursor: pointer;
-      transition: background-color 0.3s ease;
+      font-weight: 600;
     }
+
     button:hover {
-      background-color: #4338ca;
+      background-color: #5930c4;
     }
   </style>
-  <script>
-    function mostrarPensando() {
-      const container = document.getElementById("pensando-box");
-      container.innerHTML = '<div class="pensando">Pensando... 💭</div>';
-    }
-  </script>
 </head>
 <body>
-  <div class="chat-container">
-    <h2>🤖 IA - Nanda Mac</h2>
+  <div class="container">
+    <div class="header">
+      <span class="emoji">🤖</span>
+      <h1>IA - Nanda Mac</h1>
+    </div>
 
-    <div class="message">
-      <div class="ia">
-        <strong>IA - Nanda Mac:</strong><br><br>
-        Olá! 😊 Seja muito bem-vindo ao seu espaço de aprendizado!<br><br>
-        Eu sou a <strong>Nanda Mac.ia</strong>, sua professora virtual aqui no curso <em>Consultório High Ticket</em>.<br>
-        Estou aqui para caminhar com você e esclarecer todas as suas dúvidas com base nas aulas do curso, como uma <strong>professora dedicada e experiente</strong>.<br><br>
-        Meu objetivo é te ajudar a aplicar o método da Nanda com clareza, segurança e foco nos resultados.<br><br>
-        Pode perguntar o que quiser, que eu te explico como se estivéssemos em uma aula particular. 😉🚀
+    <div class="intro">
+      <p><strong>IA - Nanda Mac:</strong></p>
+      <p>Olá! 😊 Seja muito bem-vindo ao seu espaço de aprendizado!</p>
+      <p>Eu sou a <strong>Nanda Mac.ia</strong>, sua professora virtual aqui no curso <em>Consultório High Ticket</em>. Estou aqui para caminhar com você e esclarecer todas as suas dúvidas com base nas aulas do curso, como uma <strong>professora dedicada e experiente</strong>.</p>
+      <p>Meu objetivo é te ajudar a aplicar o método da Nanda com clareza, segurança e foco nos resultados.</p>
+      <p>Pode perguntar o que quiser, que eu te explico como se estivéssemos em uma aula particular. 🥰</p>
+    </div>
+
+    <div class="chat-box" id="chat-box">
+      <!-- Mensagens aparecerão aqui dinamicamente -->
+      <div class="message user"><strong>Você:</strong> como fazer um health plan?</div>
+      <div class="thinking">Pensando... 🧠</div>
+      <div class="message assistant">
+        Montar um Health Plan é uma habilidade essencial para os profissionais de saúde, pois é uma maneira poderosa de comunicar de forma clara e eficaz o tratamento ao paciente. Aqui está a estrutura do Health Plan que a Nanda Mac ensina:
+        <br><br>
+        ➡️ <strong>Situação Atual:</strong> Esta é a parte onde você e o paciente entendem com clareza o que ele está passando no momento... <br>
+        ➡️ <strong>Objetivo:</strong> Seja específico com a meta de tratamento... <br>
+        ➡️ <strong>Plano de Tratamento:</strong> Aqui você explica o que será feito...
       </div>
     </div>
 
-    {% if history %}
-      {% for msg in history %}
-        <div class="message">
-          <div class="user">Você: {{ msg.user }}</div>
-          {% if "fora do conteúdo abordado nas aulas do curso Consultório High Ticket" in msg.ai %}
-            <div class="ia aviso">{{ msg.ai | safe }}</div>
-          {% else %}
-            <div class="ia">{{ msg.ai | safe }}</div>
-          {% endif %}
-        </div>
-      {% endfor %}
-    {% endif %}
-
-    <form method="post" action="/ask" onsubmit="mostrarPensando()">
-      <input type="hidden" name="history" value='{{ history | tojson }}'>
-      <textarea name="question" rows="3" placeholder="Digite sua pergunta..." required></textarea>
+    <form method="POST" action="/chat">
+      <textarea name="user_input" rows="3" placeholder="Digite sua dúvida aqui..."></textarea>
       <button type="submit">Enviar</button>
     </form>
-
-    <div id="pensando-box"></div>
   </div>
 </body>
 </html>
