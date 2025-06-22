@@ -1,6 +1,14 @@
 def inferir_tipo_de_prompt(pergunta: str) -> str:
     pergunta_lower = pergunta.lower()
 
+    # 📲 Mensagens automáticas no WhatsApp (nova regra)
+    termos_mensagem_auto = [
+        "mensagem automática", "whatsapp", "resposta automática",
+        "fim de semana", "fora do horário", "responder depois", "robô"
+    ]
+    if any(t in pergunta_lower for t in termos_mensagem_auto):
+        return "mensagem_whatsapp"
+
     # 🔎 Health Plan
     if (
         "health plan" in pergunta_lower
