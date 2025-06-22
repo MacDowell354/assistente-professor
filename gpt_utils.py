@@ -86,22 +86,42 @@ def generate_answer(question: str, context: str = "", history: str = None, tipo_
 
     prompt += f"<br><strong>🤔 Pergunta do aluno:</strong><br>{question}<br><br><strong>🧠 Resposta:</strong><br>"
 
-    termos_cirurgia = ["cirurgia", "cirúrgico", "hospital", "anestesia", "plástica", "equipe médica"]
-    if tipo_de_prompt == "health_plan" and any(t in question.lower() for t in termos_cirurgia):
-        prompt += (
-            "<br><br><strong>💰 Investimento (modelo para cirurgias):</strong><br>"
-            "O valor total do tratamento cirúrgico, considerando todos os envolvidos — equipe médica, anestesia e hospital — pode chegar até R$ X.XXX,00.<br><br>"
-            "Esse valor já considera uma margem de segurança, pois alguns custos, como os valores cobrados pelo hospital ou pela equipe de anestesia, podem sofrer variações que não estão sob o meu controle.<br><br>"
-            "Mas pode ficar tranquila: esse é o teto máximo que você pagaria, e ele já contempla todas as etapas necessárias para a realização do seu procedimento com segurança e qualidade.<br><br>"
-            "Caso haja alguma redução nesses custos, você será informada — mas jamais ultrapassaremos esse valor combinado.<br><br>"
-            "O mais importante aqui é que você esteja segura para seguir com tranquilidade e clareza em todo o processo.<br>"
-        )
+    # 🔎 Especialidades e blocos automáticos de investimento
+    especialidades_blocos = {
+        "médico": "O valor total estimado para o plano de cuidados médicos pode chegar até R$ X.XXX,00...",
+        "dentista": "O investimento total estimado para o plano de tratamento odontológico pode chegar até R$ X.XXX,00...",
+        "psicólogo": "O valor total estimado para o processo terapêutico completo pode chegar até R$ X.XXX,00...",
+        "fisioterapeuta": "O valor total estimado para o plano fisioterapêutico pode chegar até R$ X.XXX,00...",
+        "fonoaudiólogo": "O valor total estimado para o plano fonoaudiológico pode chegar até R$ X.XXX,00...",
+        "nutricionista": "O investimento total estimado para o acompanhamento nutricional pode chegar até R$ X.XXX,00...",
+        "veterinário": "O investimento total estimado para o cuidado do seu animal pode chegar até R$ X.XXX,00...",
+        "psicanalista": "O valor total estimado para o processo de psicanálise pode chegar até R$ X.XXX,00...",
+        "pediatra": "O valor total estimado para o plano pediátrico pode chegar até R$ X.XXX,00...",
+        "terapeuta": "O investimento total estimado para o acompanhamento terapêutico pode chegar até R$ X.XXX,00...",
+        "acupunturista": "O valor total estimado para o plano de acupuntura pode chegar até R$ X.XXX,00...",
+    }
+
+    # ⚙️ Regras de aplicação para HEALTH PLAN
+    if tipo_de_prompt == "health_plan":
+        termos_cirurgia = ["cirurgia", "cirúrgico", "hospital", "anestesia", "plástica", "equipe médica"]
+        if any(t in question.lower() for t in termos_cirurgia):
+            prompt += (
+                "<br><br><strong>💰 Investimento (modelo para cirurgias):</strong><br>"
+                "O valor total do tratamento cirúrgico, considerando todos os envolvidos — equipe médica, anestesia e hospital — pode chegar até R$ X.XXX,00.<br><br>"
+                "Esse valor já considera uma margem de segurança, pois alguns custos, como os valores cobrados pelo hospital ou pela equipe de anestesia, podem sofrer variações que não estão sob o meu controle.<br><br>"
+                "Mas pode ficar tranquila: esse é o teto máximo que você pagaria, e ele já contempla todas as etapas necessárias para a realização do seu procedimento com segurança e qualidade.<br><br>"
+                "Caso haja alguma redução nesses custos, você será informada — mas jamais ultrapassaremos esse valor combinado.<br><br>"
+                "O mais importante aqui é que você esteja segura para seguir com tranquilidade e clareza em todo o processo.<br>"
+            )
+        else:
+            pergunta_lower = question.lower()
+            for especialidade, bloco in especialidades_blocos.items():
+                if especialidade in pergunta_lower:
+                    prompt += f"<br><br><strong>💰 Investimento ({especialidade.title()}):</strong><br>{bloco}<br>"
+                    break
 
     # 🔁 Seleciona o modelo ideal
-    if tipo_de_prompt in ["health_plan", "aplicacao", "precificacao", "capitacao_sem_marketing_digital"]:
-        modelo_escolhido = "gpt-4"
-    else:
-        modelo_escolhido = "gpt-3.5-turbo"
+    modelo_escolhido = "gpt-4" if tipo_de_prompt in ["health_plan", "aplicacao", "precificacao", "capitacao_sem_marketing_digital"] else "gpt-3.5-turbo"
 
     response = client.chat.completions.create(
         model=modelo_escolhido,
