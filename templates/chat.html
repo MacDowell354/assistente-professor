@@ -13,8 +13,6 @@
       justify-content: center;
       align-items: flex-start;
       padding: 40px 20px;
-      max-height: 100vh;
-      overflow-y: auto;
     }
     .chat-container {
       background: #ffffff;
@@ -23,7 +21,6 @@
       max-width: 800px;
       width: 100%;
       box-shadow: 0 15px 30px rgba(0, 0, 0, 0.07);
-      min-height: 70vh;
     }
     h2 {
       text-align: center;
@@ -57,6 +54,15 @@
       color: #92400e;
       font-weight: 500;
     }
+    .pensando {
+      background-color: #fef3c7;
+      border: 1px solid #facc15;
+      padding: 12px 16px;
+      border-radius: 10px;
+      color: #92400e;
+      font-weight: 500;
+      margin-top: 10px;
+    }
     textarea {
       width: 100%;
       padding: 14px;
@@ -79,15 +85,21 @@
       transition: background-color 0.3s ease;
     }
     button:hover {
-      background-color: #3730a3;
+      background-color: #4338ca;
     }
   </style>
+  <script>
+    function mostrarPensando() {
+      const container = document.getElementById("pensando-box");
+      container.innerHTML = '<div class="pensando">Pensando... 💭</div>';
+    }
+  </script>
 </head>
 <body>
-  <main class="chat-container">
+  <div class="chat-container">
     <h2>🤖 IA - Nanda Mac</h2>
 
-    <section class="message">
+    <div class="message">
       <div class="ia">
         <strong>IA - Nanda Mac:</strong><br><br>
         Olá! 😊 Seja muito bem-vindo ao seu espaço de aprendizado!<br><br>
@@ -96,26 +108,28 @@
         Meu objetivo é te ajudar a aplicar o método da Nanda com clareza, segurança e foco nos resultados.<br><br>
         Pode perguntar o que quiser, que eu te explico como se estivéssemos em uma aula particular. 😉🚀
       </div>
-    </section>
+    </div>
 
     {% if history %}
       {% for msg in history %}
-        <section class="message">
+        <div class="message">
           <div class="user">Você: {{ msg.user }}</div>
           {% if "fora do conteúdo abordado nas aulas do curso Consultório High Ticket" in msg.ai %}
             <div class="ia aviso">{{ msg.ai | safe }}</div>
           {% else %}
             <div class="ia">{{ msg.ai | safe }}</div>
           {% endif %}
-        </section>
+        </div>
       {% endfor %}
     {% endif %}
 
-    <form method="post" action="/ask">
+    <form method="post" action="/ask" onsubmit="mostrarPensando()">
       <input type="hidden" name="history" value='{{ history | tojson }}'>
-      <textarea name="question" rows="3" placeholder="Pode perguntar qualquer coisa sobre o curso..." required></textarea>
+      <textarea name="question" rows="3" placeholder="Digite sua pergunta..." required></textarea>
       <button type="submit">Enviar</button>
     </form>
-  </main>
+
+    <div id="pensando-box"></div>
+  </div>
 </body>
 </html>
