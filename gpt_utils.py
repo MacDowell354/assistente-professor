@@ -8,6 +8,25 @@ if not api_key:
 client = OpenAI(api_key=api_key)
 
 def generate_answer(question: str, context: str = "", history: str = None, tipo_de_prompt: str = "explicacao") -> str:
+    # 🔍 Detecta perguntas sobre mensagens automáticas
+    termos_mensagem_auto = [
+        "mensagem automática", "whatsapp", "resposta automática",
+        "fim de semana", "fora do horário", "responder depois", "robô"
+    ]
+    if any(t in question.lower() for t in termos_mensagem_auto):
+        return (
+            "Olá, querida! Vamos esclarecer isso com base no que a própria Nanda orienta no curso:<br><br>"
+            "📌 A Nanda não recomenda o uso de <strong>mensagens automáticas genéricas</strong> no WhatsApp, "
+            "especialmente aquelas como “já te respondo em breve” ou “assim que possível retorno”. "
+            "Isso porque <strong>paciente High Ticket não gosta de respostas padrões ou que soem como robôs</strong>.<br><br>"
+            "✨ O importante é responder com atenção, em horários específicos do dia. "
+            "Psicólogas, por exemplo, geralmente não têm secretária — e está tudo bem. "
+            "Os pacientes já entendem que você está em atendimento durante o dia.<br><br>"
+            "💡 Se ainda assim quiser configurar algo, recomendo criar uma <strong>mensagem mais humana e acolhedora</strong>, "
+            "que transmita segurança e cuidado, sem parecer fria ou automática.<br><br>"
+            "Se quiser, posso te ajudar a montar uma mensagem assim agora mesmo. Deseja isso?"
+        )
+
     identidade = (
         "<strong>Você é Nanda Mac.ia</strong>, a inteligência artificial oficial da Nanda Mac. "
         "Faz parte da equipe de apoio da Nanda e foi treinada exclusivamente com o conteúdo do curso <strong>Consultório High Ticket</strong>. "
@@ -66,7 +85,6 @@ def generate_answer(question: str, context: str = "", history: str = None, tipo_
         )
     }
 
-    # 🚫 Fora do escopo se não houver contexto
     if not context or context.strip() == "":
         return (
             "Essa pergunta é muito boa, mas no momento ela está <strong>fora do conteúdo abordado nas aulas do curso Consultório High Ticket</strong>. "
@@ -75,18 +93,13 @@ def generate_answer(question: str, context: str = "", history: str = None, tipo_
             "Enquanto isso, recomendamos focar nos ensinamentos já disponíveis para ter os melhores resultados possíveis no consultório."
         )
 
-    # 🔧 Constrói o prompt completo
     prompt = identidade + prompt_variacoes.get(tipo_de_prompt, "")
-
     if context:
         prompt += f"<br><br><strong>📚 Contexto relevante do curso:</strong><br>{context}<br>"
-
     if history:
         prompt += f"<br><strong>📜 Histórico anterior:</strong><br>{history}<br>"
-
     prompt += f"<br><strong>🤔 Pergunta do aluno:</strong><br>{question}<br><br><strong>🧠 Resposta:</strong><br>"
 
-    # 🔎 Especialidades e blocos automáticos de investimento
     especialidades_blocos = {
         "médico": "O valor total estimado para o plano de cuidados médicos pode chegar até R$ X.XXX,00...",
         "dentista": "O investimento total estimado para o plano de tratamento odontológico pode chegar até R$ X.XXX,00...",
@@ -101,7 +114,6 @@ def generate_answer(question: str, context: str = "", history: str = None, tipo_
         "acupunturista": "O valor total estimado para o plano de acupuntura pode chegar até R$ X.XXX,00...",
     }
 
-    # ⚙️ Regras de aplicação para HEALTH PLAN
     if tipo_de_prompt == "health_plan":
         termos_cirurgia = ["cirurgia", "cirúrgico", "hospital", "anestesia", "plástica", "equipe médica"]
         if any(t in question.lower() for t in termos_cirurgia):
@@ -120,7 +132,6 @@ def generate_answer(question: str, context: str = "", history: str = None, tipo_
                     prompt += f"<br><br><strong>💰 Investimento ({especialidade.title()}):</strong><br>{bloco}<br>"
                     break
 
-    # 🔁 Seleciona o modelo ideal
     modelo_escolhido = "gpt-4" if tipo_de_prompt in ["health_plan", "aplicacao", "precificacao", "capitacao_sem_marketing_digital"] else "gpt-3.5-turbo"
 
     response = client.chat.completions.create(
