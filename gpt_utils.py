@@ -86,7 +86,6 @@ def generate_answer(question: str, context: str = "", history: str = None, tipo_
 
     prompt += f"<br><strong>🤔 Pergunta do aluno:</strong><br>{question}<br><br><strong>🧠 Resposta:</strong><br>"
 
-    # 🏥 Se for health plan e a pergunta mencionar cirurgia, adiciona modelo de investimento cirúrgico
     termos_cirurgia = ["cirurgia", "cirúrgico", "hospital", "anestesia", "plástica", "equipe médica"]
     if tipo_de_prompt == "health_plan" and any(t in question.lower() for t in termos_cirurgia):
         prompt += (
