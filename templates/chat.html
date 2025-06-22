@@ -13,6 +13,8 @@
       justify-content: center;
       align-items: flex-start;
       padding: 40px 20px;
+      max-height: 100vh;
+      overflow-y: auto;
     }
     .chat-container {
       background: #ffffff;
@@ -21,6 +23,7 @@
       max-width: 800px;
       width: 100%;
       box-shadow: 0 15px 30px rgba(0, 0, 0, 0.07);
+      min-height: 70vh;
     }
     h2 {
       text-align: center;
@@ -76,15 +79,15 @@
       transition: background-color 0.3s ease;
     }
     button:hover {
-      background-color: #4338ca;
+      background-color: #3730a3;
     }
   </style>
 </head>
 <body>
-  <div class="chat-container">
+  <main class="chat-container">
     <h2>🤖 IA - Nanda Mac</h2>
 
-    <div class="message">
+    <section class="message">
       <div class="ia">
         <strong>IA - Nanda Mac:</strong><br><br>
         Olá! 😊 Seja muito bem-vindo ao seu espaço de aprendizado!<br><br>
@@ -93,26 +96,26 @@
         Meu objetivo é te ajudar a aplicar o método da Nanda com clareza, segurança e foco nos resultados.<br><br>
         Pode perguntar o que quiser, que eu te explico como se estivéssemos em uma aula particular. 😉🚀
       </div>
-    </div>
+    </section>
 
     {% if history %}
       {% for msg in history %}
-        <div class="message">
+        <section class="message">
           <div class="user">Você: {{ msg.user }}</div>
           {% if "fora do conteúdo abordado nas aulas do curso Consultório High Ticket" in msg.ai %}
             <div class="ia aviso">{{ msg.ai | safe }}</div>
           {% else %}
             <div class="ia">{{ msg.ai | safe }}</div>
           {% endif %}
-        </div>
+        </section>
       {% endfor %}
     {% endif %}
 
     <form method="post" action="/ask">
       <input type="hidden" name="history" value='{{ history | tojson }}'>
-      <textarea name="question" rows="3" placeholder="Digite sua pergunta..." required></textarea>
+      <textarea name="question" rows="3" placeholder="Pode perguntar qualquer coisa sobre o curso..." required></textarea>
       <button type="submit">Enviar</button>
     </form>
-  </div>
+  </main>
 </body>
 </html>
