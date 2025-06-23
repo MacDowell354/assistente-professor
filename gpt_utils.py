@@ -1,12 +1,19 @@
 import os
 from openai import OpenAI, OpenAIError
 
-# Obtém a chave de API
-api_key = os.getenv("OPENAI_API_KEY")
+# Obtém a chave de API\api_key = os.getenv("OPENAI_API_KEY")
 if not api_key:
     raise ValueError("❌ Variável de ambiente OPENAI_API_KEY não encontrada.")
 
 client = OpenAI(api_key=api_key)
+
+# Mensagem padrão para perguntas fora de escopo
+OUT_OF_SCOPE_MSG = (
+    "Essa pergunta é muito boa, mas no momento ela está <strong>fora do conteúdo abordado nas aulas do curso Consultório High Ticket</strong>. "
+    "Isso pode indicar uma oportunidade de melhoria do nosso material! 😊<br><br>"
+    "Vamos sinalizar esse tema para a equipe pedagógica avaliar a inclusão em versões futuras do curso. "
+    "Enquanto isso, recomendamos focar nos ensinamentos já disponíveis para ter os melhores resultados possíveis no consultório."
+)
 
 def generate_answer(
     question: str,
@@ -33,14 +40,9 @@ def generate_answer(
             "Se quiser, posso te ajudar a montar uma mensagem assim agora mesmo. Deseja isso?"
         )
 
-    # ✋ Perguntas fora do escopo do curso
-    if not context or not context.strip():  # :contentReference[oaicite:2]{index=2}
-        return (
-            "Essa pergunta é muito boa, mas no momento ela está <strong>fora do conteúdo abordado nas aulas do curso Consultório High Ticket</strong>. "
-            "Isso pode indicar uma oportunidade de melhoria do nosso material! 😊<br><br>"
-            "Vamos sinalizar esse tema para a equipe pedagógica avaliar a inclusão em versões futuras do curso. "
-            "Enquanto isso, recomendamos focar nos ensinamentos já disponíveis para ter os melhores resultados possíveis no consultório."
-        )
+    # ✋ Se não há contexto relevante retornado da base de transcrições, fora de escopo
+    if not context or not context.strip():
+        return OUT_OF_SCOPE_MSG
 
     # Identidade do assistente
     identidade = (
@@ -60,53 +62,34 @@ def generate_answer(
         "faq": (
             "<strong>Objetivo:</strong> Responder uma dúvida frequente entre os alunos do curso. "
             "Use explicações práticas, baseadas nos ensinamentos da Nanda Mac. "
-            "Se possível, traga exemplos do consultório, sem usar marketing digital, e aplique o método passo a passo. "
-            "Seja clara e ajude o aluno a enxergar como isso se aplica à rotina real."
+            "Se possível, traga exemplos do consultório, sem usar marketing digital, e aplique o método passo a passo."
         ),
         "revisao": (
             "<strong>Objetivo:</strong> Fazer uma revisão rápida e eficiente. "
-            "Enfatize os pontos centrais ensinados no curso com clareza. "
-            "Evite aprofundamento excessivo — pense como uma revisão antes da aplicação prática. "
-            "Organize em tópicos curtos ou bullets quando possível."
+            "Enfatize os pontos centrais ensinados no curso com clareza. Organize em tópicos curtos ou bullets."
         ),
         "aplicacao": (
             "<strong>Objetivo:</strong> Ensinar como aplicar o conceito no dia a dia do consultório. "
-            "Use exemplos realistas e mostre o passo a passo como se estivesse ajudando o aluno a executar a técnica. "
-            "Sempre use o método da Nanda Mac como referência principal. "
-            "Evite termos técnicos demais. Foque em ações práticas e concretas."
+            "Use exemplos realistas e mostre o passo a passo como se estivesse ajudando o aluno a executar a técnica."
         ),
         "correcao": (
-            "<strong>Objetivo:</strong> Corrigir gentilmente qualquer erro ou confusão na pergunta do aluno. "
-            "Mantenha o tom acolhedor, elogie o esforço do aluno e explique o conceito correto com base no curso. "
-            "Reforce a explicação com um exemplo direto e didático. Nunca deixe o aluno constrangido."
+            "<strong>Objetivo:</strong> Corrigir gentilmente qualquer erro ou confusão na pergunta do aluno."
         ),
         "capitacao_sem_marketing_digital": (
-            "<strong>Contexto:</strong> O método da Nanda Mac <u>não depende de redes sociais ou tráfego pago</u>. "
-            "Explique como o aluno pode atrair pacientes de alto valor usando <strong>posicionamento, experiência do paciente, senso estético e autoridade offline</strong>. "
-            "Corrija visões equivocadas que envolvam anúncios, parcerias digitais ou Instagram. "
-            "Mostre como profissionais faturam alto apenas com posicionamento estratégico e experiência memorável no consultório."
+            "<strong>Contexto:</strong> O método da Nanda Mac não depende de redes sociais ou tráfego pago."
         ),
         "precificacao": (
-            "<strong>Objetivo:</strong> Explicar o conceito de precificação estratégica ensinado no curso. "
-            "Apresente o Health Plan como ferramenta, seus benefícios e como aplicá-lo no consultório. "
-            "Use uma estrutura passo a passo, com destaque para a importância da mentalidade high ticket."
+            "<strong>Objetivo:</strong> Explicar o conceito de precificação estratégica ensinado no curso."
         ),
         "health_plan": (
             "<strong>Objetivo:</strong> Ensinar o aluno a montar o **Health Plan** conforme o método da Nanda Mac. "
-            "Mantenha o termo **Health Plan** em inglês, pois é o nome da ferramenta. Estruture assim:<br><br>"
-            "➡ **Situação Atual:** Descreva o que o paciente vive hoje — sinais, sintomas e desafios.<br>"
-            "➡ **Objetivo:** Defina o resultado esperado com clareza e objetividade.<br>"
-            "➡ **Plano de Tratamento:** Liste os passos e recursos concretos a serem aplicados no consultório.<br>"
-            "➡ **Previsibilidade de Retorno:** Explique o follow-up — frequência de consultas e como medir o progresso.<br>"
-            "➡ **Investimento:** Apresente o valor total do **Health Plan** com confiança, destacando o retorno em cuidado e resultados.<br><br>"
-            "Use exemplos práticos de consultório e linguagem direta, como ensinado no curso."
+            "Estruture em Situação Atual, Objetivo, Plano de Tratamento, Previsibilidade de Retorno e Investimento, sempre mantendo o termo **Health Plan** em inglês."
         )
     }
 
     # Monta o prompt completo
     prompt = identidade + prompt_variacoes.get(tipo_de_prompt, "")
-    if context:
-        prompt += f"<br><br><strong>📚 Contexto relevante do curso:</strong><br>{context}<br>"
+    prompt += f"<br><br><strong>📚 Contexto relevante do curso:</strong><br>{context}<br>"
     if history:
         prompt += f"<br><strong>📜 Histórico anterior:</strong><br>{history}<br>"
     prompt += f"<br><strong>🤔 Pergunta do aluno:</strong><br>{question}<br><br><strong>🧠 Resposta:</strong><br>"
