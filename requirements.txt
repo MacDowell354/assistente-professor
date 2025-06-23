@@ -7,21 +7,13 @@ passlib[bcrypt]==1.7.4
 bcrypt==3.2.2
 python-jose[cryptography]==3.3.0
 
-# OpenAI Python >=1.1.0 para ser compatível com llama-index
-openai==1.3.5
+# o client oficial da OpenAI
+openai==1.3.9
 
-# O httpx precisa ser >=0.24 para aceitar proxies
-httpx==0.24.1
+# llama-index com o extra que fornece a integração com OpenAI Chat
+llama-index[llms-openai]==0.12.43
 
-# Llama-Index e seus sub-pacotes de LLM/embeddings
-llama-index==0.10.30
-llama-index-llms-openai==0.1.27
-llama-index-embeddings-openai==0.1.11
-
-# Vetorização local
+# restante das libs
 faiss-cpu==1.7.3
-
 typing-extensions==4.7.0
-
-# Markdown para renderizar respostas
 markdown2==2.4.10
