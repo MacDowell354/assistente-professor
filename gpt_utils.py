@@ -1,13 +1,19 @@
 import os
-from openai import OpenAI
+from openai import OpenAI, OpenAIError
 
+# Obtém a chave de API
 api_key = os.getenv("OPENAI_API_KEY")
 if not api_key:
     raise ValueError("❌ Variável de ambiente OPENAI_API_KEY não encontrada.")
 
 client = OpenAI(api_key=api_key)
 
-def generate_answer(question: str, context: str = "", history: str = None, tipo_de_prompt: str = "explicacao") -> str:
+def generate_answer(
+    question: str,
+    context: str = "",
+    history: str = None,
+    tipo_de_prompt: str = "explicacao"
+) -> str:
     # 🔍 Detecta perguntas sobre mensagens automáticas
     termos_mensagem_auto = [
         "mensagem automática", "whatsapp", "resposta automática",
@@ -27,6 +33,7 @@ def generate_answer(question: str, context: str = "", history: str = None, tipo_
             "Se quiser, posso te ajudar a montar uma mensagem assim agora mesmo. Deseja isso?"
         )
 
+    # Identidade do assistente
     identidade = (
         "<strong>Você é Nanda Mac.ia</strong>, a inteligência artificial oficial da Nanda Mac. "
         "Faz parte da equipe de apoio da Nanda e foi treinada exclusivamente com o conteúdo do curso <strong>Consultório High Ticket</strong>. "
@@ -35,6 +42,7 @@ def generate_answer(question: str, context: str = "", history: str = None, tipo_
         "Nunca responda como se estivesse ajudando pacientes — apenas profissionais da saúde que estão aprendendo o conteúdo do curso.<br><br>"
     )
 
+    # Templates de variações de prompt
     prompt_variacoes = {
         "explicacao": (
             "<strong>Objetivo:</strong> Explicar com base no conteúdo das aulas. Use uma linguagem clara e didática, "
@@ -85,6 +93,7 @@ def generate_answer(question: str, context: str = "", history: str = None, tipo_
         )
     }
 
+    # Caso não haja contexto, sinaliza fora de escopo
     if not context or context.strip() == "":
         return (
             "Essa pergunta é muito boa, mas no momento ela está <strong>fora do conteúdo abordado nas aulas do curso Consultório High Ticket</strong>. "
@@ -93,6 +102,7 @@ def generate_answer(question: str, context: str = "", history: str = None, tipo_
             "Enquanto isso, recomendamos focar nos ensinamentos já disponíveis para ter os melhores resultados possíveis no consultório."
         )
 
+    # Monta o prompt completo
     prompt = identidade + prompt_variacoes.get(tipo_de_prompt, "")
     if context:
         prompt += f"<br><br><strong>📚 Contexto relevante do curso:</strong><br>{context}<br>"
@@ -100,43 +110,20 @@ def generate_answer(question: str, context: str = "", history: str = None, tipo_
         prompt += f"<br><strong>📜 Histórico anterior:</strong><br>{history}<br>"
     prompt += f"<br><strong>🤔 Pergunta do aluno:</strong><br>{question}<br><br><strong>🧠 Resposta:</strong><br>"
 
-    especialidades_blocos = {
-        "médico": "O valor total estimado para o plano de cuidados médicos pode chegar até R$ X.XXX,00...",
-        "dentista": "O investimento total estimado para o plano de tratamento odontológico pode chegar até R$ X.XXX,00...",
-        "psicólogo": "O valor total estimado para o processo terapêutico completo pode chegar até R$ X.XXX,00...",
-        "fisioterapeuta": "O valor total estimado para o plano fisioterapêutico pode chegar até R$ X.XXX,00...",
-        "fonoaudiólogo": "O valor total estimado para o plano fonoaudiológico pode chegar até R$ X.XXX,00...",
-        "nutricionista": "O investimento total estimado para o acompanhamento nutricional pode chegar até R$ X.XXX,00...",
-        "veterinário": "O investimento total estimado para o cuidado do seu animal pode chegar até R$ X.XXX,00...",
-        "psicanalista": "O valor total estimado para o processo de psicanálise pode chegar até R$ X.XXX,00...",
-        "pediatra": "O valor total estimado para o plano pediátrico pode chegar até R$ X.XXX,00...",
-        "terapeuta": "O investimento total estimado para o acompanhamento terapêutico pode chegar até R$ X.XXX,00...",
-        "acupunturista": "O valor total estimado para o plano de acupuntura pode chegar até R$ X.XXX,00...",
-    }
+    # Força sempre GPT-4 para máxima qualidade
+    modelo_escolhido = "gpt-4"
 
-    if tipo_de_prompt == "health_plan":
-        termos_cirurgia = ["cirurgia", "cirúrgico", "hospital", "anestesia", "plástica", "equipe médica"]
-        if any(t in question.lower() for t in termos_cirurgia):
-            prompt += (
-                "<br><br><strong>💰 Investimento (modelo para cirurgias):</strong><br>"
-                "O valor total do tratamento cirúrgico, considerando todos os envolvidos — equipe médica, anestesia e hospital — pode chegar até R$ X.XXX,00.<br><br>"
-                "Esse valor já considera uma margem de segurança, pois alguns custos, como os valores cobrados pelo hospital ou pela equipe de anestesia, podem sofrer variações que não estão sob o meu controle.<br><br>"
-                "Mas pode ficar tranquila: esse é o teto máximo que você pagaria, e ele já contempla todas as etapas necessárias para a realização do seu procedimento com segurança e qualidade.<br><br>"
-                "Caso haja alguma redução nesses custos, você será informada — mas jamais ultrapassaremos esse valor combinado.<br><br>"
-                "O mais importante aqui é que você esteja segura para seguir com tranquilidade e clareza em todo o processo.<br>"
-            )
-        else:
-            pergunta_lower = question.lower()
-            for especialidade, bloco in especialidades_blocos.items():
-                if especialidade in pergunta_lower:
-                    prompt += f"<br><br><strong>💰 Investimento ({especialidade.title()}):</strong><br>{bloco}<br>"
-                    break
-
-    modelo_escolhido = "gpt-4" if tipo_de_prompt in ["health_plan", "aplicacao", "precificacao", "capitacao_sem_marketing_digital"] else "gpt-3.5-turbo"
-
-    response = client.chat.completions.create(
-        model=modelo_escolhido,
-        messages=[{"role": "user", "content": prompt}]
-    )
+    # Chama o OpenAI GPT-4
+    try:
+        response = client.chat.completions.create(
+            model=modelo_escolhido,
+            messages=[{"role": "user", "content": prompt}]
+        )
+    except OpenAIError as e:
+        # Se acontecer algum erro com o GPT-4, faz fallback para 3.5-turbo
+        response = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[{"role": "user", "content": prompt}]
+        )
 
     return response.choices[0].message.content
