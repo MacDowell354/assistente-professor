@@ -22,4 +22,4 @@ llama-index-embeddings-openai>=0.3.1
 faiss-cpu>=1.7.3
 
 # Renderização de markdown no chat
-markdown2>=4.2.10
+markdown2>=2.4.10,<3.0.0
