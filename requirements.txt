@@ -10,5 +10,4 @@ openai>=1.1.0
 llama-index==0.10.30
 faiss-cpu==1.7.3
 typing-extensions==4.7.0
-markdown==2.4  # para suporte à conversão de Markdown para HTML
-#Corrige versão do Markdown e finaliza dependências
+markdown==3.4.3
