@@ -7,5 +7,5 @@ openai==1.23.2
 tiktoken==0.6.0
 markdown2==2.4.10
 langchain==0.1.14
-langchain-community==0.0.24
+langchain-community>=0.0.30
 llama-index==0.10.30
