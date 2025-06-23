@@ -1,7 +1,8 @@
 import os
 from openai import OpenAI, OpenAIError
 
-# Obtém a chave de API\api_key = os.getenv("OPENAI_API_KEY")
+# Obtém a chave de API
+api_key = os.getenv("OPENAI_API_KEY")
 if not api_key:
     raise ValueError("❌ Variável de ambiente OPENAI_API_KEY não encontrada.")
 
@@ -28,7 +29,7 @@ def generate_answer(
     ]
     if any(t in question.lower() for t in termos_mensagem_auto):
         return (
-            "Olá, querida! Vamos esclarecer isso com base no que a própria Nanda orienta no curso:<br><br>"
+            "Olá, Vamos esclarecer isso com base no que a própria Nanda orienta no curso:<br><br>"
             "📌 A Nanda não recomenda o uso de <strong>mensagens automáticas genéricas</strong> no WhatsApp, "
             "especialmente aquelas como “já te respondo em breve” ou “assim que possível retorno”. "
             "Isso porque <strong>paciente High Ticket não gosta de respostas padrões ou que soem como robôs</strong>.<br><br>"
