@@ -33,6 +33,15 @@ def generate_answer(
             "Se quiser, posso te ajudar a montar uma mensagem assim agora mesmo. Deseja isso?"
         )
 
+    # ✋ Perguntas fora do escopo do curso
+    if not context or not context.strip():  # :contentReference[oaicite:2]{index=2}
+        return (
+            "Essa pergunta é muito boa, mas no momento ela está <strong>fora do conteúdo abordado nas aulas do curso Consultório High Ticket</strong>. "
+            "Isso pode indicar uma oportunidade de melhoria do nosso material! 😊<br><br>"
+            "Vamos sinalizar esse tema para a equipe pedagógica avaliar a inclusão em versões futuras do curso. "
+            "Enquanto isso, recomendamos focar nos ensinamentos já disponíveis para ter os melhores resultados possíveis no consultório."
+        )
+
     # Identidade do assistente
     identidade = (
         "<strong>Você é Nanda Mac.ia</strong>, a inteligência artificial oficial da Nanda Mac. "
@@ -93,15 +102,6 @@ def generate_answer(
             "Use exemplos práticos de consultório e linguagem direta, como ensinado no curso."
         )
     }
-
-    # Caso não haja contexto, sinaliza fora de escopo
-    if not context or context.strip() == "":
-        return (
-            "Essa pergunta é muito boa, mas no momento ela está <strong>fora do conteúdo abordado nas aulas do curso Consultório High Ticket</strong>. "
-            "Isso pode indicar uma oportunidade de melhoria do nosso material! 😊<br><br>"
-            "Vamos sinalizar esse tema para a equipe pedagógica avaliar a inclusão em versões futuras do curso. "
-            "Enquanto isso, recomendamos focar nos ensinamentos já disponíveis para ter os melhores resultados possíveis no consultório."
-        )
 
     # Monta o prompt completo
     prompt = identidade + prompt_variacoes.get(tipo_de_prompt, "")
