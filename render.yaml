@@ -6,7 +6,9 @@ services:
     plan: free
     branch: main
     buildCommand: pip install -r requirements.txt
-    startCommand: python flask_app.py
+    startCommand: uvicorn "main (4):app" --host 0.0.0.0 --port $PORT
     envVars:
       - key: OPENAI_API_KEY
+        sync: true
+      - key: GITHUB_TOKEN
         sync: true
