@@ -8,22 +8,22 @@ from llama_index.core import (
 )
 from llama_index.embeddings.openai import OpenAIEmbedding
 
-# Caminhos de armazenamento
+# 📁 Diretório e caminho do índice
 INDEX_DIR = "storage"
 INDEX_FILE = os.path.join(INDEX_DIR, "index.json")
 
-# Configura a API Key da OpenAI
+# 🔑 Configura a API Key da OpenAI
 api_key = os.getenv("OPENAI_API_KEY")
 if not api_key:
     raise ValueError("❌ OPENAI_API_KEY não encontrada nas variáveis de ambiente.")
 
-# Define o modelo de embedding
+# 🤖 Define o modelo de embedding
 Settings.embed_model = OpenAIEmbedding(
     model="text-embedding-3-small",
     api_key=api_key,
 )
 
-# Carrega ou constrói o índice
+# 🧠 Carrega ou constrói o índice
 def load_or_build_index():
     if os.path.exists(INDEX_FILE):
         print("📁 Índice encontrado. Carregando do disco...")
@@ -36,16 +36,16 @@ def load_or_build_index():
         index.storage_context.persist(persist_dir=INDEX_DIR)
         return index
 
-# Inicializa o índice ao carregar o módulo
+# ⚡ Inicializa o índice assim que o módulo é carregado
 index = load_or_build_index()
 
-# Função de busca com tratamento de contexto inválido
+# 🔍 Busca contexto relevante com segurança
 def retrieve_relevant_context(question: str, top_k: int = 3) -> str:
     engine = index.as_query_engine(similarity_top_k=top_k)
     response = engine.query(question)
     response_str = str(response).strip().lower()
 
-    # Bloqueios de respostas vazias ou não úteis
+    # 🛑 Filtros para evitar ruído
     if not response_str or response_str in ["", "none", "null"]:
         return ""
 
