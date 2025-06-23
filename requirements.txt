@@ -11,4 +11,3 @@ llama-index==0.10.30
 faiss-cpu==1.7.3
 typing-extensions==4.7.0
 markdown2==2.4.10  # para suporte à conversão de Markdown para HTML
-remover whisper do projeto
