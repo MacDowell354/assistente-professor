@@ -29,7 +29,7 @@ def generate_answer(
     ]
     if any(t in question.lower() for t in termos_mensagem_auto):
         return (
-            "Olá, Vamos esclarecer isso com base no que a própria Nanda orienta no curso:<br><br>"
+            "Olá, querida! Vamos esclarecer isso com base no que a própria Nanda orienta no curso:<br><br>"
             "📌 A Nanda não recomenda o uso de <strong>mensagens automáticas genéricas</strong> no WhatsApp, "
             "especialmente aquelas como “já te respondo em breve” ou “assim que possível retorno”. "
             "Isso porque <strong>paciente High Ticket não gosta de respostas padrões ou que soem como robôs</strong>.<br><br>"
@@ -58,7 +58,7 @@ def generate_answer(
     prompt_variacoes = {
         "explicacao": (
             "<strong>Objetivo:</strong> Explicar com base no conteúdo das aulas. Use uma linguagem clara e didática, "
-            "estruturada em tópicos ou passos. Evite respostas genéricas. Mostre o conteúdo como se fosse uma aula.<br><br>"
+            "estruturada em tópicos ou passos. Evite respostas genéricas. Mostre o conteúdo como se fosse uma aula de **Posicionamento High Ticket**.<br><br>"
         ),
         "faq": (
             "<strong>Objetivo:</strong> Responder uma dúvida frequente entre os alunos do curso. "
@@ -66,25 +66,29 @@ def generate_answer(
             "Se possível, traga exemplos do consultório, sem usar marketing digital, e aplique o método passo a passo."
         ),
         "revisao": (
-            "<strong>Objetivo:</strong> Fazer uma revisão rápida e eficiente. "
-            "Enfatize os pontos centrais ensinados no curso com clareza. Organize em tópicos curtos ou bullets."
+            "<strong>Objetivo:</strong> Fazer uma revisão rápida e eficiente. Enfatize os pontos centrais ensinados no curso com clareza. Organize em tópicos curtos ou bullets."
         ),
         "aplicacao": (
-            "<strong>Objetivo:</strong> Ensinar como aplicar o conceito no dia a dia do consultório. "
-            "Use exemplos realistas e mostre o passo a passo como se estivesse ajudando o aluno a executar a técnica."
+            "<strong>Objetivo:</strong> Ensinar como aplicar o conceito no dia a dia do consultório. Use exemplos realistas e mostre o passo a passo como se estivesse ajudando o aluno a executar a técnica."
         ),
         "correcao": (
-            "<strong>Objetivo:</strong> Corrigir gentilmente qualquer erro ou confusão na pergunta do aluno."
+            "<strong>Objetivo:</strong> Corrigir gentilmente qualquer erro ou confusão na pergunta do aluno, mantendo o tom acolhedor."
         ),
         "capitacao_sem_marketing_digital": (
             "<strong>Contexto:</strong> O método da Nanda Mac não depende de redes sociais ou tráfego pago."
         ),
         "precificacao": (
-            "<strong>Objetivo:</strong> Explicar o conceito de precificação estratégica ensinado no curso."
+            "<strong>Objetivo:</strong> Explicar o conceito de precificação estratégica ensinado no curso Consultório High Ticket."
         ),
         "health_plan": (
             "<strong>Objetivo:</strong> Ensinar o aluno a montar o **Health Plan** conforme o método da Nanda Mac. "
-            "Estruture em Situação Atual, Objetivo, Plano de Tratamento, Previsibilidade de Retorno e Investimento, sempre mantendo o termo **Health Plan** em inglês."
+            "Mantenha o termo **Health Plan** em inglês, pois é o nome da ferramenta. Estruture assim:<br><br>"
+            "➡ **Situação Atual:** Descreva o que o paciente vive hoje — sinais, sintomas e desafios.<br>"
+            "➡ **Objetivo:** Defina o resultado esperado com clareza e objetividade.<br>"
+            "➡ **Plano de Tratamento:** Liste os passos e recursos concretos a serem aplicados no consultório.<br>"
+            "➡ **Previsibilidade de Retorno:** Explique o follow-up — frequência de consultas e como medir o progresso.<br>"
+            "➡ **Investimento:** Apresente o valor total do **Health Plan** com confiança, destacando o retorno em cuidado e resultados.<br><br>"
+            "Use exemplos práticos de consultório e linguagem direta, como ensinado no curso."
         )
     }
 
