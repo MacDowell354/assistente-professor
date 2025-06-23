@@ -13,7 +13,6 @@
       padding: 0;
       color: #333;
     }
-
     .container {
       max-width: 720px;
       margin: 2rem auto;
@@ -22,40 +21,33 @@
       box-shadow: 0 0 12px rgba(0,0,0,0.05);
       padding: 2rem;
     }
-
     .header {
       text-align: center;
       margin-bottom: 1.5rem;
     }
-
     .header h1 {
       font-size: 1.8rem;
       color: #6c3de2;
       margin: 0;
     }
-
     .header .emoji {
       font-size: 1.5rem;
     }
-
     .intro {
       background-color: #f1f3f8;
       padding: 1.25rem;
       border-radius: 12px;
       margin-bottom: 1.5rem;
     }
-
     .intro p {
       margin: 0.6rem 0;
       line-height: 1.5;
     }
-
     .chat-box {
       max-height: 400px;
       overflow-y: auto;
       margin-bottom: 1.5rem;
     }
-
     .message.user {
       background-color: #e7e5fd;
       padding: 0.75rem;
@@ -64,7 +56,6 @@
       color: #372aa0;
       font-weight: 600;
     }
-
     .message.assistant {
       background-color: #fffefb;
       padding: 0.9rem;
@@ -72,7 +63,6 @@
       border-radius: 12px;
       margin-bottom: 0.75rem;
     }
-
     .thinking {
       background-color: #fff4cc;
       padding: 0.75rem;
@@ -82,12 +72,10 @@
       font-weight: 500;
       font-style: italic;
     }
-
     form {
       display: flex;
       flex-direction: column;
     }
-
     textarea {
       resize: none;
       padding: 1rem;
@@ -96,7 +84,6 @@
       font-size: 1rem;
       margin-bottom: 1rem;
     }
-
     button {
       background-color: #6c3de2;
       color: white;
@@ -107,7 +94,6 @@
       cursor: pointer;
       font-weight: 600;
     }
-
     button:hover {
       background-color: #5930c4;
     }
@@ -129,27 +115,20 @@
     </div>
 
     <div class="chat-box" id="chat-box">
-      <!-- Mensagens aparecerão aqui dinamicamente -->
-      <div class="message user"><strong>Você:</strong> como fazer um health plan?</div>
-      <div class="thinking">Pensando... 🧠</div>
-      <div class="message assistant">
-        Montar um Health Plan é uma habilidade essencial para os profissionais de saúde, pois é uma maneira poderosa de comunicar de forma clara e eficaz o tratamento ao paciente. Aqui está a estrutura do Health Plan que a Nanda Mac ensina:
-        <br><br>
-        ➡️ <strong>Situação Atual:</strong> Esta é a parte onde você e o paciente entendem com clareza o que ele está passando no momento... <br>
-        ➡️ <strong>Objetivo:</strong> Seja específico com a meta de tratamento... <br>
-        ➡️ <strong>Plano de Tratamento:</strong> Aqui você explica o que será feito...
-      </div>
+      {% for msg in history %}
+        <div class="message user"><strong>Você:</strong> {{ msg.user }}</div>
+        <div class="message assistant">{{ msg.ai | safe }}</div>
+      {% endfor %}
     </div>
 
     <form method="POST" action="/ask">
+      <!-- Persiste o histórico de mensagens -->
+      <input type="hidden" name="history" value='{{ history | tojson }}'>
+
+      <!-- Este campo casa com `question: str = Form(...)` no FastAPI -->
       <textarea name="question" rows="3" placeholder="Digite sua dúvida aqui..."></textarea>
       <button type="submit">Enviar</button>
     </form>
   </div>
-
-  <script>
-    // Se você estiver usando JS para atualizar o chat dinamicamente,
-    // certifique-se de enviar o campo 'question' no fetch para '/ask'.
-  </script>
 </body>
 </html>
