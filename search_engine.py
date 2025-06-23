@@ -8,21 +8,21 @@ from llama_index.core import (
 )
 from llama_index.embeddings.openai import OpenAIEmbedding
 
-# Caminho para o diretório do índice
+# Diretório onde o índice será salvo
 INDEX_DIR = "storage"
 INDEX_FILE = os.path.join(INDEX_DIR, "index.json")
 
-# Carrega a chave da OpenAI
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-if not OPENAI_API_KEY:
+# Carrega a chave da OpenAI da variável de ambiente
+api_key = os.getenv("OPENAI_API_KEY")
+if not api_key:
     raise ValueError("❌ OPENAI_API_KEY não encontrada nas variáveis de ambiente.")
 
-# Configura o modelo de embedding
-embedding_model = OpenAIEmbedding(
+# Configura o modelo de embedding da OpenAI
+embed_model = OpenAIEmbedding(
     model="text-embedding-3-small",
-    api_key=OPENAI_API_KEY,
+    api_key=api_key,
 )
-Settings.embed_model = embedding_model
+Settings.embed_model = embed_model
 
 # Função que cria ou carrega o índice
 def load_or_build_index():
@@ -33,28 +33,29 @@ def load_or_build_index():
     else:
         print("🛠️ Índice não encontrado. Construindo novo...")
         docs = SimpleDirectoryReader(input_files=["transcricoes.txt"]).load_data()
-        storage_context = StorageContext.from_defaults(persist_dir=INDEX_DIR)
-        index = GPTVectorStoreIndex.from_documents(docs, storage_context=storage_context)
-        index.storage_context.persist()
+        index = GPTVectorStoreIndex.from_documents(docs)
+        index.storage_context.persist(persist_dir=INDEX_DIR)
         return index
 
-# Inicializa o índice
+# Inicializa o índice ao importar este módulo
 index = load_or_build_index()
 
-# Função de busca de contexto
+# Função para buscar o contexto mais relevante com base em uma pergunta
 def retrieve_relevant_context(question: str, top_k: int = 3) -> str:
     engine = index.as_query_engine(similarity_top_k=top_k)
     response = engine.query(question)
     response_str = str(response).strip().lower()
 
-    # Bloqueios para evitar respostas inúteis
+    # Bloqueia respostas vazias ou irrelevantes
     if not response_str or response_str in ["", "none", "null"]:
         return ""
 
+    # Bloqueia frases genéricas
     frases_bloqueadas = ["não tenho certeza", "desculpe"]
     if any(f in response_str for f in frases_bloqueadas):
         return ""
 
+    # Bloqueia termos fora do escopo do curso
     termos_proibidos = [
         "instagram", "vídeos para instagram", "celular para gravar",
         "smartphone", "tiktok", "post viral", "gravar vídeos",
