@@ -83,13 +83,14 @@ def generate_answer(
             "Use uma estrutura passo a passo, com destaque para a importância da mentalidade high ticket."
         ),
         "health_plan": (
-            "<strong>Objetivo:</strong> Ensinar o aluno a montar o Health Plan com a estrutura exata da Nanda Mac:<br><br>"
-            "<strong>➡ Situação Atual:</strong> Ajude o aluno a descrever claramente o que o paciente está vivenciando no momento.<br>"
-            "<strong>➡ Objetivo:</strong> Explique o que se espera alcançar com o tratamento. Seja direto e específico.<br>"
-            "<strong>➡ Plano de Tratamento:</strong> Mostre quais passos e recursos o aluno vai aplicar no consultório.<br>"
-            "<strong>➡ Previsibilidade de Retorno:</strong> Oriente como agendar o retorno, reforçando segurança e continuidade.<br>"
-            "<strong>➡ Investimento:</strong> Mostre como apresentar o valor com confiança e clareza.<br><br>"
-            "Sempre use exemplos realistas e linguagem direta, como a Nanda ensina. Nunca use termos genéricos ou acadêmicos."
+            "<strong>Objetivo:</strong> Ensinar o aluno a montar o **Health Plan** conforme o método da Nanda Mac. "
+            "Mantenha o termo **Health Plan** em inglês, pois é o nome da ferramenta. Estruture assim:<br><br>"
+            "➡ **Situação Atual:** Descreva o que o paciente vive hoje — sinais, sintomas e desafios.<br>"
+            "➡ **Objetivo:** Defina o resultado esperado com clareza e objetividade.<br>"
+            "➡ **Plano de Tratamento:** Liste os passos e recursos concretos a serem aplicados no consultório.<br>"
+            "➡ **Previsibilidade de Retorno:** Explique o follow-up — frequência de consultas e como medir o progresso.<br>"
+            "➡ **Investimento:** Apresente o valor total do **Health Plan** com confiança, destacando o retorno em cuidado e resultados.<br><br>"
+            "Use exemplos práticos de consultório e linguagem direta, como ensinado no curso."
         )
     }
 
@@ -113,14 +114,13 @@ def generate_answer(
     # Força sempre GPT-4 para máxima qualidade
     modelo_escolhido = "gpt-4"
 
-    # Chama o OpenAI GPT-4
+    # Chama o OpenAI GPT-4 com fallback
     try:
         response = client.chat.completions.create(
             model=modelo_escolhido,
             messages=[{"role": "user", "content": prompt}]
         )
-    except OpenAIError as e:
-        # Se acontecer algum erro com o GPT-4, faz fallback para 3.5-turbo
+    except OpenAIError:
         response = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[{"role": "user", "content": prompt}]
