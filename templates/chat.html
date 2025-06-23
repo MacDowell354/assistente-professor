@@ -141,10 +141,15 @@
       </div>
     </div>
 
-    <form method="POST" action="/chat">
-      <textarea name="user_input" rows="3" placeholder="Digite sua dúvida aqui..."></textarea>
+    <form method="POST" action="/ask">
+      <textarea name="question" rows="3" placeholder="Digite sua dúvida aqui..."></textarea>
       <button type="submit">Enviar</button>
     </form>
   </div>
+
+  <script>
+    // Se você estiver usando JS para atualizar o chat dinamicamente,
+    // certifique-se de enviar o campo 'question' no fetch para '/ask'.
+  </script>
 </body>
 </html>
