@@ -7,19 +7,19 @@ passlib[bcrypt]==1.7.4
 bcrypt==3.2.2
 python-jose[cryptography]==3.3.0
 
-# Cliente oficial da OpenAI, versão >=1.14.0 para compatibilidade com llama-index
+# Cliente oficial da OpenAI, versão compatível com llama-index
 openai>=1.14.0,<2.0.0
 
-# llama-index core
+# Core do LlamaIndex e seus plugins para OpenAI
 llama-index==0.12.43
-
-# plugin de LLM para OpenAI (o “extra” que pip não reconhece via [llms-openai])
 llama-index-llms-openai==0.4.7
-
-# plugin de embeddings OpenAI
 llama-index-embeddings-openai==0.3.1
 
-# resto das libs
+# Para vetor store / faiss
 faiss-cpu==1.7.3
-typing-extensions==4.7.0
+
+# Tipagens (atende openai>=1.14)
+typing-extensions>=4.11.0,<5.0.0
+
+# Renderização de Markdown
 markdown2==2.4.10
