@@ -54,7 +54,8 @@ def generate_answer(
             "Use exemplos práticos e aplique o método passo a passo."
         ),
         "revisao": (
-            "<strong>Objetivo:</strong> Fazer uma revisão rápida e eficiente. Organize em tópicos curtos ou bullets."
+            "<strong>Objetivo:</strong> Fazer uma revisão rápida e eficiente dos pontos centrais do método de precificação estratégica. "
+            "Use bullets iniciando com verbo de ação, padronize o uso do termo **Health Plan**, priorize soluções e destaque benefícios do curso.<br><br>"
         ),
         "aplicacao": (
             "<strong>Objetivo:</strong> Ensinar como aplicar o conceito no dia a dia do consultório, com exemplos realistas."
@@ -67,14 +68,14 @@ def generate_answer(
             "baseada no método da Nanda Mac. Siga estes passos práticos e use exemplos reais de consultório."
         ),
         "precificacao": (
-            "<strong>Objetivo:</strong> Explicar o conceito de precificação estratégica. Use o Health Plan como ferramenta, "
-            "mostre benefícios e passos para apresentar o valor ao paciente."
+            "<strong>Objetivo:</strong> Explicar o conceito de precificação estratégica do Consultório High Ticket. "
+            "Use bullets iniciando com verbo de ação, mantenha **Health Plan** em inglês, e destaque como dobrar faturamento, fidelizar pacientes e priorizar o bem-estar do paciente.<br><br>"
         ),
         "health_plan": (
             "<strong>Objetivo:</strong> Ensinar o aluno a montar o **Health Plan** conforme o método da Nanda Mac. "
-            "Mantenha o termo inglês e estruture:<br>"
-            "➡ Situação Atual;<br>➡ Objetivo;<br>➡ Plano de Tratamento; "
-            "➡ Previsibilidade de Retorno;<br>➡ Investimento.<br><br>"
+            "Mantenha o termo em inglês e estruture em:<br>"
+            "➡ **Situação Atual**;<br>➡ **Objetivo**;<br>➡ **Plano de Tratamento**; "
+            "➡ **Previsibilidade de Retorno**;<br>➡ **Investimento**.<br><br>"
         )
     }
 
