@@ -31,10 +31,8 @@ def load_or_build_index():
         return load_index_from_storage(storage_context)
     else:
         print("⚙️ Índice não encontrado. Construindo novo...")
-        # carrega apenas o transcricoes.txt (preservando maiúsculas e formatação)
         docs = SimpleDirectoryReader(input_files=["transcricoes.txt"]).load_data()
         index = GPTVectorStoreIndex.from_documents(docs)
-        # persiste para usos futuros
         index.storage_context.persist(persist_dir=INDEX_DIR)
         print(f"✅ Índice construído com {len(docs)} documentos.")
         return index
@@ -52,9 +50,10 @@ def retrieve_relevant_context(
     Usa `chunk_size` para controlar o tamanho dos blocos de texto.
     Retorna string vazia se não encontrar algo relevante.
     """
+    # DEBUG: confira nos logs qual pergunta chegou
     print("🔎 DEBUG — Pergunta para contexto:", question)
 
-    # cria um engine de consulta mais flexível
+    # cria um engine de consulta ajustado
     engine = index.as_query_engine(
         similarity_top_k=top_k,
         chunk_size=chunk_size
@@ -62,31 +61,32 @@ def retrieve_relevant_context(
 
     response = engine.query(question)
     response_str = str(response).strip()
+    # DEBUG: confira o texto bruto retornado
     print("🔎 DEBUG — Contexto bruto retornado:", response_str)
 
-    # normaliza para checagens
     lower = response_str.lower()
+    # se vazio ou sem sentido
     if not lower or lower in ("none", "null"):
         print("🔎 DEBUG — Contexto vazio após normalização")
         return ""
 
-    # evita respostas genéricas ou pedidos de desculpa
-    frases_bloqueadas = ["não tenho certeza", "desculpe", "não sei"]
-    if any(frase in lower for frase in frases_bloqueadas):
-        print("🔎 DEBUG — Contexto bloqueado por frase de incerteza")
-        return ""
+    # bloqueia respostas genéricas
+    for frase in ("não tenho certeza", "desculpe", "não sei"):
+        if frase in lower:
+            print("🔎 DEBUG — Contexto bloqueado por frase de incerteza")
+            return ""
 
-    # filtra menções a tópicos fora do escopo (vídeo, Instagram etc.)
-    termos_proibidos = [
+    # filtra termos fora de escopo
+    proibidos = [
         "instagram", "vídeos para instagram", "celular para gravar", "smartphone",
         "tiktok", "post viral", "gravar vídeos", "microfone", "câmera",
         "edição de vídeo", "hashtags", "stories", "marketing de conteúdo",
         "produção de vídeo", "influencer"
     ]
-    if any(tp in lower for tp in termos_proibidos):
+    if any(tp in lower for tp in proibidos):
         print("🔎 DEBUG — Contexto bloqueado por termo proibido")
         return ""
 
-    # passa adiante o trecho completo com formatação original
+    # DEBUG: contexto aprovado
     print("🔎 DEBUG — Contexto final aceito:", response_str)
     return response_str
