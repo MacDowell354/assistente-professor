@@ -20,6 +20,10 @@ def generate_answer(
     history: str = None,
     tipo_de_prompt: str = "explicacao"
 ) -> str:
+    # 🔧 DEBUG: Tipo de prompt e contexto recebido
+    print("🔧 DEBUG – tipo_de_prompt em generate_answer:", tipo_de_prompt)
+    print("🔧 DEBUG – contexto recebido (até 200 chars):", context[:200] + ("..." if len(context) > 200 else ""))
+
     # 🔍 Mensagens automáticas
     termos_mensagem_auto = [
         "mensagem automática", "whatsapp", "resposta automática",
