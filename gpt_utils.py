@@ -63,13 +63,13 @@ def generate_answer(
         ),
         "aplicacao": (
             "<strong>Objetivo:</strong> Aplicar o roteiro de atendimento High Ticket na primeira consulta. "
-            "Use exatamente seis bullets, com estes títulos em negrito e verbo de ação:\n"
-            "1. **Preparar o Ambiente:** Garanta acolhimento profissional desde a recepção, sinalizando exclusividade e empatia.\n"
-            "2. **Mapear Expectativas:** Pergunte sobre objetivos de saúde e preocupações, construindo rapport e entendimento mútuo.\n"
-            "3. **Apresentar o Health Plan:** Explique o **Health Plan** personalizado, detalhando etapas e investimento.\n"
-            "4. **Validar Compromisso:** Confirme entendimento e interesse do paciente, reforçando potencial de dobrar faturamento.\n"
-            "5. **Fechar com Confiança:** Use a técnica “two-options” para ofertar dois pacotes, reduzindo objeções e gerando segurança.\n"
-            "6. **Agendar Follow-up High Ticket:** Marque retorno imediato para manter engajamento e fidelizar pacientes de alto valor.<br><br>"
+            "Use exatamente seis bullets, cada um iniciando com verbo de ação e estes títulos em negrito:<br>"
+            "➡ **Abertura da Consulta:** Garanta acolhimento profissional, transmitindo exclusividade e empatia.<br>"
+            "➡ **Mapear Expectativas:** Pergunte objetivos e preocupações do paciente, construindo rapport.<br>"
+            "➡ **Apresentar o Health Plan:** Explique o **Health Plan** personalizado, detalhando etapas e investimento.<br>"
+            "➡ **Validar Compromisso:** Confirme entendimento do paciente e mencione potencial de dobrar faturamento.<br>"
+            "➡ **Usar Two-Options:** Ofereça duas opções de pacote, reduzindo objeções e gerando segurança.<br>"
+            "➡ **Agendar Follow-up:** Marque retorno imediato para manter engajamento e fidelizar pacientes.<br><br>"
         ),
         "correcao": (
             "<strong>Objetivo:</strong> Corrigir gentilmente qualquer erro na pergunta, elogiando o esforço."
