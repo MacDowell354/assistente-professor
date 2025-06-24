@@ -46,8 +46,8 @@ def generate_answer(
     # 📖 Templates de variações de prompt
     prompt_variacoes = {
         "explicacao": (
-            "<strong>Objetivo:</strong> Explicar com base no conteúdo das aulas. Use linguagem clara e didática, "
-            "com tópicos ou passos. Evite genéricos. Mostre o conteúdo como se fosse uma aula de **Posicionamento High Ticket**.<br><br>"
+            "<strong>Objetivo:</strong> Explicar com base no conteúdo das aulas. Use uma linguagem clara e didática, "
+            "com tópicos ou passos. Evite respostas genéricas. Mostre o conteúdo como se fosse uma aula de **Posicionamento High Ticket**.<br><br>"
         ),
         "faq": (
             "<strong>Objetivo:</strong> Responder uma dúvida frequente entre os alunos do curso. "
@@ -58,26 +58,30 @@ def generate_answer(
             "Use exatamente seis bullets, cada um iniciando com verbo de ação e título em negrito: "
             "**Identificar Pacientes Potenciais**, **Determinar Valores**, **Elaborar o Health Plan**, "
             "**Preparar a Apresentação**, **Comunicar o Valor** e **Monitorar Resultados**. "
-            "Após o título, adicione uma breve linha com menção a dobrar faturamento e fidelizar pacientes em ao menos dois bullets.<br><br>"
+            "Após o título de cada bullet, adicione uma breve explicação de uma linha. "
+            "E **certifique-se de mencionar o benefício de dobrar o faturamento e fidelizar pacientes** em pelo menos dois desses bullets.<br><br>"
         ),
         "aplicacao": (
-            "<strong>Objetivo:</strong> Ensinar como aplicar o roteiro de atendimento High Ticket na primeira consulta com um paciente novo. "
-            "Use exatamente seis bullets, cada um iniciando com verbo de ação e título em negrito: "
-            "**Preparar o Ambiente**, **Mapear Expectativas**, **Apresentar o Health Plan**, "
-            "**Validar Compromisso**, **Fechar com Confiança** e **Agendar Follow-up High Ticket**. "
-            "Após cada título, acrescente uma breve explicação de uma linha, enfatizando posicionamento premium, potencial de dobrar faturamento e fidelização.<br><br>"
+            "<strong>Objetivo:</strong> Aplicar o roteiro de atendimento High Ticket na primeira consulta. "
+            "Use exatamente seis bullets, com estes títulos em negrito e verbo de ação:\n"
+            "1. **Preparar o Ambiente:** Garanta acolhimento profissional desde a recepção, sinalizando exclusividade e empatia.\n"
+            "2. **Mapear Expectativas:** Pergunte sobre objetivos de saúde e preocupações, construindo rapport e entendimento mútuo.\n"
+            "3. **Apresentar o Health Plan:** Explique o **Health Plan** personalizado, detalhando etapas e investimento.\n"
+            "4. **Validar Compromisso:** Confirme entendimento e interesse do paciente, reforçando potencial de dobrar faturamento.\n"
+            "5. **Fechar com Confiança:** Use a técnica “two-options” para ofertar dois pacotes, reduzindo objeções e gerando segurança.\n"
+            "6. **Agendar Follow-up High Ticket:** Marque retorno imediato para manter engajamento e fidelizar pacientes de alto valor.<br><br>"
         ),
         "correcao": (
             "<strong>Objetivo:</strong> Corrigir gentilmente qualquer erro na pergunta, elogiando o esforço."
         ),
         "capitacao_sem_marketing_digital": (
             "<strong>Objetivo:</strong> Mostrar uma **estratégia 100% offline** para atrair pacientes de alto valor sem usar Instagram ou anúncios, "
-            "baseada no método da Nanda Mac. Siga passos práticos com exemplos reais de consultório."
+            "baseada no método da Nanda Mac. Siga estes passos práticos e use exemplos reais de consultório."
         ),
         "precificacao": (
             "<strong>Objetivo:</strong> Explicar o conceito de precificação estratégica do Consultório High Ticket. "
-            "Use bullets iniciando com verbo de ação, mantenha **Health Plan** em inglês, "
-            "e destaque como dobrar faturamento, fidelizar pacientes e priorizar o bem-estar do paciente.<br><br>"
+            "Use bullets iniciando com verbo de ação, mantenha **Health Plan** em inglês, e destaque como dobrar faturamento, "
+            "fidelizar pacientes e priorizar o bem-estar do paciente.<br><br>"
         ),
         "health_plan": (
             "<strong>Objetivo:</strong> Ensinar o aluno a montar o **Health Plan** conforme o método da Nanda Mac. "
@@ -87,7 +91,7 @@ def generate_answer(
         )
     }
 
-    # 🔧 Incluir contexto no prompt
+    # 🔧 Decidir se inclui contexto no prompt
     if tipo_de_prompt == "capitacao_sem_marketing_digital":
         contexto_para_prompt = ""
     else:
@@ -97,13 +101,10 @@ def generate_answer(
         )
 
     # 🔧 Monta o prompt completo
-    prompt = identidade + prompt_variacoes[tipo_de_prompt] + contexto_para_prompt
+    prompt = identidade + prompt_variacoes.get(tipo_de_prompt, "") + contexto_para_prompt
     if history:
         prompt += f"<br><strong>📜 Histórico anterior:</strong><br>{history}<br>"
-    prompt += (
-        f"<br><strong>🤔 Pergunta:</strong><br>{question}<br><br>"
-        f"<strong>🧠 Resposta:</strong><br>"
-    )
+    prompt += f"<br><strong>🤔 Pergunta:</strong><br>{question}<br><br><strong>🧠 Resposta:</strong><br>"
 
     # 🚀 Chama o GPT-4 com fallback para 3.5
     try:
