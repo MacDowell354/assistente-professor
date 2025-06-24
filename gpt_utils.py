@@ -1,12 +1,14 @@
 import os
 from openai import OpenAI, OpenAIError
 
-api_key = os.getenv("OPENAI_API_KEY")
+# Carrega a API Key
+a pi_key = os.getenv("OPENAI_API_KEY")
 if not api_key:
     raise ValueError("❌ Variável de ambiente OPENAI_API_KEY não encontrada.")
 
 client = OpenAI(api_key=api_key)
 
+# Mensagem padrão para perguntas fora de escopo
 OUT_OF_SCOPE_MSG = (
     "Essa pergunta é muito boa, mas no momento ela está <strong>fora do conteúdo abordado nas aulas do curso "
     "Consultório High Ticket</strong>. Isso pode indicar uma oportunidade de melhoria do nosso material! 😊<br><br>"
@@ -20,7 +22,14 @@ def generate_answer(
     history: str = None,
     tipo_de_prompt: str = "explicacao"
 ) -> str:
-    # 🔍 Mensagens automáticas
+    # 🔍 Detecção de captação offline (sem marketing digital)
+    termos_offline = [
+        "sem usar instagram", "sem instagram", "sem anúncios", "sem anuncios", "offline"
+    ]
+    if any(term in question.lower() for term in termos_offline):
+        tipo_de_prompt = "capitacao_sem_marketing_digital"
+
+    # 🔍 Detecção de mensagens automáticas no WhatsApp
     termos_mensagem_auto = [
         "mensagem automática", "whatsapp", "resposta automática",
         "fim de semana", "fora do horário", "responder depois", "robô"
@@ -34,10 +43,10 @@ def generate_answer(
 
     # 📌 Tipos que exigem contexto para não cair em "fora de escopo"
     tipos_que_exigem_contexto = {"explicacao", "faq", "revisao", "correcao", "precificacao"}
-    if tipo_de_prompt in tipos_que_exigem_contexto and (not context or not context.strip()):
+    if tipo_de_prompt in tipos_que_exigem_contexto and not context.strip():
         return OUT_OF_SCOPE_MSG
 
-    # 🆔 Identidade
+    # 🆔 Identidade da IA
     identidade = (
         "<strong>Você é Nanda Mac.ia</strong>, a IA oficial da Nanda Mac, treinada com o conteúdo do curso "
         "<strong>Consultório High Ticket</strong>. Responda como uma professora experiente, ajudando o aluno a aplicar o método na prática.<br><br>"
@@ -84,7 +93,7 @@ def generate_answer(
             "➡ Cartas personalizadas com proposta de valor;<br>"
             "➡ Manutenção da relação via WhatsApp (sem automação);<br>"
             "➡ Geração de confiança e autoridade silenciosa;<br>"
-            "➡ Fidelização e indicações espontâneas. <br><br>"
+            "➡ Fidelização e indicações espontâneas.<br><br>"
             "Evite termos genéricos como panfletos ou folders. Dê exemplos reais de como aplicar essa estratégia no consultório.<br><br>"
         ),
         "precificacao": (
@@ -108,12 +117,11 @@ def generate_answer(
         contexto_para_prompt = ""
     else:
         contexto_para_prompt = (
-            f"<br><br><strong>📚 Contexto relevante:</strong><br>{context}<br>"
-            if context and context.strip() else ""
+            f"<br><br><strong>📚 Contexto relevante:</strong><br>{context}<br>" if context.strip() else ""
         )
 
     # 🔧 Monta o prompt completo
-    prompt = identidade + prompt_variacoes.get(tipo_de_prompt, "") + contexto_para_prompt
+    prompt = identidade + prompt_variacoes.get(tipo_de_prompt, prompt_variacoes["explicacao"]) + contexto_para_prompt
     if history:
         prompt += f"<br><strong>📜 Histórico anterior:</strong><br>{history}<br>"
     prompt += f"<br><strong>🤔 Pergunta:</strong><br>{question}<br><br><strong>🧠 Resposta:</strong><br>"
