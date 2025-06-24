@@ -73,7 +73,8 @@ def generate_answer(
         ),
         "correcao": (
             "<strong>Objetivo:</strong> Corrigir gentilmente qualquer confusão ou prática equivocada do aluno, "
-            "elogiando o esforço e apontando a abordagem correta conforme o método High Ticket."
+            "apontando a abordagem correta conforme o método High Ticket. Mostre por que o ajuste sugerido pode trazer melhores resultados, "
+            "especialmente em termos de posicionamento, fidelização ou faturamento.<br><br>"
         ),
         "capitacao_sem_marketing_digital": (
             "<strong>Objetivo:</strong> Mostrar uma **estratégia 100% offline** para atrair pacientes de alto valor sem usar Instagram ou anúncios, "
@@ -107,7 +108,7 @@ def generate_answer(
         prompt += f"<br><strong>📜 Histórico anterior:</strong><br>{history}<br>"
     prompt += f"<br><strong>🤔 Pergunta:</strong><br>{question}<br><br><strong>🧠 Resposta:</strong><br>"
 
-    # 🚀 Chama o GPT-4 com fallback para 3.5-turbo
+    # 🚀 Chama o GPT-4 com fallback para 3.5
     try:
         response = client.chat.completions.create(
             model="gpt-4",
