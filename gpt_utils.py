@@ -86,15 +86,14 @@ def generate_answer(
             "especialmente em termos de posicionamento, fidelização ou faturamento.<br><br>"
         ),
         "capitacao_sem_marketing_digital": (
-            "<strong>Objetivo:</strong> Mostrar uma <strong>estratégia 100% offline</strong> para atrair pacientes de alto valor sem usar Instagram ou anúncios, "
-            "baseada no método da Nanda Mac. Ensine a sequência passo a passo com foco em:<br>"
-            "➡ Encantamento de pacientes atuais;<br>"
-            "➡ Parcerias com profissionais de saúde;<br>"
-            "➡ Cartas personalizadas com proposta de valor;<br>"
-            "➡ Manutenção da relação via WhatsApp (sem automação);<br>"
-            "➡ Geração de confiança e autoridade silenciosa;<br>"
-            "➡ Fidelização e indicações espontâneas.<br><br>"
-            "Evite termos genéricos como panfletos ou folders. Dê exemplos reais de como aplicar essa estratégia no consultório.<br><br>"
+            "<strong>Objetivo:</strong> Mostrar uma <strong>estratégia 100% offline</strong> do método Consultório High Ticket para atrair pacientes de alto valor sem usar Instagram ou anúncios, passo a passo:<br>"
+            "➡ **Encantamento de pacientes atuais:** Envie um convite VIP impresso ou bilhete à mão, demonstre atenção a detalhes pessoais;<br>"
+            "➡ **Parcerias com profissionais de saúde:** Médicos, fisioterapeutas, nutricionistas e psicólogos em mini-palestras em troca de indicações;<br>"
+            "➡ **Cartas personalizadas com proposta VIP:** Convites impressos destacando diferenciais exclusivos;<br>"
+            "➡ **Manutenção via WhatsApp (sem automação):** Mensagem de voz personalizada entre 10h e 12h após a consulta;<br>"
+            "➡ **Construção de autoridade silenciosa:** Depoimentos reais em folhetos na recepção e eventos locais;<br>"
+            "➡ **Fidelização e indicações espontâneas:** Programa \"Indique um amigo VIP\" com brindes exclusivos;<br><br>"
+            "Com essa sequência, você <strong>dobra seu faturamento</strong> e conquista pacientes de alto valor <strong>sem depender de redes sociais ou anúncios</strong>."
         ),
         "precificacao": (
             "<strong>Objetivo:</strong> Explicar o conceito de precificação estratégica do Consultório High Ticket. "
