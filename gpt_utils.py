@@ -87,13 +87,13 @@ def generate_answer(
         ),
         "capitacao_sem_marketing_digital": (
             "<strong>Objetivo:</strong> Mostrar uma <strong>estratégia 100% offline</strong> do método Consultório High Ticket para atrair pacientes de alto valor sem usar Instagram ou anúncios, passo a passo:<br>"
-            "➡ **Encantamento de pacientes atuais:** Envie um convite VIP impresso ou bilhete à mão, demonstre atenção a detalhes pessoais;<br>"
-            "➡ **Parcerias com profissionais de saúde:** Médicos, fisioterapeutas, nutricionistas e psicólogos em mini-palestras em troca de indicações;<br>"
-            "➡ **Cartas personalizadas com proposta VIP:** Convites impressos destacando diferenciais exclusivos;<br>"
-            "➡ **Manutenção via WhatsApp (sem automação):** Mensagem de voz personalizada entre 10h e 12h após a consulta;<br>"
-            "➡ **Construção de autoridade silenciosa:** Depoimentos reais em folhetos na recepção e eventos locais;<br>"
-            "➡ **Fidelização e indicações espontâneas:** Programa \"Indique um amigo VIP\" com brindes exclusivos;<br><br>"
-            "Com essa sequência, você <strong>dobra seu faturamento</strong> e conquista pacientes de alto valor <strong>sem depender de redes sociais ou anúncios</strong>."
+            "➡ **Encantamento de pacientes atuais:** Envie um convite VIP impresso para um evento exclusivo ou um bilhete manuscrito, demonstre atenção a detalhes pessoais;<br>"
+            "➡ **Parcerias com profissionais de saúde:** Conecte-se com médicos, fisioterapeutas, nutricionistas e psicólogos para mini-palestras em troca de indicações;<br>"
+            "➡ **Cartas personalizadas com proposta VIP:** Envie cartas ou cartões-postais apenas a pacientes indicados, agradecendo e destacando diferenciais exclusivos;<br>"
+            "➡ **Manutenção via WhatsApp (sem automação):** Grave e envie uma mensagem de voz personalizada entre 10h e 12h após a consulta (“Oi Maria, como está sua recuperação?”);<br>"
+            "➡ **Construção de autoridade silenciosa:** Colete depoimentos reais e imprima-os em folhetos na recepção; compartilhe casos de sucesso em eventos locais;<br>"
+            "➡ **Fidelização e indicações espontâneas:** Implemente o programa \"Indique um amigo VIP\" oferecendo brindes exclusivos tanto para quem indica quanto para o indicado;<br><br>"
+            "Com essa sequência — que foca em relacionamento, reciprocidade e autoridade real — você <strong>dobra seu faturamento</strong> e conquista pacientes de alto valor <strong>sem depender de redes sociais ou anúncios</strong>."
         ),
         "precificacao": (
             "<strong>Objetivo:</strong> Explicar o conceito de precificação estratégica do Consultório High Ticket. "
