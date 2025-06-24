@@ -20,10 +20,6 @@ def generate_answer(
     history: str = None,
     tipo_de_prompt: str = "explicacao"
 ) -> str:
-    # 🔧 DEBUG: Tipo de prompt e contexto recebido
-    print("🔧 DEBUG – tipo_de_prompt em generate_answer:", tipo_de_prompt)
-    print("🔧 DEBUG – contexto recebido (até 200 chars):", context[:200] + ("..." if len(context) > 200 else ""))
-
     # 🔍 Mensagens automáticas
     termos_mensagem_auto = [
         "mensagem automática", "whatsapp", "resposta automática",
@@ -40,6 +36,12 @@ def generate_answer(
     tipos_que_exigem_contexto = {"explicacao", "faq", "revisao", "correcao", "precificacao"}
     if tipo_de_prompt in tipos_que_exigem_contexto and (not context or not context.strip()):
         return OUT_OF_SCOPE_MSG
+
+    # -- DEBUG: log do tipo de prompt e trecho inicial do contexto
+    print(f"🔧 DEBUG – tipo_de_prompt em generate_answer: {tipo_de_prompt}")
+    if context and context.strip():
+        preview = context.strip().replace("\n", " ")[:200]
+        print(f"🔧 DEBUG – contexto recebido (até 200 chars): {preview}")
 
     # 🆔 Identidade
     identidade = (
