@@ -77,19 +77,29 @@ def generate_answer(
             "especialmente em termos de posicionamento, fidelização ou faturamento.<br><br>"
         ),
         "capitacao_sem_marketing_digital": (
-            "<strong>Objetivo:</strong> Mostrar uma **estratégia 100% offline** para atrair pacientes de alto valor sem usar Instagram ou anúncios, "
-            "baseada no método da Nanda Mac. Siga estes passos práticos e use exemplos reais de consultório."
+            "<strong>Objetivo:</strong> Mostrar uma <strong>estratégia 100% offline</strong> para atrair pacientes de alto valor sem usar Instagram ou anúncios, "
+            "baseada no método da Nanda Mac. Ensine a sequência passo a passo com foco em:<br>"
+            "➡ Encantamento de pacientes atuais;<br>"
+            "➡ Parcerias com profissionais de saúde;<br>"
+            "➡ Cartas personalizadas com proposta de valor;<br>"
+            "➡ Manutenção da relação via WhatsApp (sem automação);<br>"
+            "➡ Geração de confiança e autoridade silenciosa;<br>"
+            "➡ Fidelização e indicações espontâneas. <br><br>"
+            "Evite termos genéricos como panfletos ou folders. Dê exemplos reais de como aplicar essa estratégia no consultório.<br><br>"
         ),
         "precificacao": (
             "<strong>Objetivo:</strong> Explicar o conceito de precificação estratégica do Consultório High Ticket. "
-            "Use bullets iniciando com verbo de ação, mantenha **Health Plan** em inglês, e destaque como dobrar faturamento, "
+            "Use bullets iniciando com verbo de ação, mantenha <strong>Health Plan</strong> em inglês, e destaque como dobrar faturamento, "
             "fidelizar pacientes e priorizar o bem-estar do paciente.<br><br>"
         ),
         "health_plan": (
-            "<strong>Objetivo:</strong> Ensinar o aluno a montar o **Health Plan** conforme o método da Nanda Mac. "
+            "<strong>Objetivo:</strong> Ensinar o aluno a montar o <strong>Health Plan</strong> conforme o método da Nanda Mac. "
             "Mantenha o termo em inglês e estruture em:<br>"
-            "➡ **Situação Atual**;<br>➡ **Objetivo**;<br>➡ **Plano de Tratamento**; "
-            "➡ **Previsibilidade de Retorno**;<br>➡ **Investimento**.<br><br>"
+            "➡ <strong>Situação Atual</strong>;<br>"
+            "➡ <strong>Objetivo</strong>;<br>"
+            "➡ <strong>Plano de Tratamento</strong>;<br>"
+            "➡ <strong>Previsibilidade de Retorno</strong>;<br>"
+            "➡ <strong>Investimento</strong>.<br><br>"
         )
     }
 
