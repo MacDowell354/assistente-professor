@@ -23,43 +23,70 @@ Settings.embed_model = OpenAIEmbedding(
     api_key=api_key,
 )
 
-# 🧠 Carrega ou constrói o índice
 def load_or_build_index():
+    """Carrega o índice existente ou cria um novo a partir de transcricoes.txt."""
     if os.path.exists(INDEX_FILE):
         print("📁 Índice encontrado. Carregando do disco...")
         storage_context = StorageContext.from_defaults(persist_dir=INDEX_DIR)
         return load_index_from_storage(storage_context)
     else:
         print("⚙️ Índice não encontrado. Construindo novo...")
+        # carrega apenas o transcricoes.txt (preservando maiúsculas e formatação)
         docs = SimpleDirectoryReader(input_files=["transcricoes.txt"]).load_data()
         index = GPTVectorStoreIndex.from_documents(docs)
+        # persiste para usos futuros
         index.storage_context.persist(persist_dir=INDEX_DIR)
+        print(f"✅ Índice construído com {len(docs)} documentos.")
         return index
 
-# ⚡ Inicializa o índice assim que o módulo é carregado
+# ⚡ Inicializa o índice na importação deste módulo
 index = load_or_build_index()
 
-# 🔍 Busca contexto relevante com segurança
-def retrieve_relevant_context(question: str, top_k: int = 3) -> str:
-    engine = index.as_query_engine(similarity_top_k=top_k)
+def retrieve_relevant_context(
+    question: str,
+    top_k: int = 3,
+    chunk_size: int = 512
+) -> str:
+    """
+    Busca no índice até `top_k` trechos que respondam à `question`.
+    Usa `chunk_size` para controlar o tamanho dos blocos de texto.
+    Retorna string vazia se não encontrar algo relevante.
+    """
+    print("🔎 DEBUG — Pergunta para contexto:", question)
+
+    # cria um engine de consulta mais flexível
+    engine = index.as_query_engine(
+        similarity_top_k=top_k,
+        chunk_size=chunk_size
+    )
+
     response = engine.query(question)
-    response_str = str(response).strip().lower()
+    response_str = str(response).strip()
+    print("🔎 DEBUG — Contexto bruto retornado:", response_str)
 
-    # 🛑 Filtros para evitar ruído
-    if not response_str or response_str in ["", "none", "null"]:
+    # normaliza para checagens
+    lower = response_str.lower()
+    if not lower or lower in ("none", "null"):
+        print("🔎 DEBUG — Contexto vazio após normalização")
         return ""
 
-    frases_bloqueadas = ["não tenho certeza", "desculpe"]
-    if any(frase in response_str for frase in frases_bloqueadas):
+    # evita respostas genéricas ou pedidos de desculpa
+    frases_bloqueadas = ["não tenho certeza", "desculpe", "não sei"]
+    if any(frase in lower for frase in frases_bloqueadas):
+        print("🔎 DEBUG — Contexto bloqueado por frase de incerteza")
         return ""
 
+    # filtra menções a tópicos fora do escopo (vídeo, Instagram etc.)
     termos_proibidos = [
         "instagram", "vídeos para instagram", "celular para gravar", "smartphone",
         "tiktok", "post viral", "gravar vídeos", "microfone", "câmera",
         "edição de vídeo", "hashtags", "stories", "marketing de conteúdo",
         "produção de vídeo", "influencer"
     ]
-    if any(termo in response_str for termo in termos_proibidos):
+    if any(tp in lower for tp in termos_proibidos):
+        print("🔎 DEBUG — Contexto bloqueado por termo proibido")
         return ""
 
+    # passa adiante o trecho completo com formatação original
+    print("🔎 DEBUG — Contexto final aceito:", response_str)
     return response_str
