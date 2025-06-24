@@ -37,12 +37,6 @@ def generate_answer(
     if tipo_de_prompt in tipos_que_exigem_contexto and (not context or not context.strip()):
         return OUT_OF_SCOPE_MSG
 
-    # -- DEBUG: log do tipo de prompt e trecho inicial do contexto
-    print(f"🔧 DEBUG – tipo_de_prompt em generate_answer: {tipo_de_prompt}")
-    if context and context.strip():
-        preview = context.strip().replace("\n", " ")[:200]
-        print(f"🔧 DEBUG – contexto recebido (até 200 chars): {preview}")
-
     # 🆔 Identidade
     identidade = (
         "<strong>Você é Nanda Mac.ia</strong>, a IA oficial da Nanda Mac, treinada com o conteúdo do curso "
