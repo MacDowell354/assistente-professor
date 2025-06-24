@@ -58,7 +58,8 @@ def generate_answer(
             "Use exatamente seis bullets, cada um iniciando com verbo de ação e título em negrito: "
             "**Identificar Pacientes Potenciais**, **Determinar Valores**, **Elaborar o Health Plan**, "
             "**Preparar a Apresentação**, **Comunicar o Valor** e **Monitorar Resultados**. "
-            "Após o título de cada bullet, adicione uma breve explicação de uma linha.<br><br>"
+            "Após o título de cada bullet, adicione uma breve explicação de uma linha. "
+            "E **certifique-se de mencionar o benefício de dobrar o faturamento e fidelizar pacientes** em pelo menos dois desses bullets.<br><br>"
         ),
         "aplicacao": (
             "<strong>Objetivo:</strong> Ensinar como aplicar o conceito no dia a dia do consultório, com exemplos realistas."
