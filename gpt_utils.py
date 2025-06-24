@@ -8,8 +8,8 @@ if not api_key:
 client = OpenAI(api_key=api_key)
 
 OUT_OF_SCOPE_MSG = (
-    "Essa pergunta é muito boa, mas no momento ela está <strong>fora do conteúdo abordado nas aulas do curso Consultório High Ticket</strong>. "
-    "Isso pode indicar uma oportunidade de melhoria do nosso material! 😊<br><br>"
+    "Essa pergunta é muito boa, mas no momento ela está <strong>fora do conteúdo abordado nas aulas do curso "
+    "Consultório High Ticket</strong>. Isso pode indicar uma oportunidade de melhoria do nosso material! 😊<br><br>"
     "Vamos sinalizar esse tema para a equipe pedagógica avaliar a inclusão em versões futuras do curso. "
     "Enquanto isso, recomendamos focar nos ensinamentos já disponíveis para ter os melhores resultados possíveis no consultório."
 )
@@ -66,13 +66,14 @@ def generate_answer(
             "Use exatamente seis bullets, cada um iniciando com verbo de ação e estes títulos em negrito:<br>"
             "➡ **Abertura da Consulta:** Garanta acolhimento profissional, transmitindo exclusividade e empatia.<br>"
             "➡ **Mapear Expectativas:** Pergunte objetivos e preocupações do paciente, construindo rapport.<br>"
-            "➡ **Apresentar o Health Plan:** Explique o **Health Plan** personalizado, detalhando etapas e investimento.<br>"
+            "➡ **Elaborar Health Plan:** Explique o **Health Plan** personalizado, detalhando etapas e investimento.<br>"
             "➡ **Validar Compromisso:** Confirme entendimento do paciente e mencione potencial de dobrar faturamento.<br>"
             "➡ **Usar Two-Options:** Ofereça duas opções de pacote, reduzindo objeções e gerando segurança.<br>"
             "➡ **Agendar Follow-up:** Marque retorno imediato para manter engajamento e fidelizar pacientes.<br><br>"
         ),
         "correcao": (
-            "<strong>Objetivo:</strong> Corrigir gentilmente qualquer erro na pergunta, elogiando o esforço."
+            "<strong>Objetivo:</strong> Corrigir gentilmente qualquer confusão ou prática equivocada do aluno, "
+            "elogiando o esforço e apontando a abordagem correta conforme o método High Ticket."
         ),
         "capitacao_sem_marketing_digital": (
             "<strong>Objetivo:</strong> Mostrar uma **estratégia 100% offline** para atrair pacientes de alto valor sem usar Instagram ou anúncios, "
@@ -106,7 +107,7 @@ def generate_answer(
         prompt += f"<br><strong>📜 Histórico anterior:</strong><br>{history}<br>"
     prompt += f"<br><strong>🤔 Pergunta:</strong><br>{question}<br><br><strong>🧠 Resposta:</strong><br>"
 
-    # 🚀 Chama o GPT-4 com fallback para 3.5
+    # 🚀 Chama o GPT-4 com fallback para 3.5-turbo
     try:
         response = client.chat.completions.create(
             model="gpt-4",
