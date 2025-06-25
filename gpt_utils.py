@@ -45,6 +45,13 @@ except OpenAIError:
     COURSE_SUMMARY = ""
 
 # -----------------------------
+# LISTA DE PALAVRAS FORA DE ESCOPO
+# -----------------------------
+OUT_OF_SCOPE_KEYWORDS = [
+    "exercício", "exercicios", "costas", "coluna", "dor", "em casa"
+]
+
+# -----------------------------
 # MAPA DE KEYWORDS PARA TIPO DE PROMPT
 # -----------------------------
 TYPE_KEYWORDS = {
@@ -52,7 +59,7 @@ TYPE_KEYWORDS = {
     "precificacao":                   ["precificação", "precificacao", "precificar", "preço", "valor", "faturamento"],
     "health_plan":                    ["health plan", "valor do health plan", "retorno do investimento"],
     "capitacao_sem_marketing_digital":["offline", "sem usar instagram", "sem instagram", "sem anúncios", "sem anuncios"],
-    "aplicacao":                      ["como aplico", "aplicação", "aplico", "roteiro", "aplicação"],
+    "aplicacao":                      ["como aplico", "aplicação", "aplico", "roteiro"],
     "faq":                            ["quais", "dúvidas", "duvidas", "pergunta frequente"],
     "explicacao":                     ["explique", "o que é", "defina", "conceito"]
 }
@@ -63,7 +70,11 @@ TYPE_KEYWORDS = {
 def classify_prompt(question: str) -> dict:
     lower_q = question.lower()
 
-    # 1) Match rápido por palavras-chave
+    # 0) Detecção imediata de perguntas fora de escopo
+    if any(kw in lower_q for kw in OUT_OF_SCOPE_KEYWORDS):
+        return {"scope": "OUT_OF_SCOPE", "type": "explicacao"}
+
+    # 1) Match rápido por palavras-chave de tipo
     for tipo, keywords in TYPE_KEYWORDS.items():
         if any(k in lower_q for k in keywords):
             return {"scope": "IN_SCOPE", "type": tipo}
@@ -156,18 +167,13 @@ prompt_variacoes = {
 def generate_answer(
     question: str,
     context: str = "",
-    history: str = None,
-    tipo_de_prompt: str = "explicacao"
+    history: str = None
 ) -> str:
-    # CLASSIFICAÇÃO
     cls = classify_prompt(question)
     if cls["scope"] == "OUT_OF_SCOPE":
         return OUT_OF_SCOPE_MSG
 
-    #Seleciona o template
     tipo = cls["type"]
-
-    # CONTEXTO (se necessário)
     if tipo == "capitacao_sem_marketing_digital":
         contexto_para_prompt = ""
     else:
@@ -176,13 +182,11 @@ def generate_answer(
             if context.strip() else ""
         )
 
-    # Monta o prompt final
     prompt = identidade + prompt_variacoes[tipo] + contexto_para_prompt
     if history:
         prompt += f"<br><strong>📜 Histórico anterior:</strong><br>{history}<br>"
     prompt += f"<br><strong>🤔 Pergunta:</strong><br>{question}<br><br><strong>🧠 Resposta:</strong><br>"
 
-    # Chama o GPT
     try:
         r2 = client.chat.completions.create(
             model="gpt-4",
