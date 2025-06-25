@@ -8,7 +8,6 @@ from openai import OpenAI, OpenAIError
 api_key = os.getenv("OPENAI_API_KEY")
 if not api_key:
     raise ValueError("❌ Variável de ambiente OPENAI_API_KEY não encontrada.")
-
 client = OpenAI(api_key=api_key)
 
 # -----------------------------
@@ -52,7 +51,7 @@ TYPE_KEYWORDS = {
     "revisao":                        ["revisão", "revisao", "revise", "resumir"],
     "precificacao":                   ["precificação", "precificacao", "precificar", "preço", "valor", "faturamento"],
     "health_plan":                    ["health plan", "valor do health plan", "retorno do investimento"],
-    "capitacao_sem_marketing_digital": ["offline", "sem usar instagram", "sem instagram", "sem anúncios", "sem anuncios"],
+    "capitacao_sem_marketing_digital":["offline", "sem usar instagram", "sem instagram", "sem anúncios", "sem anuncios"],
     "aplicacao":                      ["como aplico", "aplicação", "aplico", "roteiro", "aplicação"],
     "faq":                            ["quais", "dúvidas", "duvidas", "pergunta frequente"],
     "explicacao":                     ["explique", "o que é", "defina", "conceito"]
@@ -64,7 +63,7 @@ TYPE_KEYWORDS = {
 def classify_prompt(question: str) -> dict:
     lower_q = question.lower()
 
-    # 1) Quick match via TYPE_KEYWORDS
+    # 1) Match rápido por palavras-chave
     for tipo, keywords in TYPE_KEYWORDS.items():
         if any(k in lower_q for k in keywords):
             return {"scope": "IN_SCOPE", "type": tipo}
@@ -74,7 +73,7 @@ def classify_prompt(question: str) -> dict:
         "Você é um classificador inteligente. Com base no resumo e na pergunta abaixo, "
         "responda **apenas** um JSON com duas chaves:\n"
         "  • scope: 'IN_SCOPE' ou 'OUT_OF_SCOPE'\n"
-        "  • type: nome de um template (ex: 'explicacao', 'health_plan', 'precificacao', 'capitacao_sem_marketing_digital', etc)\n\n"
+        "  • type: nome de um template (ex: 'explicacao', 'health_plan', 'precificacao', etc)\n\n"
         f"Resumo do curso:\n{COURSE_SUMMARY}\n\n"
         f"Pergunta:\n{question}\n\n"
         "Exemplo de resposta válida:\n"
@@ -132,12 +131,12 @@ prompt_variacoes = {
     "capitacao_sem_marketing_digital": (
         "<strong>Objetivo:</strong> Mostrar uma **estratégia 100% offline** do método Consultório High Ticket para atrair pacientes "
         "de alto valor sem usar Instagram ou anúncios, passo a passo:<br>"
-        "➡ **Encantamento de pacientes atuais:** Envie um convite VIP impresso ou bilhete manuscrito, demonstrando atenção a detalhes pessoais;<br>"
-        "➡ **Parcerias com profissionais de saúde:** Conecte-se com médicos, fisioterapeutas, nutricionistas e psicólogos para mini-palestras em troca de indicações;<br>"
-        "➡ **Cartas personalizadas com proposta VIP:** Envie cartas ou cartões-postais a pacientes indicados, agradecendo e destacando diferenciais exclusivos;<br>"
-        "➡ **Manutenção via WhatsApp (sem automação):** Grave e envie uma mensagem de voz personalizada após a consulta;<br>"
-        "➡ **Construção de autoridade silenciosa:** Colete depoimentos reais e imprima-os em folhetos na recepção;<br>"
-        "➡ **Fidelização e indicações espontâneas:** Implemente o programa “Indique um amigo VIP” com brindes exclusivos;<br><br>"
+        "➡ **Encantamento de pacientes atuais:** Envie um convite VIP impresso ou bilhete manuscrito;<br>"
+        "➡ **Parcerias com profissionais de saúde:** Conecte-se com médicos, fisioterapeutas, nutricionistas e psicólogos;<br>"
+        "➡ **Cartas personalizadas com proposta VIP:** Envie convites impressos destacando diferenciais;<br>"
+        "➡ **Manutenção via WhatsApp (sem automação):** Grave e envie mensagem de voz após a consulta;<br>"
+        "➡ **Construção de autoridade silenciosa:** Colete depoimentos reais e imprima folhetos;<br>"
+        "➡ **Fidelização e indicações espontâneas:** Implemente o programa “Indique um amigo VIP”;<br><br>"
         "Com essa sequência você <strong>dobra seu faturamento</strong> e conquista pacientes de alto valor sem depender de redes sociais ou anúncios."
     ),
     "precificacao": (
@@ -165,10 +164,11 @@ def generate_answer(
     if cls["scope"] == "OUT_OF_SCOPE":
         return OUT_OF_SCOPE_MSG
 
-    tipo_de_prompt = cls["type"]
+    #Seleciona o template
+    tipo = cls["type"]
 
-    # CONTEXTO
-    if tipo_de_prompt == "capitacao_sem_marketing_digital":
+    # CONTEXTO (se necessário)
+    if tipo == "capitacao_sem_marketing_digital":
         contexto_para_prompt = ""
     else:
         contexto_para_prompt = (
@@ -176,13 +176,13 @@ def generate_answer(
             if context.strip() else ""
         )
 
-    # MONTAGEM FINAL
-    prompt = identidade + prompt_variacoes[tipo_de_prompt] + contexto_para_prompt
+    # Monta o prompt final
+    prompt = identidade + prompt_variacoes[tipo] + contexto_para_prompt
     if history:
         prompt += f"<br><strong>📜 Histórico anterior:</strong><br>{history}<br>"
     prompt += f"<br><strong>🤔 Pergunta:</strong><br>{question}<br><br><strong>🧠 Resposta:</strong><br>"
 
-    # CHAMADA AO GPT
+    # Chama o GPT
     try:
         r2 = client.chat.completions.create(
             model="gpt-4",
