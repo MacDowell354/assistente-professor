@@ -41,6 +41,13 @@ def generate_answer(
             'Se quiser, posso te ajudar a montar uma mensagem mais humana e acolhedora agora mesmo. Deseja isso?'
         )
 
+    # 🚫 Detecção de perguntas fora de escopo geral (ex: exercícios, saúde geral)
+    termos_fora_escopo = [
+        'exercício', 'exercicios', 'costas', 'coluna', 'dor', 'em casa'
+    ]
+    if any(term in question.lower() for term in termos_fora_escopo):
+        return OUT_OF_SCOPE_MSG
+
     # 📌 Tipos que exigem contexto para não cair em "fora de escopo"
     tipos_que_exigem_contexto = {'explicacao', 'faq', 'revisao', 'correcao', 'precificacao'}
     if tipo_de_prompt in tipos_que_exigem_contexto and not context.strip():
