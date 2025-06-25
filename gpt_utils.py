@@ -31,8 +31,8 @@ LINKS_PAPELARIA_BRINDES = {
     "Mark & Graham": "https://www.markandgraham.com/",
     "Elo 7": "https://www.elo7.com.br/",
     "Dupla Ideia": "https://duplaideia.com/",
-    "Jo Malone (Aromas de Ambiente)": "https://www.jomalone.com.br",
-    "BidetKing (Privada Eletrônica)": "https://bidetking.com"
+    "Jo Malone - Aromas de Ambiente": "https://www.jomalone.com.br",
+    "Privada Eletrônica BidetKing": "https://bidetking.com"
 }
 
 # -----------------------------
@@ -41,7 +41,8 @@ LINKS_PAPELARIA_BRINDES = {
 BASE_DIR = os.path.dirname(__file__)
 
 # 1) transcrições
-with open(os.path.join(BASE_DIR, "transcricoes.txt"), encoding="utf-8") as f:
+txt_path = os.path.join(BASE_DIR, "transcricoes.txt")
+with open(txt_path, encoding="utf-8") as f:
     _raw_txt = f.read()
 
 # 2) Plano de Ação (1ª Semana)
@@ -72,8 +73,8 @@ try:
                 "role": "system",
                 "content": (
                     "Você é um resumidor especialista em educação. Resuma em até 300 palavras o conteúdo do curso "
-                    "“Consultório High Ticket”, incluindo o plano de ação da primeira semana e o Guia do Curso, "
-                    "para servir de base na classificação de escopo e tipo de prompt."
+                    ""“Consultório High Ticket”, incluindo o plano de ação da primeira semana e o Guia do Curso, "
+                    ""para servir de base na classificação de escopo e tipo de prompt."
                 )
             },
             {"role": "user", "content": _combined}
@@ -90,7 +91,7 @@ TYPE_KEYWORDS = {
     "revisao":                        ["revisão", "revisao", "revise", "resumir"],
     "precificacao":                   ["precificação", "precificacao", "precificar", "preço", "valor", "faturamento"],
     "health_plan":                    ["health plan", "valor do health plan", "retorno do investimento"],
-    "capitacao_sem_marketing_digital":["offline", "sem usar instagram", "sem instagram", "sem anúncios", "sem anuncios"],
+    "capitacao_sem_marketing_digital": ["offline", "sem usar instagram", "sem instagram", "sem anúncios", "sem anuncios"],
     "aplicacao":                      ["como aplico", "aplicação", "aplico", "roteiro"],
     "faq":                            ["quais", "dúvidas", "duvidas", "pergunta frequente"],
     "explicacao":                     ["explique", "o que é", "defina", "conceito"],
@@ -181,10 +182,7 @@ prompt_variacoes = {
     ),
     "papelaria_brindes": (
         "<strong>Objetivo:</strong> Fornecer as indicações de papelaria e brindes da aula 2.5, listando os links recomendados:<br>"
-        + "".join(
-            f"➡ <a href=\"{url}\" target=\"_blank\">{name}</a><br>"
-            for name, url in LINKS_PAPELARIA_BRINDES.items()
-        )
+        + "".join(f"➡ <a href=\"{url}\" target=\"_blank\">{name}</a><br>" for name, url in LINKS_PAPELARIA_BRINDES.items())
         + "<br>"
     )
 }
@@ -207,7 +205,7 @@ def generate_answer(
         f"<br><br><strong>📚 Contexto relevante:</strong><br>{context}<br>" if context.strip() else ""
     )
 
-    prompt = identidade + prompt_variacoes[tipo] + contexto_para_prompt
+    prompt = identidad + prompt_variacoes[tipo] + contexto_para_prompt
     if history:
         prompt += f"<br><strong>📜 Histórico anterior:</strong><br>{history}<br>"
     prompt += f"<br><strong>🤔 Pergunta:</strong><br>{question}<br><br><strong>🧠 Resposta:</strong><br>"
