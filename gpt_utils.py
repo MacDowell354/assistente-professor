@@ -27,21 +27,21 @@ OUT_OF_SCOPE_MSG = (
 TRANSCRIPT_PATH = os.path.join(os.path.dirname(__file__), "transcricoes.txt")
 _raw = open(TRANSCRIPT_PATH, encoding="utf-8").read()
 try:
-    _res = client.chat.completions.create(
+    resp = client.chat.completions.create(
         model="gpt-4",
         messages=[
             {
                 "role": "system",
                 "content": (
                     "Você é um resumidor especialista em educação. "
-                    "Resuma em até 300 palavras o conteúdo do curso “Consultório High Ticket”, "
-                    "para servir de base para classificação de escopo."
+                    "Resuma em até 300 palavras o conteúdo do curso “Consultório High Ticket” "
+                    "para servir de base na classificação de escopo e tipo de prompt."
                 )
             },
             {"role": "user", "content": _raw}
         ]
     )
-    COURSE_SUMMARY = _res.choices[0].message.content
+    COURSE_SUMMARY = resp.choices[0].message.content
 except OpenAIError:
     COURSE_SUMMARY = ""
 
@@ -50,33 +50,32 @@ except OpenAIError:
 # -----------------------------
 def classify_prompt(question: str) -> dict:
     """
-    Chama o GPT e retorna um dict com:
-      - scope: "IN_SCOPE" ou "OUT_OF_SCOPE"
-      - type: nome da variação (ex: "explicacao", "health_plan", "precificacao", etc)
+    Retorna um dict:
+      - scope: 'IN_SCOPE' ou 'OUT_OF_SCOPE'
+      - type: nome exato de uma chave em prompt_variacoes (ou 'explicacao')
     """
     payload = (
-        "Você é um classificador de escopo e tipo de prompt. "
-        "Com base no resumo abaixo e na pergunta, responda **apenas** um JSON com duas chaves:\n"
+        "Você é um classificador inteligente. Com base no resumo e na pergunta abaixo, "
+        "responda **apenas** um JSON com duas chaves:\n"
         "  • scope: 'IN_SCOPE' ou 'OUT_OF_SCOPE'\n"
-        "  • type: uma das chaves disponíveis em prompt_variacoes (ou 'explicacao').\n\n"
+        "  • type: nome de um template (ex: 'explicacao', 'health_plan', 'precificacao', 'capitacao_sem_marketing_digital', etc)\n\n"
         f"Resumo do curso:\n{COURSE_SUMMARY}\n\n"
         f"Pergunta:\n{question}\n\n"
         "Exemplo de resposta válida:\n"
         '{ "scope": "IN_SCOPE", "type": "health_plan" }'
     )
     try:
-        resp = client.chat.completions.create(
+        r = client.chat.completions.create(
             model="gpt-4",
             messages=[{"role": "system", "content": payload}]
         )
-        return json.loads(resp.choices[0].message.content)
+        return json.loads(r.choices[0].message.content)
     except (OpenAIError, json.JSONDecodeError):
-        # fallback mais conservador
+        # se algo falhar, considera fora de escopo
         return {"scope": "OUT_OF_SCOPE", "type": "explicacao"}
 
-
 # -----------------------------
-# TEMPLATES E FLUXO DE RESPOSTA
+# IDENTIDADE E TEMPLATES
 # -----------------------------
 identidade = (
     "<strong>Você é Nanda Mac.ia</strong>, a IA oficial da Nanda Mac, treinada com o conteúdo do curso "
@@ -120,12 +119,11 @@ prompt_variacoes = {
         "de alto valor sem usar Instagram ou anúncios, passo a passo:<br>"
         "➡ **Encantamento de pacientes atuais:** Envie um convite VIP impresso ou bilhete manuscrito, demonstrando atenção a detalhes pessoais;<br>"
         "➡ **Parcerias com profissionais de saúde:** Conecte-se com médicos, fisioterapeutas, nutricionistas e psicólogos para mini-palestras em troca de indicações;<br>"
-        "➡ **Cartas personalizadas com proposta VIP:** Envie cartas ou cartões-postais apenas a pacientes indicados, "
-        "agradecendo e destacando diferenciais exclusivos;<br>"
+        "➡ **Cartas personalizadas com proposta VIP:** Envie cartas ou cartões-postais a pacientes indicados, agradecendo e destacando diferenciais exclusivos;<br>"
         "➡ **Manutenção via WhatsApp (sem automação):** Grave e envie uma mensagem de voz personalizada após a consulta;<br>"
         "➡ **Construção de autoridade silenciosa:** Colete depoimentos reais e imprima-os em folhetos na recepção;<br>"
         "➡ **Fidelização e indicações espontâneas:** Implemente o programa “Indique um amigo VIP” com brindes exclusivos;<br><br>"
-        "Com essa sequência você <strong>dobra seu faturamento</strong> e conquista pacientes de alto valor <strong>sem depender de redes sociais ou anúncios</strong>."
+        "Com essa sequência você <strong>dobra seu faturamento</strong> e conquista pacientes de alto valor sem depender de redes sociais ou anúncios."
     ),
     "precificacao": (
         "<strong>Objetivo:</strong> Explicar o conceito de precificação estratégica do Consultório High Ticket. "
@@ -133,8 +131,8 @@ prompt_variacoes = {
         "fidelizar pacientes e priorizar o bem-estar do paciente.<br><br>"
     ),
     "health_plan": (
-        "<strong>Objetivo:</strong> Estruturar a apresentação de valor do **Health Plan** de forma clara e convincente. "
-        "Use passos sequenciais que demonstrem o retorno sobre o investimento, inclua benefícios tangíveis e emocione o paciente.<br><br>"
+        "<strong>Objetivo:</strong> Estruturar a apresentação de valor do **Health Plan** para demonstrar o retorno sobre o investimento. "
+        "Use passos sequenciais, inclua benefícios tangíveis e histórias de sucesso para emocionar o paciente.<br><br>"
     )
 }
 
@@ -147,14 +145,14 @@ def generate_answer(
     history: str = None,
     tipo_de_prompt: str = "explicacao"
 ) -> str:
-    # 1) Classificação automática
+    # CLASSIFICAÇÃO ÚNICA
     cls = classify_prompt(question)
     if cls["scope"] == "OUT_OF_SCOPE":
         return OUT_OF_SCOPE_MSG
 
-    tipo_de_prompt = cls["type"]
+    tipo_de_prompt = cls.get("type", "explicacao")
 
-    # 2) Monta contexto (se necessário)
+    # CONTEXTO (se precisar)
     if tipo_de_prompt == "capitacao_sem_marketing_digital":
         contexto_para_prompt = ""
     else:
@@ -163,21 +161,21 @@ def generate_answer(
             if context.strip() else ""
         )
 
-    # 3) Monta prompt completo
+    # MONTAGEM FINAL
     prompt = identidade + prompt_variacoes.get(tipo_de_prompt, prompt_variacoes["explicacao"]) + contexto_para_prompt
     if history:
         prompt += f"<br><strong>📜 Histórico anterior:</strong><br>{history}<br>"
     prompt += f"<br><strong>🤔 Pergunta:</strong><br>{question}<br><br><strong>🧠 Resposta:</strong><br>"
 
-    # 4) Chama o GPT-4 com fallback para 3.5
+    # CHAMADA AO GPT
     try:
-        resp = client.chat.completions.create(
+        r2 = client.chat.completions.create(
             model="gpt-4",
             messages=[{"role": "user", "content": prompt}]
         )
     except OpenAIError:
-        resp = client.chat.completions.create(
+        r2 = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[{"role": "user", "content": prompt}]
         )
-    return resp.choices[0].message.content
+    return r2.choices[0].message.content
