@@ -1,150 +1,221 @@
-import openai
 import os
 import json
 import logging
+from openai import OpenAI, OpenAIError, AuthenticationError, RateLimitError, InvalidRequestError
 
-# Configure logging básico (caso o app principal não tenha configurado)
+# -----------------------------
+# CONFIGURAÇÃO DE LOG
+# -----------------------------
 logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
-# Configura a chave de API da OpenAI a partir da variável de ambiente
-openai.api_key = os.getenv("OPENAI_API_KEY")
-if not openai.api_key:
-    logging.warning("OPENAI_API_KEY não está definida. As chamadas à API OpenAI podem falhar por falta de autenticação.")
+# -----------------------------
+# CONFIGURAÇÃO DE AMBIENTE
+# -----------------------------
+api_key = os.getenv("OPENAI_API_KEY")
+if not api_key:
+    raise ValueError("❌ Variável de ambiente OPENAI_API_KEY não encontrada.")
+client = OpenAI(api_key=api_key)
 
-# Parâmetros opcionais de modelo e ajustes, com defaults
-MODEL_NAME = os.getenv("OPENAI_MODEL", "gpt-3.5-turbo")
-TEMPERATURE = float(os.getenv("OPENAI_TEMPERATURE", "0.7"))
-MAX_TOKENS = int(os.getenv("OPENAI_MAX_TOKENS", "1024"))
+# -----------------------------
+# MENSAGEM PADRÃO PARA FORA DE ESCOPO
+# -----------------------------
+OUT_OF_SCOPE_MSG = (
+    "Essa pergunta é muito boa, mas no momento ela está <strong>fora do conteúdo abordado nas aulas do curso "
+    "Consultório High Ticket</strong>. Isso pode indicar uma oportunidade de melhoria do nosso material! 😊<br><br>"
+    "Vamos sinalizar esse tema para a equipe pedagógica avaliar a inclusão em versões futuras do curso. "
+    "Enquanto isso, recomendamos focar nos ensinamentos já disponíveis para ter os melhores resultados possíveis no consultório."
+)
 
-# Tenta importar bcrypt para recursos de autenticação; caso falhe, prossegue com aviso
+# -----------------------------
+# MAPEAMENTO DE KEYWORDS
+# -----------------------------
+TYPE_KEYWORDS = {
+    "revisao":                        ["revisão", "revisao", "revise", "resumir"],
+    "precificacao":                   ["precificação", "precificacao", "precificar", "preço", "valor", "faturamento"],
+    "health_plan":                    ["health plan", "valor do health plan", "retorno do investimento"],
+    "capitacao_sem_marketing_digital":["offline", "sem usar instagram", "sem instagram", "sem anúncios", "sem anuncios"],
+    "aplicacao":                      ["como aplico", "aplicação", "aplico", "roteiro"],
+    "faq":                            ["quais", "dúvidas", "duvidas", "pergunta frequente"],
+    "explicacao":                     ["explique", "o que é", "defina", "conceito"]
+}
+
+# -----------------------------
+# CARREGA E RESUME TRANSCRIÇÕES (1× NO STARTUP)
+# -----------------------------
+TRANSCRIPT_PATH = os.path.join(os.path.dirname(__file__), "transcricoes.txt")
+_raw = open(TRANSCRIPT_PATH, encoding="utf-8").read()
 try:
-    import bcrypt
-except ImportError as e:
-    bcrypt = None
-    logging.error("Falha ao importar módulo bcrypt: %s. A autenticação pode não funcionar corretamente.", e)
+    resp = client.chat.completions.create(
+        model="gpt-4",
+        messages=[
+            {"role": "system", "content": (
+                "Você é um resumidor especialista em educação. "
+                "Resuma em até 300 palavras o conteúdo do curso “Consultório High Ticket” "
+                "para servir de base na classificação de escopo e tipo de prompt."
+            )},
+            {"role": "user", "content": _raw}
+        ]
+    )
+    COURSE_SUMMARY = resp.choices[0].message.content
+    logger.info("Resumo do curso carregado com sucesso.")
+except Exception as e:
+    COURSE_SUMMARY = ""
+    logger.warning("Falha ao resumir transcricoes: %s", e)
 
-def verify_password(plain_password: str, hashed_password: bytes) -> bool:
-    """
-    Verifica uma senha de texto plano em comparação com sua versão hash usando bcrypt.
-    Se bcrypt não estiver disponível, emite um alerta e ignora a verificação (inseguro).
-    """
-    if bcrypt is None:
-        logging.warning("Ignorando verificação de senha porque o bcrypt está indisponível.")
-        # AVISO: Isso tratará qualquer senha como válida. Utilize apenas como paliativo em desenvolvimento.
-        return True
+# -----------------------------
+# IDENTIDADE E TEMPLATES
+# -----------------------------
+identidade = (
+    "<strong>Você é Nanda Mac.ia</strong>, a IA oficial da Nanda Mac, treinada com o conteúdo do curso "
+    "<strong>Consultório High Ticket</strong>. Responda como uma professora experiente, ajudando o aluno a aplicar o método na prática.<br><br>"
+)
+
+prompt_variacoes = {
+    "explicacao": (
+        "<strong>Objetivo:</strong> Explicar com base no conteúdo das aulas. Use uma linguagem clara e didática, "
+        "com tópicos ou passos. Evite respostas genéricas. Mostre o conteúdo como se fosse uma aula de **Posicionamento High Ticket**.<br><br>"
+    ),
+    "faq": (
+        "<strong>Objetivo:</strong> Responder uma dúvida frequente entre os alunos do curso. "
+        "Use exemplos práticos e aplique o método passo a passo."
+    ),
+    "revisao": (
+        "<strong>Objetivo:</strong> Fazer uma revisão rápida dos pontos centrais do método de precificação estratégica. "
+        "Use exatamente seis bullets, cada um iniciando com verbo de ação e título em negrito: "
+        "**Identificar Pacientes Potenciais**, **Determinar Valores**, **Elaborar o Health Plan**, "
+        "**Preparar a Apresentação**, **Comunicar o Valor** e **Monitorar Resultados**. "
+        "Após o título de cada bullet, adicione uma breve explicação de uma linha. "
+        "E **certifique-se de mencionar o benefício de dobrar o faturamento e fidelizar pacientes** em pelo menos dois desses bullets.<br><br>"
+    ),
+    "aplicacao": (
+        "<strong>Objetivo:</strong> Aplicar o roteiro de atendimento High Ticket na primeira consulta. "
+        "Use exatamente seis bullets, cada um iniciando com verbo de ação e estes títulos em negrito:<br>"
+        "➡ **Abertura da Consulta:** Garanta acolhimento profissional e empatia.<br>"
+        "➡ **Mapear Expectativas:** Pergunte objetivos e preocupações do paciente.<br>"
+        "➡ **Elaborar Health Plan:** Explique o plano personalizado e investimento.<br>"
+        "➡ **Validar Compromisso:** Confirme entendimento e mencione dobrar faturamento.<br>"
+        "➡ **Usar Two-Options:** Ofereça duas opções de pacote.<br>"
+        "➡ **Agendar Follow-up:** Marque retorno para fidelizar.<br><br>"
+    ),
+    "correcao": (
+        "<strong>Objetivo:</strong> Corrigir gentilmente qualquer confusão ou prática equivocada, "
+        "apontando a abordagem correta conforme o método High Ticket.<br><br>"
+    ),
+    "capitacao_sem_marketing_digital": (
+        "<strong>Objetivo:</strong> Mostrar uma **estratégia 100% offline** para atrair pacientes "
+        "de alto valor sem usar Instagram ou anúncios:<br>"
+        "➡ Envie convites VIP impressos;<br>"
+        "➡ Faça mini-palestras em parcerias;<br>"
+        "➡ Envie cartas personalizadas;<br>"
+        "➡ Mensagens de voz via WhatsApp;<br>"
+        "➡ Depoimentos impressos;<br>"
+        "➡ Programa “Indique um amigo VIP”.<br><br>"
+        "Isso <strong>dobra seu faturamento</strong> sem redes sociais."
+    ),
+    "precificacao": (
+        "<strong>Objetivo:</strong> Explicar o conceito de precificação estratégica. "
+        "Use bullets com **Health Plan** em inglês, mencionando dobrar faturamento e fidelizar.<br><br>"
+    ),
+    "health_plan": (
+        "<strong>Objetivo:</strong> Estruturar a apresentação de valor do **Health Plan**. "
+        "Use passos sequenciais, benefícios tangíveis e histórias de sucesso.<br><br>"
+    )
+}
+
+# -----------------------------
+# CLASSIFICADOR DE ESCOPO + TIPO
+# -----------------------------
+def classify_prompt(question: str) -> dict:
+    lower_q = question.lower()
+    # 1) Match rápido via keywords
+    for tipo, keys in TYPE_KEYWORDS.items():
+        if any(k in lower_q for k in keys):
+            return {"scope": "IN_SCOPE", "type": tipo}
+
+    # 2) Fallback via GPT
+    payload = (
+        "Você é um classificador inteligente. Com base no resumo e na pergunta abaixo, "
+        "responda **apenas** um JSON com duas chaves:\n"
+        "  • scope: 'IN_SCOPE' ou 'OUT_OF_SCOPE'\n"
+        "  • type: nome de um template (ex: 'explicacao', 'health_plan', 'precificacao', ...)\n\n"
+        f"Resumo do curso:\n{COURSE_SUMMARY}\n\n"
+        f"Pergunta:\n{question}\n\n"
+        "Exemplo de resposta válida:\n"
+        '{ "scope": "IN_SCOPE", "type": "health_plan" }'
+    )
     try:
-        return bcrypt.checkpw(plain_password.encode('utf-8'), hashed_password)
+        r = client.chat.completions.create(
+            model="gpt-4",
+            messages=[{"role": "system", "content": payload}]
+        )
+        return json.loads(r.choices[0].message.content)
     except Exception as e:
-        logging.error("Erro durante verificação de senha: %s", e)
-        return False
+        logger.warning("Fallback classifier falhou: %s", e)
+        return {"scope": "OUT_OF_SCOPE", "type": "explicacao"}
 
-# Importa classes de erro da OpenAI para tratamento específico
-try:
-    from openai.error import AuthenticationError, RateLimitError, InvalidRequestError, OpenAIError
-except ImportError:
-    # Caso não seja possível importar, define aliases genéricos para evitar NameError
-    AuthenticationError = RateLimitError = InvalidRequestError = OpenAIError = Exception
+# -----------------------------
+# GERA A RESPOSTA FINAL
+# -----------------------------
+def generate_answer(
+    question: str,
+    context: str = "",
+    history: str = None
+) -> str:
+    # 1) Classificar
+    cls = classify_prompt(question)
+    if cls["scope"] == "OUT_OF_SCOPE":
+        return OUT_OF_SCOPE_MSG
 
-def generate_answer(user_question: str, system_prompt: str = None) -> str:
-    """
-    Gera uma resposta do modelo OpenAI para uma determinada pergunta do usuário.
-    Opcionalmente inclui um prompt de sistema para contexto ou instruções adicionais.
-    Retorna o texto da resposta ou uma mensagem de erro segura caso algo dê errado.
-    """
-    # Prepara a lista de mensagens para o chat (contexto + pergunta do usuário)
-    messages = []
-    if system_prompt:
-        messages.append({"role": "system", "content": system_prompt})
-    messages.append({"role": "user", "content": user_question})
-    
-    # Chama a API OpenAI e trata exceções da chamada
+    tipo = cls["type"]
+    template = prompt_variacoes.get(tipo, prompt_variacoes["explicacao"])
+
+    # 2) Montar contexto adicional
+    ctx = ""
+    if context.strip() and tipo != "capitacao_sem_marketing_digital":
+        ctx = f"<br><br><strong>📚 Contexto relevante:</strong><br>{context}<br>"
+
+    # 3) Histórico (se houver)
+    hist = ""
+    if history:
+        hist = f"<br><strong>📜 Histórico anterior:</strong><br>{history}<br>"
+
+    # 4) Montar prompt completo
+    prompt = (
+        identidade
+        + template
+        + ctx
+        + f"<br><strong>🤔 Pergunta:</strong><br>{question}<br><br>"
+        + "<strong>🧠 Resposta:</strong><br>"
+    ) + hist
+
+    # 5) Chamar OpenAI com tratamento de erros
     try:
-        response = openai.ChatCompletion.create(
-            model=MODEL_NAME,
-            messages=messages,
-            temperature=TEMPERATURE,
-            max_tokens=MAX_TOKENS
+        resp = client.chat.completions.create(
+            model="gpt-4",
+            messages=[{"role": "user", "content": prompt}]
         )
     except AuthenticationError as e:
-        logging.error("OpenAI AuthenticationError: %s", e)
-        return "Erro de autenticação ao conectar com o serviço de IA."
+        logger.error("AuthError: %s", e)
+        return "Erro de autenticação com o serviço de IA."
     except RateLimitError as e:
-        logging.error("OpenAI RateLimitError: %s", e)
-        return "A API de IA atingiu o limite de requisições. Por favor, tente novamente mais tarde."
+        logger.error("RateLimitError: %s", e)
+        return "Limite de requisições atingido. Tente novamente mais tarde."
     except InvalidRequestError as e:
-        logging.error("OpenAI InvalidRequestError: %s", e)
-        return "Falha na solicitação ao modelo de IA. Verifique os parâmetros e tente novamente."
+        logger.error("InvalidRequestError: %s", e)
+        return "Erro na requisição ao modelo de IA."
     except OpenAIError as e:
-        logging.error("OpenAI API error: %s", e)
-        return "Ocorreu um erro ao obter a resposta do modelo de IA."
+        logger.error("OpenAIError: %s", e)
+        return "Erro ao obter resposta da IA."
     except Exception as e:
-        logging.exception("Erro inesperado ao chamar a API OpenAI: %s", e)
-        return "Ocorreu um erro interno ao processar a resposta do assistente de IA."
-    
-    # Valida a estrutura da resposta recebida
-    if response is None:
-        logging.error("A API OpenAI não retornou nenhuma resposta (None).")
-        return "Desculpe, não foi possível obter resposta do assistente no momento."
-    if "choices" not in response or not response.get("choices"):
-        logging.error("A API OpenAI retornou um formato inesperado: %s", response)
-        return "Desculpe, a resposta do assistente não pôde ser interpretada."
-    
-    # Extrai o conteúdo da mensagem de resposta do assistente
+        logger.exception("Erro inesperado na geração de resposta: %s", e)
+        return "Erro interno ao processar sua solicitação."
+
+    # 6) Extrair e retornar o conteúdo
     try:
-        answer_content = response["choices"][0]["message"]["content"]
+        answer = resp.choices[0].message.content.strip()
     except Exception as e:
-        logging.error("Falha ao extrair o campo 'content' da resposta da OpenAI: %s", e)
-        return "Desculpe, ocorreu um problema ao ler a resposta do assistente."
-    
-    if answer_content is None:
-        answer_content = ""
-    answer_content = answer_content.strip()
-    
-    if answer_content == "":
-        logging.error("A OpenAI retornou conteúdo vazio para a pergunta: '%s'", user_question)
-        return "Desculpe, o assistente não conseguiu gerar uma resposta para sua pergunta."
-    
-    # Remove blocos de código Markdown (``` ```), se presentes, em torno de conteúdo JSON
-    if "```" in answer_content:
-        start_idx = answer_content.find("```")
-        end_idx = answer_content.rfind("```")
-        if start_idx != -1 and end_idx != -1 and end_idx > start_idx:
-            # Extrai apenas o conteúdo dentro do bloco de código
-            fenced_content = answer_content[start_idx+3:end_idx]
-            answer_content = fenced_content.strip()
-        # Remove indicador de linguagem (ex: "json") se estiver presente logo no início
-        if answer_content.lower().startswith("json"):
-            lines = answer_content.splitlines()
-            if lines and lines[0].strip().lower() == "json":
-                lines = lines[1:]
-            answer_content = "\n".join(lines).strip()
-    
-    # Tenta interpretar a resposta como JSON, se aparentemente estiver em formato JSON
-    parsed_data = None
-    if answer_content.startswith("{") or answer_content.startswith("["):
-        try:
-            parsed_data = json.loads(answer_content)
-        except json.JSONDecodeError as e:
-            logging.error("JSON parse error for model response: %s. Content: %s", e, answer_content)
-            parsed_data = None
-    
-    # Se o JSON foi interpretado com sucesso, formata a saída apropriadamente
-    if parsed_data is not None:
-        try:
-            if isinstance(parsed_data, dict):
-                # Se houver algum campo relevante, retorna apenas ele (e.g. 'answer' ou 'resposta')
-                for key in ("answer", "resposta", "content", "message", "resultado"):
-                    if key in parsed_data:
-                        return str(parsed_data[key])
-                # Caso nenhum dos campos esperados esteja presente, retorna o JSON inteiro formatado
-                return json.dumps(parsed_data, ensure_ascii=False, indent=2)
-            elif isinstance(parsed_data, list):
-                # Se a resposta é uma lista, retorna o array JSON formatado
-                return json.dumps(parsed_data, ensure_ascii=False, indent=2)
-        except Exception as e:
-            logging.error("Error processing parsed JSON output: %s", e)
-            # Em caso de falha ao manipular o JSON, volta ao conteúdo bruto
-            return answer_content
-    
-    # Se não for JSON ou se o parsing falhou, retorna o texto puro da resposta
-    return answer_content
+        logger.error("Falha ao extrair resposta: %s", e)
+        return "Desculpe, não consegui gerar uma resposta completa."
+
+    return answer
