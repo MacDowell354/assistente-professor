@@ -1,4 +1,3 @@
-```python
 import os
 import json
 from openai import OpenAI, OpenAIError
@@ -195,4 +194,3 @@ def generate_answer(
             messages=[{"role": "user", "content": prompt}]
         )
     return r2.choices[0].message.content
-```
