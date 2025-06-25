@@ -22,28 +22,36 @@ OUT_OF_SCOPE_MSG = (
 )
 
 # -----------------------------
-# CARREGA TRANSCRIÇÕES E PDF (1× NO STARTUP)
+# CARREGA TEXTOS (1× NO STARTUP)
 # -----------------------------
 BASE_DIR = os.path.dirname(__file__)
 
-# 1) texto das transcrições
+# 1) transcrições
 TRANSCRIPT_PATH = os.path.join(BASE_DIR, "transcricoes.txt")
 _raw_txt = open(TRANSCRIPT_PATH, encoding="utf-8").read()
 
-# 2) texto do PDF de Plano de Ação (1ª Semana)
-PDF_PATH = os.path.join(BASE_DIR, "PlanodeAcaoConsultorioHighTicket-1Semana (4)[1].pdf")
-_raw_pdf = ""
+# 2) Plano de Ação 1ª Semana
+PDF1_PATH = os.path.join(BASE_DIR, "PlanodeAcaoConsultorioHighTicket-1Semana (4)[1].pdf")
+_raw_pdf1 = ""
 try:
-    reader = PdfReader(PDF_PATH)
-    _raw_pdf = "\n\n".join(page.extract_text() or "" for page in reader.pages)
+    reader1 = PdfReader(PDF1_PATH)
+    _raw_pdf1 = "\n\n".join(page.extract_text() or "" for page in reader1.pages)
 except Exception:
-    # falha ao ler PDF: ignora
-    _raw_pdf = ""
+    _raw_pdf1 = ""
 
-# combina tudo para resumo
-_combined = _raw_txt + "\n\n" + _raw_pdf
+# 3) Guia do Curso
+PDF2_PATH = os.path.join(BASE_DIR, "GuiadoCursoConsultorioHighTicket.-CHT21[1].pdf")
+_raw_pdf2 = ""
+try:
+    reader2 = PdfReader(PDF2_PATH)
+    _raw_pdf2 = "\n\n".join(page.extract_text() or "" for page in reader2.pages)
+except Exception:
+    _raw_pdf2 = ""
 
-# pede resumo ao GPT-4
+# combina todos os conteúdos para resumo
+_combined = _raw_txt + "\n\n" + _raw_pdf1 + "\n\n" + _raw_pdf2
+
+# pede resumo ao GPT-4 para base de classificação
 try:
     resp = client.chat.completions.create(
         model="gpt-4",
@@ -53,7 +61,8 @@ try:
                 "content": (
                     "Você é um resumidor especialista em educação. "
                     "Resuma em até 300 palavras todo o conteúdo do curso “Consultório High Ticket”, "
-                    "incluindo o plano de ação da primeira semana, para servir de base na classificação de escopo e tipo de prompt."
+                    "incluindo o plano de ação da primeira semana e o guia do curso, "
+                    "para servir de base na classificação de escopo e tipo de prompt."
                 )
             },
             {"role": "user", "content": _combined}
@@ -97,7 +106,7 @@ def classify_prompt(question: str) -> dict:
         "Você é um classificador inteligente. Com base no resumo e na pergunta abaixo, "
         "responda **apenas** um JSON com duas chaves:\n"
         "  • scope: 'IN_SCOPE' ou 'OUT_OF_SCOPE'\n"
-        "  • type: nome de um template (ex: 'explicacao', 'health_plan', etc)\n\n"
+        "  • type: nome de um template (ex: 'explicacao', 'health_plan', 'plano_de_acao', etc)\n\n"
         f"Resumo do curso:\n{COURSE_SUMMARY}\n\n"
         f"Pergunta:\n{question}\n\n"
         "Exemplo de resposta válida:\n"
@@ -193,6 +202,8 @@ def generate_answer(
         return OUT_OF_SCOPE_MSG
 
     tipo = cls["type"]
+
+    # contexto extra (se houver)
     if tipo == "capitacao_sem_marketing_digital":
         contexto_para_prompt = ""
     else:
@@ -201,11 +212,13 @@ def generate_answer(
             if context.strip() else ""
         )
 
+    # monta prompt
     prompt = identidade + prompt_variacoes[tipo] + contexto_para_prompt
     if history:
         prompt += f"<br><strong>📜 Histórico anterior:</strong><br>{history}<br>"
     prompt += f"<br><strong>🤔 Pergunta:</strong><br>{question}<br><br><strong>🧠 Resposta:</strong><br>"
 
+    # chama OpenAI
     try:
         r2 = client.chat.completions.create(
             model="gpt-4",
