@@ -1,16 +1,9 @@
 import os
 import json
-import logging
 from openai import OpenAI, OpenAIError
 
 # -----------------------------
-# LOGGING
-# -----------------------------
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
-
-# -----------------------------
-# API KEY
+# CONFIGURAÇÃO DE AMBIENTE
 # -----------------------------
 api_key = os.getenv("OPENAI_API_KEY")
 if not api_key:
@@ -18,7 +11,7 @@ if not api_key:
 client = OpenAI(api_key=api_key)
 
 # -----------------------------
-# MENSAGEM FORA DE ESCOPO
+# MENSAGEM PADRÃO PARA FORA DE ESCOPO
 # -----------------------------
 OUT_OF_SCOPE_MSG = (
     "Essa pergunta é muito boa, mas no momento ela está <strong>fora do conteúdo abordado nas aulas do curso "
@@ -28,7 +21,7 @@ OUT_OF_SCOPE_MSG = (
 )
 
 # -----------------------------
-# RESUME TRANSCRIÇÕES (startup)
+# CARREGA E RESUME TRANSCRIÇÕES (1× NO STARTUP)
 # -----------------------------
 TRANSCRIPT_PATH = os.path.join(os.path.dirname(__file__), "transcricoes.txt")
 _raw = open(TRANSCRIPT_PATH, encoding="utf-8").read()
@@ -36,86 +29,54 @@ try:
     resp = client.chat.completions.create(
         model="gpt-4",
         messages=[
-            {"role": "system", "content": (
-                "Você é um resumidor especialista em educação. "
-                "Resuma em até 300 palavras o conteúdo do curso “Consultório High Ticket” "
-                "para servir de base na classificação de escopo e tipo de prompt."
-            )},
+            {
+                "role": "system",
+                "content": (
+                    "Você é um resumidor especialista em educação. "
+                    "Resuma em até 300 palavras o conteúdo do curso “Consultório High Ticket” "
+                    "para servir de base na classificação de escopo e tipo de prompt."
+                )
+            },
             {"role": "user", "content": _raw}
         ]
     )
     COURSE_SUMMARY = resp.choices[0].message.content
-    logger.info("Resumo do curso carregado com sucesso.")
-except Exception as e:
+except OpenAIError:
     COURSE_SUMMARY = ""
-    logger.warning("Falha ao resumir transcricoes: %s", e)
 
 # -----------------------------
-# PALAVRAS-CHAVE POR TIPO
+# MAPA DE KEYWORDS PARA TIPO DE PROMPT
 # -----------------------------
 TYPE_KEYWORDS = {
     "revisao":                        ["revisão", "revisao", "revise", "resumir"],
     "precificacao":                   ["precificação", "precificacao", "precificar", "preço", "valor", "faturamento"],
     "health_plan":                    ["health plan", "valor do health plan", "retorno do investimento"],
     "capitacao_sem_marketing_digital":["offline", "sem usar instagram", "sem instagram", "sem anúncios", "sem anuncios"],
-    "aplicacao":                      ["como aplico", "aplicação", "aplico", "roteiro"],
+    "aplicacao":                      ["como aplico", "aplicação", "aplico", "roteiro", "aplicação"],
     "faq":                            ["quais", "dúvidas", "duvidas", "pergunta frequente"],
     "explicacao":                     ["explique", "o que é", "defina", "conceito"]
 }
 
 # -----------------------------
-# TEMPLATES E IDENTIDADE
-# -----------------------------
-identidade = (
-    "<strong>Você é Nanda Mac.ia</strong>, a IA oficial da Nanda Mac, treinada com o conteúdo do curso "
-    "<strong>Consultório High Ticket</strong>. Responda como uma professora experiente, ajudando o aluno a aplicar o método na prática.<br><br>"
-)
-
-prompt_variacoes = {
-    "explicacao": (
-        "<strong>Objetivo:</strong> Explicar com base no conteúdo das aulas…<br><br>"
-    ),
-    "faq": (
-        "<strong>Objetivo:</strong> Responder dúvida frequente…"
-    ),
-    "revisao": (
-        "<strong>Objetivo:</strong> Fazer revisão rápida do método de precificação estratégica em 6 bullets…<br><br>"
-    ),
-    "aplicacao": (
-        "<strong>Objetivo:</strong> Aplicar roteiro de atendimento High Ticket na primeira consulta (6 bullets)…<br><br>"
-    ),
-    "correcao": (
-        "<strong>Objetivo:</strong> Corrigir gentilmente confusões…<br><br>"
-    ),
-    "capitacao_sem_marketing_digital": (
-        "<strong>Objetivo:</strong> Estratégia 100% offline para atrair pacientes de alto valor sem Instagram…<br><br>"
-    ),
-    "precificacao": (
-        "<strong>Objetivo:</strong> Explicar precificação estratégica, mantendo **Health Plan** em inglês…<br><br>"
-    ),
-    "health_plan": (
-        "<strong>Objetivo:</strong> Estruturar apresentação de valor do **Health Plan**, incluindo benefícios tangíveis e histórias de sucesso…<br><br>"
-    )
-}
-
-# -----------------------------
-# CLASSIFICADOR
+# CLASSIFICADOR DE ESCOPO + TIPO
 # -----------------------------
 def classify_prompt(question: str) -> dict:
     lower_q = question.lower()
-    for tipo, keys in TYPE_KEYWORDS.items():
-        if any(k in lower_q for k in keys):
+
+    # 1) Match rápido por palavras-chave
+    for tipo, keywords in TYPE_KEYWORDS.items():
+        if any(k in lower_q for k in keywords):
             return {"scope": "IN_SCOPE", "type": tipo}
 
-    # fallback via GPT
+    # 2) Fallback inteligente via GPT
     payload = (
         "Você é um classificador inteligente. Com base no resumo e na pergunta abaixo, "
         "responda **apenas** um JSON com duas chaves:\n"
         "  • scope: 'IN_SCOPE' ou 'OUT_OF_SCOPE'\n"
-        "  • type: nome de um template (ex: 'explicacao', 'health_plan', …)\n\n"
+        "  • type: nome de um template (ex: 'explicacao', 'health_plan', 'precificacao', etc)\n\n"
         f"Resumo do curso:\n{COURSE_SUMMARY}\n\n"
         f"Pergunta:\n{question}\n\n"
-        "Exemplo de resposta:\n"
+        "Exemplo de resposta válida:\n"
         '{ "scope": "IN_SCOPE", "type": "health_plan" }'
     )
     try:
@@ -124,57 +85,112 @@ def classify_prompt(question: str) -> dict:
             messages=[{"role": "system", "content": payload}]
         )
         return json.loads(r.choices[0].message.content)
-    except Exception as e:
-        logger.warning("Classifier fallback falhou: %s", e)
+    except (OpenAIError, json.JSONDecodeError):
         return {"scope": "OUT_OF_SCOPE", "type": "explicacao"}
 
 # -----------------------------
-# GERAÇÃO DE RESPOSTA
+# IDENTIDADE E TEMPLATES
+# -----------------------------
+identidade = (
+    "<strong>Você é Nanda Mac.ia</strong>, a IA oficial da Nanda Mac, treinada com o conteúdo do curso "
+    "<strong>Consultório High Ticket</strong>. Responda como uma professora experiente, ajudando o aluno a aplicar o método na prática.<br><br>"
+)
+
+prompt_variacoes = {
+    "explicacao": (
+        "<strong>Objetivo:</strong> Explicar com base no conteúdo das aulas. Use uma linguagem clara e didática, "
+        "com tópicos ou passos. Evite respostas genéricas. Mostre o conteúdo como se fosse uma aula de **Posicionamento High Ticket**.<br><br>"
+    ),
+    "faq": (
+        "<strong>Objetivo:</strong> Responder uma dúvida frequente entre os alunos do curso. "
+        "Use exemplos práticos e aplique o método passo a passo."
+    ),
+    "revisao": (
+        "<strong>Objetivo:</strong> Fazer uma revisão rápida dos pontos centrais do método de precificação estratégica. "
+        "Use exatamente seis bullets, cada um iniciando com verbo de ação e título em negrito: "
+        "**Identificar Pacientes Potenciais**, **Determinar Valores**, **Elaborar o Health Plan**, "
+        "**Preparar a Apresentação**, **Comunicar o Valor** e **Monitorar Resultados**. "
+        "Após o título de cada bullet, adicione uma breve explicação de uma linha. "
+        "E **certifique-se de mencionar o benefício de dobrar o faturamento e fidelizar pacientes** em pelo menos dois desses bullets.<br><br>"
+    ),
+    "aplicacao": (
+        "<strong>Objetivo:</strong> Aplicar o roteiro de atendimento High Ticket na primeira consulta. "
+        "Use exatamente seis bullets, cada um iniciando com verbo de ação e estes títulos em negrito:<br>"
+        "➡ **Abertura da Consulta:** Garanta acolhimento profissional, transmitindo exclusividade e empatia.<br>"
+        "➡ **Mapear Expectativas:** Pergunte objetivos e preocupações do paciente, construindo rapport.<br>"
+        "➡ **Elaborar Health Plan:** Explique o **Health Plan** personalizado, detalhando etapas e investimento.<br>"
+        "➡ **Validar Compromisso:** Confirme entendimento do paciente e mencione potencial de dobrar faturamento.<br>"
+        "➡ **Usar Two-Options:** Ofereça duas opções de pacote, reduzindo objeções e gerando segurança.<br>"
+        "➡ **Agendar Follow-up:** Marque retorno imediato para manter engajamento e fidelizar pacientes.<br><br>"
+    ),
+    "correcao": (
+        "<strong>Objetivo:</strong> Corrigir gentilmente qualquer confusão ou prática equivocada do aluno, "
+        "apontando a abordagem correta conforme o método High Ticket. Mostre por que o ajuste sugerido pode trazer melhores resultados, "
+        "especialmente em termos de posicionamento, fidelização ou faturamento.<br><br>"
+    ),
+    "capitacao_sem_marketing_digital": (
+        "<strong>Objetivo:</strong> Mostrar uma **estratégia 100% offline** do método Consultório High Ticket para atrair pacientes "
+        "de alto valor sem usar Instagram ou anúncios, passo a passo:<br>"
+        "➡ **Encantamento de pacientes atuais:** Envie um convite VIP impresso ou bilhete manuscrito;<br>"
+        "➡ **Parcerias com profissionais de saúde:** Conecte-se com médicos, fisioterapeutas, nutricionistas e psicólogos;<br>"
+        "➡ **Cartas personalizadas com proposta VIP:** Envie convites impressos destacando diferenciais;<br>"
+        "➡ **Manutenção via WhatsApp (sem automação):** Grave e envie mensagem de voz após a consulta;<br>"
+        "➡ **Construção de autoridade silenciosa:** Colete depoimentos reais e imprima folhetos;<br>"
+        "➡ **Fidelização e indicações espontâneas:** Implemente o programa “Indique um amigo VIP”;<br><br>"
+        "Com essa sequência você <strong>dobra seu faturamento</strong> e conquista pacientes de alto valor sem depender de redes sociais ou anúncios."
+    ),
+    "precificacao": (
+        "<strong>Objetivo:</strong> Explicar o conceito de precificação estratégica do Consultório High Ticket. "
+        "Use bullets iniciando com verbo de ação, mantenha **Health Plan** em inglês, e destaque como dobrar faturamento, "
+        "fidelizar pacientes e priorizar o bem-estar do paciente.<br><br>"
+    ),
+    "health_plan": (
+        "<strong>Objetivo:</strong> Estruturar a apresentação de valor do **Health Plan** para demonstrar o retorno sobre o investimento. "
+        "Use passos sequenciais, inclua benefícios tangíveis e histórias de sucesso para emocionar o paciente.<br><br>"
+    )
+}
+
+# -----------------------------
+# FUNÇÃO PRINCIPAL
 # -----------------------------
 def generate_answer(
     question: str,
     context: str = "",
-    history: str | None = None
+    history: str = None,
+    tipo_de_prompt: str = "explicacao"
 ) -> str:
+    # CLASSIFICAÇÃO
     cls = classify_prompt(question)
     if cls["scope"] == "OUT_OF_SCOPE":
         return OUT_OF_SCOPE_MSG
 
+    #Seleciona o template
     tipo = cls["type"]
-    template = prompt_variacoes.get(tipo, prompt_variacoes["explicacao"])
 
-    ctx = (
-        f"<br><br><strong>📚 Contexto relevante:</strong><br>{context}<br>"
-        if context.strip() and tipo != "capitacao_sem_marketing_digital" else ""
-    )
-    hist = (
-        f"<br><strong>📜 Histórico anterior:</strong><br>{history}<br>"
-        if history else ""
-    )
-
-    full_prompt = (
-        identidade
-        + template
-        + ctx
-        + f"<br><strong>🤔 Pergunta:</strong><br>{question}<br><br><strong>🧠 Resposta:</strong><br>"
-        + hist
-    )
-
-    try:
-        resp = client.chat.completions.create(
-            model="gpt-4",
-            messages=[{"role": "user", "content": full_prompt}]
+    # CONTEXTO (se necessário)
+    if tipo == "capitacao_sem_marketing_digital":
+        contexto_para_prompt = ""
+    else:
+        contexto_para_prompt = (
+            f"<br><br><strong>📚 Contexto relevante:</strong><br>{context}<br>"
+            if context.strip() else ""
         )
-        return resp.choices[0].message.content.strip()
 
-    except OpenAIError as e:
-        msg = str(e).lower()
-        if "rate limit" in msg:
-            return "Limite de requisições atingido. Tente novamente mais tarde."
-        if "invalid api key" in msg or "authentication" in msg:
-            return "Erro de autenticação com o serviço de IA."
-        logger.error("OpenAIError: %s", e)
-        return "Erro ao obter resposta da IA."
-    except Exception as e:
-        logger.exception("Erro inesperado ao gerar resposta: %s", e)
-        return "Erro interno ao processar sua solicitação."
+    # Monta o prompt final
+    prompt = identidade + prompt_variacoes[tipo] + contexto_para_prompt
+    if history:
+        prompt += f"<br><strong>📜 Histórico anterior:</strong><br>{history}<br>"
+    prompt += f"<br><strong>🤔 Pergunta:</strong><br>{question}<br><br><strong>🧠 Resposta:</strong><br>"
+
+    # Chama o GPT
+    try:
+        r2 = client.chat.completions.create(
+            model="gpt-4",
+            messages=[{"role": "user", "content": prompt}]
+        )
+    except OpenAIError:
+        r2 = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[{"role": "user", "content": prompt}]
+        )
+    return r2.choices[0].message.content
