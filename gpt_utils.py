@@ -27,11 +27,12 @@ OUT_OF_SCOPE_MSG = (
 # LISTA DE LINKS - MÓDULO 2, AULA 2.5: PAPELARIA E BRINDES
 # -----------------------------
 LINKS_PAPELARIA_BRINDES = {
-    "Cartões de Visita Premium": "https://exemplo.com/cartoes-premium",
-    "Papelaria Personalizada": "https://exemplo.com/papelaria-personalizada",
-    "Brindes Corporativos": "https://exemplo.com/brindes-corporativos",
-    "Embalagens Personalizadas": "https://exemplo.com/embalagens",
-    "Kit Boas-vindas": "https://exemplo.com/kit-boas-vindas"
+    "Easy to Go Orlando": "https://easytogoorlando.com/",
+    "Mark & Graham": "https://www.markandgraham.com/",
+    "Elo 7": "https://www.elo7.com.br/",
+    "Dupla Ideia": "https://duplaideia.com/",
+    "Jo Malone (Aromas de Ambiente)": "https://www.jomalone.com.br",
+    "BidetKing (Privada Eletrônica)": "https://bidetking.com"
 }
 
 # -----------------------------
@@ -180,7 +181,10 @@ prompt_variacoes = {
     ),
     "papelaria_brindes": (
         "<strong>Objetivo:</strong> Fornecer as indicações de papelaria e brindes da aula 2.5, listando os links recomendados:<br>"
-        + "".join(f"➡ <a href=\"{url}\" target=\"_blank\">{name}</a><br>" for name, url in LINKS_PAPELARIA_BRINDES.items())
+        + "".join(
+            f"➡ <a href=\"{url}\" target=\"_blank\">{name}</a><br>"
+            for name, url in LINKS_PAPELARIA_BRINDES.items()
+        )
         + "<br>"
     )
 }
@@ -199,7 +203,6 @@ def generate_answer(
         return OUT_OF_SCOPE_MSG
 
     tipo = cls["type"]
-    # sem contexto para offline
     contexto_para_prompt = "" if tipo == "capitacao_sem_marketing_digital" else (
         f"<br><br><strong>📚 Contexto relevante:</strong><br>{context}<br>" if context.strip() else ""
     )
