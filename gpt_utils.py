@@ -45,7 +45,7 @@ except OpenAIError:
     COURSE_SUMMARY = ""
 
 # -----------------------------
-# LISTA DE PALAVRAS FORA DE ESCOPO
+# PALAVRAS-CHAVE FORA DE ESCOPO
 # -----------------------------
 OUT_OF_SCOPE_KEYWORDS = [
     "exercício", "exercicios", "costas", "coluna", "dor", "em casa"
@@ -69,17 +69,14 @@ TYPE_KEYWORDS = {
 # -----------------------------
 def classify_prompt(question: str) -> dict:
     lower_q = question.lower()
-
-    # 0) Detecção imediata de perguntas fora de escopo
+    # 1) Perguntas comuns fora de escopo
     if any(kw in lower_q for kw in OUT_OF_SCOPE_KEYWORDS):
         return {"scope": "OUT_OF_SCOPE", "type": "explicacao"}
-
-    # 1) Match rápido por palavras-chave de tipo
+    # 2) Match rápido por palavras-chave
     for tipo, keywords in TYPE_KEYWORDS.items():
         if any(k in lower_q for k in keywords):
             return {"scope": "IN_SCOPE", "type": tipo}
-
-    # 2) Fallback inteligente via GPT
+    # 3) Fallback via GPT
     payload = (
         "Você é um classificador inteligente. Com base no resumo e na pergunta abaixo, "
         "responda **apenas** um JSON com duas chaves:\n"
@@ -136,24 +133,23 @@ prompt_variacoes = {
     ),
     "correcao": (
         "<strong>Objetivo:</strong> Corrigir gentilmente qualquer confusão ou prática equivocada do aluno, "
-        "apontando a abordagem correta conforme o método High Ticket. Mostre por que o ajuste sugerido pode trazer melhores resultados, "
-        "especialmente em termos de posicionamento, fidelização ou faturamento.<br><br>"
+        "apontando a abordagem correta conforme o método High Ticket. Mostre por que o ajuste sugerido pode trazer melhores resultados."
     ),
     "capitacao_sem_marketing_digital": (
         "<strong>Objetivo:</strong> Mostrar uma **estratégia 100% offline** do método Consultório High Ticket para atrair pacientes "
         "de alto valor sem usar Instagram ou anúncios, passo a passo:<br>"
-        "➡ **Encantamento de pacientes atuais:** Envie um convite VIP impresso ou bilhete manuscrito;<br>"
-        "➡ **Parcerias com profissionais de saúde:** Conecte-se com médicos, fisioterapeutas, nutricionistas e psicólogos;<br>"
-        "➡ **Cartas personalizadas com proposta VIP:** Envie convites impressos destacando diferenciais;<br>"
-        "➡ **Manutenção via WhatsApp (sem automação):** Grave e envie mensagem de voz após a consulta;<br>"
-        "➡ **Construção de autoridade silenciosa:** Colete depoimentos reais e imprima folhetos;<br>"
-        "➡ **Fidelização e indicações espontâneas:** Implemente o programa “Indique um amigo VIP”;<br><br>"
+        "➡ **Encantamento de pacientes atuais:** Envie convite VIP impresso ou bilhete manuscrito;<br>"
+        "➡ **Parcerias com profissionais de saúde:** Conecte-se para mini-palestras;<br>"
+        "➡ **Cartas personalizadas:** Convites impressos destacando diferenciais;<br>"
+        "➡ **Manutenção via WhatsApp:** Mensagem de voz manual pós-consulta;<br>"
+        "➡ **Autoridade silenciosa:** Depoimentos em folhetos na recepção;<br>"
+        "➡ **Indicações espontâneas:** Programa “Indique um amigo VIP”.<br><br>"
         "Com essa sequência você <strong>dobra seu faturamento</strong> e conquista pacientes de alto valor sem depender de redes sociais ou anúncios."
     ),
     "precificacao": (
         "<strong>Objetivo:</strong> Explicar o conceito de precificação estratégica do Consultório High Ticket. "
         "Use bullets iniciando com verbo de ação, mantenha **Health Plan** em inglês, e destaque como dobrar faturamento, "
-        "fidelizar pacientes e priorizar o bem-estar do paciente.<br><br>"
+        "fidelizar pacientes e priorizar o bem-estar do paciente."
     ),
     "health_plan": (
         "<strong>Objetivo:</strong> Estruturar a apresentação de valor do **Health Plan** para demonstrar o retorno sobre o investimento. "
@@ -164,23 +160,16 @@ prompt_variacoes = {
 # -----------------------------
 # FUNÇÃO PRINCIPAL
 # -----------------------------
-def generate_answer(
-    question: str,
-    context: str = "",
-    history: str = None
-) -> str:
+def generate_answer(question: str, context: str = "", history: str = None) -> str:
     cls = classify_prompt(question)
     if cls["scope"] == "OUT_OF_SCOPE":
         return OUT_OF_SCOPE_MSG
 
     tipo = cls["type"]
-    if tipo == "capitacao_sem_marketing_digital":
-        contexto_para_prompt = ""
-    else:
-        contexto_para_prompt = (
-            f"<br><br><strong>📚 Contexto relevante:</strong><br>{context}<br>"
-            if context.strip() else ""
-        )
+    # não adicionar contexto para offline
+    contexto_para_prompt = "" if tipo == "capitacao_sem_marketing_digital" else (
+        f"<br><br><strong>📚 Contexto relevante:</strong><br>{context}<br>" if context.strip() else ""
+    )
 
     prompt = identidade + prompt_variacoes[tipo] + contexto_para_prompt
     if history:
