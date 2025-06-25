@@ -1,6 +1,7 @@
 import os
 import json
 from openai import OpenAI, OpenAIError
+from pypdf import PdfReader
 
 # -----------------------------
 # CONFIGURAÇÃO DE AMBIENTE
@@ -21,10 +22,28 @@ OUT_OF_SCOPE_MSG = (
 )
 
 # -----------------------------
-# CARREGA E RESUME TRANSCRIÇÕES (1× NO STARTUP)
+# CARREGA TRANSCRIÇÕES E PDF (1× NO STARTUP)
 # -----------------------------
-TRANSCRIPT_PATH = os.path.join(os.path.dirname(__file__), "transcricoes.txt")
-_raw = open(TRANSCRIPT_PATH, encoding="utf-8").read()
+BASE_DIR = os.path.dirname(__file__)
+
+# 1) texto das transcrições
+TRANSCRIPT_PATH = os.path.join(BASE_DIR, "transcricoes.txt")
+_raw_txt = open(TRANSCRIPT_PATH, encoding="utf-8").read()
+
+# 2) texto do PDF de Plano de Ação (1ª Semana)
+PDF_PATH = os.path.join(BASE_DIR, "PlanodeAcaoConsultorioHighTicket-1Semana (4)[1].pdf")
+_raw_pdf = ""
+try:
+    reader = PdfReader(PDF_PATH)
+    _raw_pdf = "\n\n".join(page.extract_text() or "" for page in reader.pages)
+except Exception:
+    # falha ao ler PDF: ignora
+    _raw_pdf = ""
+
+# combina tudo para resumo
+_combined = _raw_txt + "\n\n" + _raw_pdf
+
+# pede resumo ao GPT-4
 try:
     resp = client.chat.completions.create(
         model="gpt-4",
@@ -33,11 +52,11 @@ try:
                 "role": "system",
                 "content": (
                     "Você é um resumidor especialista em educação. "
-                    "Resuma em até 300 palavras o conteúdo do curso “Consultório High Ticket” "
-                    "para servir de base na classificação de escopo e tipo de prompt."
+                    "Resuma em até 300 palavras todo o conteúdo do curso “Consultório High Ticket”, "
+                    "incluindo o plano de ação da primeira semana, para servir de base na classificação de escopo e tipo de prompt."
                 )
             },
-            {"role": "user", "content": _raw}
+            {"role": "user", "content": _combined}
         ]
     )
     COURSE_SUMMARY = resp.choices[0].message.content
@@ -48,13 +67,14 @@ except OpenAIError:
 # MAPA DE KEYWORDS PARA TIPO DE PROMPT
 # -----------------------------
 TYPE_KEYWORDS = {
-    "revisao":                         ["revisão", "revisao", "revise", "resumir"],
-    "precificacao":                    ["precificação", "precificacao", "precificar", "preço", "valor", "faturamento"],
-    "health_plan":                     ["health plan", "valor do health plan", "retorno do investimento"],
-    "capitacao_sem_marketing_digital": ["offline", "sem usar instagram", "sem instagram", "sem anúncios", "sem anuncios"],
-    "aplicacao":                       ["como aplico", "aplicação", "aplico", "roteiro", "aplicação"],
-    "faq":                             ["quais", "dúvidas", "duvidas", "pergunta frequente"],
-    "explicacao":                      ["explique", "o que é", "defina", "conceito"]
+    "revisao":                        ["revisão", "revisao", "revise", "resumir"],
+    "precificacao":                   ["precificação", "precificacao", "precificar", "preço", "valor", "faturamento"],
+    "health_plan":                    ["health plan", "valor do health plan", "retorno do investimento"],
+    "capitacao_sem_marketing_digital":["offline", "sem usar instagram", "sem instagram", "sem anúncios", "sem anuncios"],
+    "aplicacao":                      ["como aplico", "aplicação", "aplico", "roteiro", "aplicação"],
+    "faq":                            ["quais", "dúvidas", "duvidas", "pergunta frequente"],
+    "explicacao":                     ["explique", "o que é", "defina", "conceito"],
+    "plano_de_acao":                  ["plano de ação", "primeira semana", "1ª semana"]
 }
 
 # -----------------------------
@@ -63,21 +83,21 @@ TYPE_KEYWORDS = {
 def classify_prompt(question: str) -> dict:
     lower_q = question.lower()
 
-    # 0) bloquear exercícios físicos como fora de escopo
+    # bloquear exercícios físicos
     if "exercício" in lower_q or "exercicios" in lower_q:
         return {"scope": "OUT_OF_SCOPE", "type": "explicacao"}
 
-    # 1) Match rápido via palavras-chave
+    # 1) match rápido por keyword
     for tipo, keywords in TYPE_KEYWORDS.items():
         if any(k in lower_q for k in keywords):
             return {"scope": "IN_SCOPE", "type": tipo}
 
-    # 2) Fallback via GPT caso não case
+    # 2) fallback via GPT
     payload = (
         "Você é um classificador inteligente. Com base no resumo e na pergunta abaixo, "
         "responda **apenas** um JSON com duas chaves:\n"
         "  • scope: 'IN_SCOPE' ou 'OUT_OF_SCOPE'\n"
-        "  • type: nome de um template (ex: 'explicacao', 'health_plan', 'precificacao', etc)\n\n"
+        "  • type: nome de um template (ex: 'explicacao', 'health_plan', etc)\n\n"
         f"Resumo do curso:\n{COURSE_SUMMARY}\n\n"
         f"Pergunta:\n{question}\n\n"
         "Exemplo de resposta válida:\n"
@@ -151,6 +171,11 @@ prompt_variacoes = {
     "health_plan": (
         "<strong>Objetivo:</strong> Estruturar a apresentação de valor do **Health Plan** para demonstrar o retorno sobre o investimento. "
         "Use passos sequenciais, inclua benefícios tangíveis e histórias de sucesso para emocionar o paciente.<br><br>"
+    ),
+    "plano_de_acao": (
+        "<strong>Objetivo:</strong> Auxiliar o aluno a completar o **Plano de Ação (1ª Semana)**, "
+        "abordando etapas como **Bloqueios com dinheiro**, **Autoconfiança**, **Nicho**, **Valor dos serviços**, "
+        "**Convênios vs Particulares**, **Ambiente do consultório** e **Ações de atração high ticket**.<br><br>"
     )
 }
 
@@ -163,15 +188,11 @@ def generate_answer(
     history: str = None,
     tipo_de_prompt: str = "explicacao"
 ) -> str:
-    # CLASSIFICAÇÃO
     cls = classify_prompt(question)
     if cls["scope"] == "OUT_OF_SCOPE":
         return OUT_OF_SCOPE_MSG
 
-    # Seleciona o template
     tipo = cls["type"]
-
-    # Contexto (se necessário)
     if tipo == "capitacao_sem_marketing_digital":
         contexto_para_prompt = ""
     else:
@@ -180,13 +201,11 @@ def generate_answer(
             if context.strip() else ""
         )
 
-    # Monta o prompt final
     prompt = identidade + prompt_variacoes[tipo] + contexto_para_prompt
     if history:
         prompt += f"<br><strong>📜 Histórico anterior:</strong><br>{history}<br>"
     prompt += f"<br><strong>🤔 Pergunta:</strong><br>{question}<br><br><strong>🧠 Resposta:</strong><br>"
 
-    # Chama o GPT
     try:
         r2 = client.chat.completions.create(
             model="gpt-4",
