@@ -22,15 +22,15 @@ OUT_OF_SCOPE_MSG = (
 )
 
 # -----------------------------
-# CARREGA TEXTOS (1× NO STARTUP)
+# CARREGA TRANSCRIÇÕES E PDFs (1× NO STARTUP)
 # -----------------------------
 BASE_DIR = os.path.dirname(__file__)
 
-# 1) transcrições
+# 1) texto das transcrições
 TRANSCRIPT_PATH = os.path.join(BASE_DIR, "transcricoes.txt")
 _raw_txt = open(TRANSCRIPT_PATH, encoding="utf-8").read()
 
-# 2) Plano de Ação 1ª Semana
+# 2) texto do Plano de Ação (1ª Semana)
 PDF1_PATH = os.path.join(BASE_DIR, "PlanodeAcaoConsultorioHighTicket-1Semana (4)[1].pdf")
 _raw_pdf1 = ""
 try:
@@ -39,7 +39,7 @@ try:
 except Exception:
     _raw_pdf1 = ""
 
-# 3) Guia do Curso
+# 3) texto do Guia do Curso
 PDF2_PATH = os.path.join(BASE_DIR, "GuiadoCursoConsultorioHighTicket.-CHT21[1].pdf")
 _raw_pdf2 = ""
 try:
@@ -48,10 +48,10 @@ try:
 except Exception:
     _raw_pdf2 = ""
 
-# combina todos os conteúdos para resumo
+# Combina tudo para resumo
 _combined = _raw_txt + "\n\n" + _raw_pdf1 + "\n\n" + _raw_pdf2
 
-# pede resumo ao GPT-4 para base de classificação
+# Pede resumo ao GPT-4
 try:
     resp = client.chat.completions.create(
         model="gpt-4",
@@ -61,7 +61,7 @@ try:
                 "content": (
                     "Você é um resumidor especialista em educação. "
                     "Resuma em até 300 palavras todo o conteúdo do curso “Consultório High Ticket”, "
-                    "incluindo o plano de ação da primeira semana e o guia do curso, "
+                    "incluindo o plano de ação da primeira semana e o Guia do Curso, "
                     "para servir de base na classificação de escopo e tipo de prompt."
                 )
             },
@@ -83,7 +83,8 @@ TYPE_KEYWORDS = {
     "aplicacao":                      ["como aplico", "aplicação", "aplico", "roteiro", "aplicação"],
     "faq":                            ["quais", "dúvidas", "duvidas", "pergunta frequente"],
     "explicacao":                     ["explique", "o que é", "defina", "conceito"],
-    "plano_de_acao":                  ["plano de ação", "primeira semana", "1ª semana"]
+    "plano_de_acao":                  ["plano de ação", "primeira semana", "1ª semana"],
+    "guia":                           ["guia do curso", "passo a passo", "CHT21"]
 }
 
 # -----------------------------
@@ -106,11 +107,11 @@ def classify_prompt(question: str) -> dict:
         "Você é um classificador inteligente. Com base no resumo e na pergunta abaixo, "
         "responda **apenas** um JSON com duas chaves:\n"
         "  • scope: 'IN_SCOPE' ou 'OUT_OF_SCOPE'\n"
-        "  • type: nome de um template (ex: 'explicacao', 'health_plan', 'plano_de_acao', etc)\n\n"
+        "  • type: nome de um template (ex: 'explicacao', 'health_plan', 'plano_de_acao', 'guia', etc)\n\n"
         f"Resumo do curso:\n{COURSE_SUMMARY}\n\n"
         f"Pergunta:\n{question}\n\n"
         "Exemplo de resposta válida:\n"
-        '{ "scope": "IN_SCOPE", "type": "health_plan" }'
+        '{ "scope": "IN_SCOPE", "type": "guia" }'
     )
     try:
         r = client.chat.completions.create(
@@ -185,7 +186,12 @@ prompt_variacoes = {
         "<strong>Objetivo:</strong> Auxiliar o aluno a completar o **Plano de Ação (1ª Semana)**, "
         "abordando etapas como **Bloqueios com dinheiro**, **Autoconfiança**, **Nicho**, **Valor dos serviços**, "
         "**Convênios vs Particulares**, **Ambiente do consultório** e **Ações de atração high ticket**.<br><br>"
-    )
+    ),
+    "guia": (
+        "<strong>Objetivo:</strong> Explorar o **Guia do Curso Consultório High Ticket**, "
+        "apresentando o passo a passo sugerido no documento. Use uma estrutura sequencial clara, "
+        "destacando cada etapa conforme o PDF de referência.<br><br>"
+    ),
 }
 
 # -----------------------------
@@ -202,8 +208,6 @@ def generate_answer(
         return OUT_OF_SCOPE_MSG
 
     tipo = cls["type"]
-
-    # contexto extra (se houver)
     if tipo == "capitacao_sem_marketing_digital":
         contexto_para_prompt = ""
     else:
@@ -212,13 +216,11 @@ def generate_answer(
             if context.strip() else ""
         )
 
-    # monta prompt
     prompt = identidade + prompt_variacoes[tipo] + contexto_para_prompt
     if history:
         prompt += f"<br><strong>📜 Histórico anterior:</strong><br>{history}<br>"
     prompt += f"<br><strong>🤔 Pergunta:</strong><br>{question}<br><br><strong>🧠 Resposta:</strong><br>"
 
-    # chama OpenAI
     try:
         r2 = client.chat.completions.create(
             model="gpt-4",
