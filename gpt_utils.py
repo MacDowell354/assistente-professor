@@ -2,16 +2,15 @@ import os
 import json
 import logging
 from openai import OpenAI, OpenAIError
-from openai.error import AuthenticationError, RateLimitError
 
 # -----------------------------
-# CONFIGURAÇÃO DE LOG
+# LOGGING
 # -----------------------------
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # -----------------------------
-# CONFIGURAÇÃO DE AMBIENTE
+# API KEY
 # -----------------------------
 api_key = os.getenv("OPENAI_API_KEY")
 if not api_key:
@@ -19,7 +18,7 @@ if not api_key:
 client = OpenAI(api_key=api_key)
 
 # -----------------------------
-# MENSAGEM PADRÃO PARA FORA DE ESCOPO
+# MENSAGEM FORA DE ESCOPO
 # -----------------------------
 OUT_OF_SCOPE_MSG = (
     "Essa pergunta é muito boa, mas no momento ela está <strong>fora do conteúdo abordado nas aulas do curso "
@@ -29,20 +28,7 @@ OUT_OF_SCOPE_MSG = (
 )
 
 # -----------------------------
-# MAPEAMENTO DE KEYWORDS
-# -----------------------------
-TYPE_KEYWORDS = {
-    "revisao":                        ["revisão", "revisao", "revise", "resumir"],
-    "precificacao":                   ["precificação", "precificacao", "precificar", "preço", "valor", "faturamento"],
-    "health_plan":                    ["health plan", "valor do health plan", "retorno do investimento"],
-    "capitacao_sem_marketing_digital":["offline", "sem usar instagram", "sem instagram", "sem anúncios", "sem anuncios"],
-    "aplicacao":                      ["como aplico", "aplicação", "aplico", "roteiro"],
-    "faq":                            ["quais", "dúvidas", "duvidas", "pergunta frequente"],
-    "explicacao":                     ["explique", "o que é", "defina", "conceito"]
-}
-
-# -----------------------------
-# CARREGA E RESUME TRANSCRIÇÕES (1× NO STARTUP)
+# RESUME TRANSCRIÇÕES (startup)
 # -----------------------------
 TRANSCRIPT_PATH = os.path.join(os.path.dirname(__file__), "transcricoes.txt")
 _raw = open(TRANSCRIPT_PATH, encoding="utf-8").read()
@@ -65,7 +51,20 @@ except Exception as e:
     logger.warning("Falha ao resumir transcricoes: %s", e)
 
 # -----------------------------
-# IDENTIDADE E TEMPLATES
+# PALAVRAS-CHAVE POR TIPO
+# -----------------------------
+TYPE_KEYWORDS = {
+    "revisao":                        ["revisão", "revisao", "revise", "resumir"],
+    "precificacao":                   ["precificação", "precificacao", "precificar", "preço", "valor", "faturamento"],
+    "health_plan":                    ["health plan", "valor do health plan", "retorno do investimento"],
+    "capitacao_sem_marketing_digital":["offline", "sem usar instagram", "sem instagram", "sem anúncios", "sem anuncios"],
+    "aplicacao":                      ["como aplico", "aplicação", "aplico", "roteiro"],
+    "faq":                            ["quais", "dúvidas", "duvidas", "pergunta frequente"],
+    "explicacao":                     ["explique", "o que é", "defina", "conceito"]
+}
+
+# -----------------------------
+# TEMPLATES E IDENTIDADE
 # -----------------------------
 identidade = (
     "<strong>Você é Nanda Mac.ia</strong>, a IA oficial da Nanda Mac, treinada com o conteúdo do curso "
@@ -74,58 +73,33 @@ identidade = (
 
 prompt_variacoes = {
     "explicacao": (
-        "<strong>Objetivo:</strong> Explicar com base no conteúdo das aulas. Use uma linguagem clara e didática, "
-        "com tópicos ou passos. Evite respostas genéricas. Mostre o conteúdo como se fosse uma aula de **Posicionamento High Ticket**.<br><br>"
+        "<strong>Objetivo:</strong> Explicar com base no conteúdo das aulas…<br><br>"
     ),
     "faq": (
-        "<strong>Objetivo:</strong> Responder uma dúvida frequente entre os alunos do curso. "
-        "Use exemplos práticos e aplique o método passo a passo."
+        "<strong>Objetivo:</strong> Responder dúvida frequente…"
     ),
     "revisao": (
-        "<strong>Objetivo:</strong> Fazer uma revisão rápida dos pontos centrais do método de precificação estratégica. "
-        "Use exatamente seis bullets, cada um iniciando com verbo de ação e título em negrito: "
-        "**Identificar Pacientes Potenciais**, **Determinar Valores**, **Elaborar o Health Plan**, "
-        "**Preparar a Apresentação**, **Comunicar o Valor** e **Monitorar Resultados**. "
-        "Após o título de cada bullet, adicione uma breve explicação de uma linha. "
-        "E **certifique-se de mencionar o benefício de dobrar o faturamento e fidelizar pacientes** em pelo menos dois desses bullets.<br><br>"
+        "<strong>Objetivo:</strong> Fazer revisão rápida do método de precificação estratégica em 6 bullets…<br><br>"
     ),
     "aplicacao": (
-        "<strong>Objetivo:</strong> Aplicar o roteiro de atendimento High Ticket na primeira consulta. "
-        "Use exatamente seis bullets, cada um iniciando com verbo de ação e estes títulos em negrito:<br>"
-        "➡ **Abertura da Consulta:** Garanta acolhimento profissional e empatia.<br>"
-        "➡ **Mapear Expectativas:** Pergunte objetivos e preocupações do paciente.<br>"
-        "➡ **Elaborar Health Plan:** Explique o plano personalizado e investimento.<br>"
-        "➡ **Validar Compromisso:** Confirme entendimento e mencione dobrar faturamento.<br>"
-        "➡ **Usar Two-Options:** Ofereça duas opções de pacote.<br>"
-        "➡ **Agendar Follow-up:** Marque retorno para fidelizar.<br><br>"
+        "<strong>Objetivo:</strong> Aplicar roteiro de atendimento High Ticket na primeira consulta (6 bullets)…<br><br>"
     ),
     "correcao": (
-        "<strong>Objetivo:</strong> Corrigir gentilmente qualquer confusão ou prática equivocada, "
-        "apontando a abordagem correta conforme o método High Ticket.<br><br>"
+        "<strong>Objetivo:</strong> Corrigir gentilmente confusões…<br><br>"
     ),
     "capitacao_sem_marketing_digital": (
-        "<strong>Objetivo:</strong> Mostrar uma **estratégia 100% offline** para atrair pacientes "
-        "de alto valor sem usar Instagram ou anúncios:<br>"
-        "➡ Envie convites VIP impressos;<br>"
-        "➡ Faça mini-palestras em parcerias;<br>"
-        "➡ Envie cartas personalizadas;<br>"
-        "➡ Mensagens de voz via WhatsApp;<br>"
-        "➡ Depoimentos impressos;<br>"
-        "➡ Programa “Indique um amigo VIP”.<br><br>"
-        "Isso <strong>dobra seu faturamento</strong> sem redes sociais."
+        "<strong>Objetivo:</strong> Estratégia 100% offline para atrair pacientes de alto valor sem Instagram…<br><br>"
     ),
     "precificacao": (
-        "<strong>Objetivo:</strong> Explicar o conceito de precificação estratégica. "
-        "Use bullets com **Health Plan** em inglês, mencionando dobrar faturamento e fidelizar.<br><br>"
+        "<strong>Objetivo:</strong> Explicar precificação estratégica, mantendo **Health Plan** em inglês…<br><br>"
     ),
     "health_plan": (
-        "<strong>Objetivo:</strong> Estruturar a apresentação de valor do **Health Plan**. "
-        "Use passos sequenciais, benefícios tangíveis e histórias de sucesso.<br><br>"
+        "<strong>Objetivo:</strong> Estruturar apresentação de valor do **Health Plan**, incluindo benefícios tangíveis e histórias de sucesso…<br><br>"
     )
 }
 
 # -----------------------------
-# CLASSIFICADOR DE ESCOPO + TIPO
+# CLASSIFICADOR
 # -----------------------------
 def classify_prompt(question: str) -> dict:
     lower_q = question.lower()
@@ -138,7 +112,7 @@ def classify_prompt(question: str) -> dict:
         "Você é um classificador inteligente. Com base no resumo e na pergunta abaixo, "
         "responda **apenas** um JSON com duas chaves:\n"
         "  • scope: 'IN_SCOPE' ou 'OUT_OF_SCOPE'\n"
-        "  • type: nome de um template (ex: 'explicacao', 'health_plan', ...)\n\n"
+        "  • type: nome de um template (ex: 'explicacao', 'health_plan', …)\n\n"
         f"Resumo do curso:\n{COURSE_SUMMARY}\n\n"
         f"Pergunta:\n{question}\n\n"
         "Exemplo de resposta:\n"
@@ -155,7 +129,7 @@ def classify_prompt(question: str) -> dict:
         return {"scope": "OUT_OF_SCOPE", "type": "explicacao"}
 
 # -----------------------------
-# GERA A RESPOSTA FINAL
+# GERAÇÃO DE RESPOSTA
 # -----------------------------
 def generate_answer(
     question: str,
@@ -169,10 +143,16 @@ def generate_answer(
     tipo = cls["type"]
     template = prompt_variacoes.get(tipo, prompt_variacoes["explicacao"])
 
-    ctx = f"<br><br><strong>📚 Contexto relevante:</strong><br>{context}<br>" if context.strip() and tipo != "capitacao_sem_marketing_digital" else ""
-    hist = f"<br><strong>📜 Histórico anterior:</strong><br>{history}<br>" if history else ""
+    ctx = (
+        f"<br><br><strong>📚 Contexto relevante:</strong><br>{context}<br>"
+        if context.strip() and tipo != "capitacao_sem_marketing_digital" else ""
+    )
+    hist = (
+        f"<br><strong>📜 Histórico anterior:</strong><br>{history}<br>"
+        if history else ""
+    )
 
-    prompt = (
+    full_prompt = (
         identidade
         + template
         + ctx
@@ -183,17 +163,18 @@ def generate_answer(
     try:
         resp = client.chat.completions.create(
             model="gpt-4",
-            messages=[{"role": "user", "content": prompt}]
+            messages=[{"role": "user", "content": full_prompt}]
         )
-    except AuthenticationError:
-        return "Erro de autenticação com o serviço de IA."
-    except RateLimitError:
-        return "Limite de requisições atingido. Tente novamente mais tarde."
+        return resp.choices[0].message.content.strip()
+
     except OpenAIError as e:
-        logger.error("Erro OpenAI: %s", e)
+        msg = str(e).lower()
+        if "rate limit" in msg:
+            return "Limite de requisições atingido. Tente novamente mais tarde."
+        if "invalid api key" in msg or "authentication" in msg:
+            return "Erro de autenticação com o serviço de IA."
+        logger.error("OpenAIError: %s", e)
         return "Erro ao obter resposta da IA."
     except Exception as e:
-        logger.exception("Erro inesperado: %s", e)
+        logger.exception("Erro inesperado ao gerar resposta: %s", e)
         return "Erro interno ao processar sua solicitação."
-
-    return resp.choices[0].message.content.strip()
