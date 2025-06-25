@@ -1,7 +1,8 @@
 import os
 import json
 import logging
-from openai import OpenAI, OpenAIError, AuthenticationError, RateLimitError, InvalidRequestError
+from openai import OpenAI, OpenAIError
+from openai.error import AuthenticationError, RateLimitError
 
 # -----------------------------
 # CONFIGURAÇÃO DE LOG
@@ -128,20 +129,19 @@ prompt_variacoes = {
 # -----------------------------
 def classify_prompt(question: str) -> dict:
     lower_q = question.lower()
-    # 1) Match rápido via keywords
     for tipo, keys in TYPE_KEYWORDS.items():
         if any(k in lower_q for k in keys):
             return {"scope": "IN_SCOPE", "type": tipo}
 
-    # 2) Fallback via GPT
+    # fallback via GPT
     payload = (
         "Você é um classificador inteligente. Com base no resumo e na pergunta abaixo, "
         "responda **apenas** um JSON com duas chaves:\n"
         "  • scope: 'IN_SCOPE' ou 'OUT_OF_SCOPE'\n"
-        "  • type: nome de um template (ex: 'explicacao', 'health_plan', 'precificacao', ...)\n\n"
+        "  • type: nome de um template (ex: 'explicacao', 'health_plan', ...)\n\n"
         f"Resumo do curso:\n{COURSE_SUMMARY}\n\n"
         f"Pergunta:\n{question}\n\n"
-        "Exemplo de resposta válida:\n"
+        "Exemplo de resposta:\n"
         '{ "scope": "IN_SCOPE", "type": "health_plan" }'
     )
     try:
@@ -151,7 +151,7 @@ def classify_prompt(question: str) -> dict:
         )
         return json.loads(r.choices[0].message.content)
     except Exception as e:
-        logger.warning("Fallback classifier falhou: %s", e)
+        logger.warning("Classifier fallback falhou: %s", e)
         return {"scope": "OUT_OF_SCOPE", "type": "explicacao"}
 
 # -----------------------------
@@ -160,9 +160,8 @@ def classify_prompt(question: str) -> dict:
 def generate_answer(
     question: str,
     context: str = "",
-    history: str = None
+    history: str | None = None
 ) -> str:
-    # 1) Classificar
     cls = classify_prompt(question)
     if cls["scope"] == "OUT_OF_SCOPE":
         return OUT_OF_SCOPE_MSG
@@ -170,52 +169,31 @@ def generate_answer(
     tipo = cls["type"]
     template = prompt_variacoes.get(tipo, prompt_variacoes["explicacao"])
 
-    # 2) Montar contexto adicional
-    ctx = ""
-    if context.strip() and tipo != "capitacao_sem_marketing_digital":
-        ctx = f"<br><br><strong>📚 Contexto relevante:</strong><br>{context}<br>"
+    ctx = f"<br><br><strong>📚 Contexto relevante:</strong><br>{context}<br>" if context.strip() and tipo != "capitacao_sem_marketing_digital" else ""
+    hist = f"<br><strong>📜 Histórico anterior:</strong><br>{history}<br>" if history else ""
 
-    # 3) Histórico (se houver)
-    hist = ""
-    if history:
-        hist = f"<br><strong>📜 Histórico anterior:</strong><br>{history}<br>"
-
-    # 4) Montar prompt completo
     prompt = (
         identidade
         + template
         + ctx
-        + f"<br><strong>🤔 Pergunta:</strong><br>{question}<br><br>"
-        + "<strong>🧠 Resposta:</strong><br>"
-    ) + hist
+        + f"<br><strong>🤔 Pergunta:</strong><br>{question}<br><br><strong>🧠 Resposta:</strong><br>"
+        + hist
+    )
 
-    # 5) Chamar OpenAI com tratamento de erros
     try:
         resp = client.chat.completions.create(
             model="gpt-4",
             messages=[{"role": "user", "content": prompt}]
         )
-    except AuthenticationError as e:
-        logger.error("AuthError: %s", e)
+    except AuthenticationError:
         return "Erro de autenticação com o serviço de IA."
-    except RateLimitError as e:
-        logger.error("RateLimitError: %s", e)
+    except RateLimitError:
         return "Limite de requisições atingido. Tente novamente mais tarde."
-    except InvalidRequestError as e:
-        logger.error("InvalidRequestError: %s", e)
-        return "Erro na requisição ao modelo de IA."
     except OpenAIError as e:
-        logger.error("OpenAIError: %s", e)
+        logger.error("Erro OpenAI: %s", e)
         return "Erro ao obter resposta da IA."
     except Exception as e:
-        logger.exception("Erro inesperado na geração de resposta: %s", e)
+        logger.exception("Erro inesperado: %s", e)
         return "Erro interno ao processar sua solicitação."
 
-    # 6) Extrair e retornar o conteúdo
-    try:
-        answer = resp.choices[0].message.content.strip()
-    except Exception as e:
-        logger.error("Falha ao extrair resposta: %s", e)
-        return "Desculpe, não consegui gerar uma resposta completa."
-
-    return answer
+    return resp.choices[0].message.content.strip()
