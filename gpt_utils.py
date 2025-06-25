@@ -1,3 +1,4 @@
+```python
 import os
 import json
 from openai import OpenAI, OpenAIError
@@ -46,19 +47,30 @@ except OpenAIError:
     COURSE_SUMMARY = ""
 
 # -----------------------------
+# MAPA DE KEYWORDS PARA TIPO DE PROMPT
+# -----------------------------
+TYPE_KEYWORDS = {
+    "revisao":                        ["revisão", "revisao", "revise", "resumir"],
+    "precificacao":                   ["precificação", "precificacao", "precificar", "preço", "valor", "faturamento"],
+    "health_plan":                    ["health plan", "valor do health plan", "retorno do investimento"],
+    "capitacao_sem_marketing_digital": ["offline", "sem usar instagram", "sem instagram", "sem anúncios", "sem anuncios"],
+    "aplicacao":                      ["como aplico", "aplicação", "aplico", "roteiro", "aplicação"],
+    "faq":                            ["quais", "dúvidas", "duvidas", "pergunta frequente"],
+    "explicacao":                     ["explique", "o que é", "defina", "conceito"]
+}
+
+# -----------------------------
 # CLASSIFICADOR DE ESCOPO + TIPO
 # -----------------------------
 def classify_prompt(question: str) -> dict:
-    """
-    Retorna um dict:
-      - scope: 'IN_SCOPE' ou 'OUT_OF_SCOPE'
-      - type: nome exato de uma chave em prompt_variacoes (ou 'explicacao')
-    """
-    # override manual para garantir revisão
     lower_q = question.lower()
-    if "revisão" in lower_q or "revisao" in lower_q:
-        return {"scope": "IN_SCOPE", "type": "revisao"}
 
+    # 1) Quick match via TYPE_KEYWORDS
+    for tipo, keywords in TYPE_KEYWORDS.items():
+        if any(k in lower_q for k in keywords):
+            return {"scope": "IN_SCOPE", "type": tipo}
+
+    # 2) Fallback inteligente via GPT
     payload = (
         "Você é um classificador inteligente. Com base no resumo e na pergunta abaixo, "
         "responda **apenas** um JSON com duas chaves:\n"
@@ -76,7 +88,6 @@ def classify_prompt(question: str) -> dict:
         )
         return json.loads(r.choices[0].message.content)
     except (OpenAIError, json.JSONDecodeError):
-        # se algo falhar, considera fora de escopo
         return {"scope": "OUT_OF_SCOPE", "type": "explicacao"}
 
 # -----------------------------
@@ -150,14 +161,14 @@ def generate_answer(
     history: str = None,
     tipo_de_prompt: str = "explicacao"
 ) -> str:
-    # CLASSIFICAÇÃO ÚNICA
+    # CLASSIFICAÇÃO
     cls = classify_prompt(question)
     if cls["scope"] == "OUT_OF_SCOPE":
         return OUT_OF_SCOPE_MSG
 
-    tipo_de_prompt = cls.get("type", "explicacao")
+    tipo_de_prompt = cls["type"]
 
-    # CONTEXTO (se precisar)
+    # CONTEXTO
     if tipo_de_prompt == "capitacao_sem_marketing_digital":
         contexto_para_prompt = ""
     else:
@@ -167,7 +178,7 @@ def generate_answer(
         )
 
     # MONTAGEM FINAL
-    prompt = identidade + prompt_variacoes.get(tipo_de_prompt, prompt_variacoes["explicacao"]) + contexto_para_prompt
+    prompt = identidade + prompt_variacoes[tipo_de_prompt] + contexto_para_prompt
     if history:
         prompt += f"<br><strong>📜 Histórico anterior:</strong><br>{history}<br>"
     prompt += f"<br><strong>🤔 Pergunta:</strong><br>{question}<br><br><strong>🧠 Resposta:</strong><br>"
@@ -184,3 +195,4 @@ def generate_answer(
             messages=[{"role": "user", "content": prompt}]
         )
     return r2.choices[0].message.content
+```
