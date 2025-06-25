@@ -84,7 +84,7 @@ TYPE_KEYWORDS = {
     "faq":                            ["quais", "dúvidas", "duvidas", "pergunta frequente"],
     "explicacao":                     ["explique", "o que é", "defina", "conceito"],
     "plano_de_acao":                  ["plano de ação", "primeira semana", "1ª semana"],
-    "guia":                           ["guia do curso", "passo a passo", "CHT21"]
+    "guia":                           ["guia do curso", "passo a passo", "cht21"]
 }
 
 # -----------------------------
@@ -184,7 +184,7 @@ prompt_variacoes = {
     ),
     "plano_de_acao": (
         "<strong>Objetivo:</strong> Auxiliar o aluno a completar o **Plano de Ação (1ª Semana)**, "
-        "abordando etapas como **Bloqueios com dinheiro**, **Autoconfiança**, **Nicho**, **Valor dos serviços**, "
+        "abordando etapas como **Bloqueios com dinheiro**, **Autoconfiança**, **Nicho**, **Val                                                or dos serviços**, "
         "**Convênios vs Particulares**, **Ambiente do consultório** e **Ações de atração high ticket**.<br><br>"
     ),
     "guia": (
