@@ -48,13 +48,13 @@ except OpenAIError:
 # MAPA DE KEYWORDS PARA TIPO DE PROMPT
 # -----------------------------
 TYPE_KEYWORDS = {
-    "revisao":                        ["revisão", "revisao", "revise", "resumir"],
-    "precificacao":                   ["precificação", "precificacao", "precificar", "preço", "valor", "faturamento"],
-    "health_plan":                    ["health plan", "valor do health plan", "retorno do investimento"],
-    "capitacao_sem_marketing_digital":["offline", "sem usar instagram", "sem instagram", "sem anúncios", "sem anuncios"],
-    "aplicacao":                      ["como aplico", "aplicação", "aplico", "roteiro", "aplicação"],
-    "faq":                            ["quais", "dúvidas", "duvidas", "pergunta frequente"],
-    "explicacao":                     ["explique", "o que é", "defina", "conceito"]
+    "revisao":                         ["revisão", "revisao", "revise", "resumir"],
+    "precificacao":                    ["precificação", "precificacao", "precificar", "preço", "valor", "faturamento"],
+    "health_plan":                     ["health plan", "valor do health plan", "retorno do investimento"],
+    "capitacao_sem_marketing_digital": ["offline", "sem usar instagram", "sem instagram", "sem anúncios", "sem anuncios"],
+    "aplicacao":                       ["como aplico", "aplicação", "aplico", "roteiro", "aplicação"],
+    "faq":                             ["quais", "dúvidas", "duvidas", "pergunta frequente"],
+    "explicacao":                      ["explique", "o que é", "defina", "conceito"]
 }
 
 # -----------------------------
@@ -63,12 +63,16 @@ TYPE_KEYWORDS = {
 def classify_prompt(question: str) -> dict:
     lower_q = question.lower()
 
-    # 1) Match rápido por palavras-chave
+    # 0) bloquear exercícios físicos como fora de escopo
+    if "exercício" in lower_q or "exercicios" in lower_q:
+        return {"scope": "OUT_OF_SCOPE", "type": "explicacao"}
+
+    # 1) Match rápido via palavras-chave
     for tipo, keywords in TYPE_KEYWORDS.items():
         if any(k in lower_q for k in keywords):
             return {"scope": "IN_SCOPE", "type": tipo}
 
-    # 2) Fallback inteligente via GPT
+    # 2) Fallback via GPT caso não case
     payload = (
         "Você é um classificador inteligente. Com base no resumo e na pergunta abaixo, "
         "responda **apenas** um JSON com duas chaves:\n"
@@ -164,10 +168,10 @@ def generate_answer(
     if cls["scope"] == "OUT_OF_SCOPE":
         return OUT_OF_SCOPE_MSG
 
-    #Seleciona o template
+    # Seleciona o template
     tipo = cls["type"]
 
-    # CONTEXTO (se necessário)
+    # Contexto (se necessário)
     if tipo == "capitacao_sem_marketing_digital":
         contexto_para_prompt = ""
     else:
