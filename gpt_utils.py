@@ -15,41 +15,52 @@ client = OpenAI(api_key=api_key)
 # MENSAGEM PADRÃO PARA FORA DE ESCOPO
 # -----------------------------
 OUT_OF_SCOPE_MSG = (
-    "Essa pergunta é muito boa, mas no momento ela está <strong>fora do conteúdo abordado nas aulas do curso "
-    "Consultório High Ticket</strong>. Isso pode indicar uma oportunidade de melhoria do nosso material! 😊<br><br>"
-    "Vamos sinalizar esse tema para a equipe pedagógica avaliar a inclusão em versões futuras do curso. "
-    "Enquanto isso, recomendamos focar nos ensinamentos já disponíveis para ter os melhores resultados possíveis no consultório."
+    "Essa pergunta é muito boa, mas no momento ela está <strong>fora do conteúdo abordado "
+    "nas aulas do curso Consultório High Ticket</strong>. Isso pode indicar uma oportunidade "
+    "de melhoria do nosso material! 😊<br><br>"
+    "Vamos sinalizar esse tema para a equipe pedagógica avaliar a inclusão em versões futuras "
+    "do curso. Enquanto isso, recomendamos focar nos ensinamentos já disponíveis para ter os melhores "
+    "resultados possíveis no consultório."
 )
+
+# -----------------------------
+# LISTA DE LINKS - MÓDULO 2, AULA 2.5: PAPELARIA E BRINDES
+# -----------------------------
+LINKS_PAPELARIA_BRINDES = {
+    "Cartões de Visita Premium": "https://exemplo.com/cartoes-premium",
+    "Papelaria Personalizada": "https://exemplo.com/papelaria-personalizada",
+    "Brindes Corporativos": "https://exemplo.com/brindes-corporativos",
+    "Embalagens Personalizadas": "https://exemplo.com/embalagens",
+    "Kit Boas-vindas": "https://exemplo.com/kit-boas-vindas"
+}
 
 # -----------------------------
 # CARREGA TRANSCRIÇÕES E PDFs (1× NO STARTUP)
 # -----------------------------
 BASE_DIR = os.path.dirname(__file__)
 
-# 1) texto das transcrições
-TRANSCRIPT_PATH = os.path.join(BASE_DIR, "transcricoes.txt")
-_raw_txt = open(TRANSCRIPT_PATH, encoding="utf-8").read()
+# 1) transcrições
+with open(os.path.join(BASE_DIR, "transcricoes.txt"), encoding="utf-8") as f:
+    _raw_txt = f.read()
 
-# 2) texto do Plano de Ação (1ª Semana)
-PDF1_PATH = os.path.join(BASE_DIR, "PlanodeAcaoConsultorioHighTicket-1Semana (4)[1].pdf")
+# 2) Plano de Ação (1ª Semana)
 _raw_pdf1 = ""
 try:
-    reader1 = PdfReader(PDF1_PATH)
-    _raw_pdf1 = "\n\n".join(page.extract_text() or "" for page in reader1.pages)
+    reader1 = PdfReader(os.path.join(BASE_DIR, "PlanodeAcaoConsultorioHighTicket-1Semana (4)[1].pdf"))
+    _raw_pdf1 = "\n\n".join(p.extract_text() or "" for p in reader1.pages)
 except Exception:
     _raw_pdf1 = ""
 
-# 3) texto do Guia do Curso
-PDF2_PATH = os.path.join(BASE_DIR, "GuiadoCursoConsultorioHighTicket.-CHT21[1].pdf")
+# 3) Guia do Curso
 _raw_pdf2 = ""
 try:
-    reader2 = PdfReader(PDF2_PATH)
-    _raw_pdf2 = "\n\n".join(page.extract_text() or "" for page in reader2.pages)
+    reader2 = PdfReader(os.path.join(BASE_DIR, "GuiadoCursoConsultorioHighTicket.-CHT21[1].pdf"))
+    _raw_pdf2 = "\n\n".join(p.extract_text() or "" for p in reader2.pages)
 except Exception:
     _raw_pdf2 = ""
 
 # Combina tudo para resumo
-_combined = _raw_txt + "\n\n" + _raw_pdf1 + "\n\n" + _raw_pdf2
+_combined = "\n\n".join([_raw_txt, _raw_pdf1, _raw_pdf2])
 
 # Pede resumo ao GPT-4
 try:
@@ -59,9 +70,8 @@ try:
             {
                 "role": "system",
                 "content": (
-                    "Você é um resumidor especialista em educação. "
-                    "Resuma em até 300 palavras todo o conteúdo do curso “Consultório High Ticket”, "
-                    "incluindo o plano de ação da primeira semana e o Guia do Curso, "
+                    "Você é um resumidor especialista em educação. Resuma em até 300 palavras o conteúdo do curso "
+                    "“Consultório High Ticket”, incluindo o plano de ação da primeira semana e o Guia do Curso, "
                     "para servir de base na classificação de escopo e tipo de prompt."
                 )
             },
@@ -80,11 +90,12 @@ TYPE_KEYWORDS = {
     "precificacao":                   ["precificação", "precificacao", "precificar", "preço", "valor", "faturamento"],
     "health_plan":                    ["health plan", "valor do health plan", "retorno do investimento"],
     "capitacao_sem_marketing_digital":["offline", "sem usar instagram", "sem instagram", "sem anúncios", "sem anuncios"],
-    "aplicacao":                      ["como aplico", "aplicação", "aplico", "roteiro", "aplicação"],
+    "aplicacao":                      ["como aplico", "aplicação", "aplico", "roteiro"],
     "faq":                            ["quais", "dúvidas", "duvidas", "pergunta frequente"],
     "explicacao":                     ["explique", "o que é", "defina", "conceito"],
     "plano_de_acao":                  ["plano de ação", "primeira semana", "1ª semana"],
-    "guia":                           ["guia do curso", "passo a passo", "cht21"]
+    "guia":                           ["guia do curso", "passo a passo", "cht21"],
+    "papelaria_brindes":              ["papelaria", "brindes", "aula 2.5", "links"]
 }
 
 # -----------------------------
@@ -93,13 +104,13 @@ TYPE_KEYWORDS = {
 def classify_prompt(question: str) -> dict:
     lower_q = question.lower()
 
-    # bloquear exercícios físicos
+    # bloqueia exercícios físicos
     if "exercício" in lower_q or "exercicios" in lower_q:
         return {"scope": "OUT_OF_SCOPE", "type": "explicacao"}
 
     # 1) match rápido por keyword
-    for tipo, keywords in TYPE_KEYWORDS.items():
-        if any(k in lower_q for k in keywords):
+    for tipo, kws in TYPE_KEYWORDS.items():
+        if any(k in lower_q for k in kws):
             return {"scope": "IN_SCOPE", "type": tipo}
 
     # 2) fallback via GPT
@@ -107,11 +118,11 @@ def classify_prompt(question: str) -> dict:
         "Você é um classificador inteligente. Com base no resumo e na pergunta abaixo, "
         "responda **apenas** um JSON com duas chaves:\n"
         "  • scope: 'IN_SCOPE' ou 'OUT_OF_SCOPE'\n"
-        "  • type: nome de um template (ex: 'explicacao', 'health_plan', 'plano_de_acao', 'guia', etc)\n\n"
+        "  • type: nome de um template válido\n\n"
         f"Resumo do curso:\n{COURSE_SUMMARY}\n\n"
         f"Pergunta:\n{question}\n\n"
-        "Exemplo de resposta válida:\n"
-        '{ "scope": "IN_SCOPE", "type": "guia" }'
+        "Resposta esperada exemplo:\n"
+        '{ "scope": "IN_SCOPE", "type": "papelaria_brindes" }'
     )
     try:
         r = client.chat.completions.create(
@@ -127,71 +138,51 @@ def classify_prompt(question: str) -> dict:
 # -----------------------------
 identidade = (
     "<strong>Você é Nanda Mac.ia</strong>, a IA oficial da Nanda Mac, treinada com o conteúdo do curso "
-    "<strong>Consultório High Ticket</strong>. Responda como uma professora experiente, ajudando o aluno a aplicar o método na prática.<br><br>"
+    "<strong>Consultório High Ticket</strong>. Responda como uma professora experiente, ajudando o aluno a aplicar "
+    "o método na prática.<br><br>"
 )
 
 prompt_variacoes = {
     "explicacao": (
-        "<strong>Objetivo:</strong> Explicar com base no conteúdo das aulas. Use uma linguagem clara e didática, "
-        "com tópicos ou passos. Evite respostas genéricas. Mostre o conteúdo como se fosse uma aula de **Posicionamento High Ticket**.<br><br>"
+        "<strong>Objetivo:</strong> Explicar com base no conteúdo das aulas. Use linguagem clara e didática, "
+        "com passos numerados ou bullets.<br><br>"
     ),
     "faq": (
-        "<strong>Objetivo:</strong> Responder uma dúvida frequente entre os alunos do curso. "
-        "Use exemplos práticos e aplique o método passo a passo."
+        "<strong>Objetivo:</strong> Responder dúvida frequente. Use exemplos práticos e passo a passo.<br><br>"
     ),
     "revisao": (
-        "<strong>Objetivo:</strong> Fazer uma revisão rápida dos pontos centrais do método de precificação estratégica. "
-        "Use exatamente seis bullets, cada um iniciando com verbo de ação e título em negrito: "
-        "**Identificar Pacientes Potenciais**, **Determinar Valores**, **Elaborar o Health Plan**, "
-        "**Preparar a Apresentação**, **Comunicar o Valor** e **Monitorar Resultados**. "
-        "Após o título de cada bullet, adicione uma breve explicação de uma linha. "
-        "E **certifique-se de mencionar o benefício de dobrar o faturamento e fidelizar pacientes** em pelo menos dois desses bullets.<br><br>"
+        "<strong>Objetivo:</strong> Revisar os pontos centrais do método de precificação estratégica em 6 bullets, "
+        "cada um iniciando com verbo de ação e negrito no título, mencionando o benefício de dobrar faturamento e "
+        "fidelizar pacientes em ao menos dois bullets.<br><br>"
     ),
     "aplicacao": (
-        "<strong>Objetivo:</strong> Aplicar o roteiro de atendimento High Ticket na primeira consulta. "
-        "Use exatamente seis bullets, cada um iniciando com verbo de ação e estes títulos em negrito:<br>"
-        "➡ **Abertura da Consulta:** Garanta acolhimento profissional, transmitindo exclusividade e empatia.<br>"
-        "➡ **Mapear Expectativas:** Pergunte objetivos e preocupações do paciente, construindo rapport.<br>"
-        "➡ **Elaborar Health Plan:** Explique o **Health Plan** personalizado, detalhando etapas e investimento.<br>"
-        "➡ **Validar Compromisso:** Confirme entendimento do paciente e mencione potencial de dobrar faturamento.<br>"
-        "➡ **Usar Two-Options:** Ofereça duas opções de pacote, reduzindo objeções e gerando segurança.<br>"
-        "➡ **Agendar Follow-up:** Marque retorno imediato para manter engajamento e fidelizar pacientes.<br><br>"
-    ),
-    "correcao": (
-        "<strong>Objetivo:</strong> Corrigir gentilmente qualquer confusão ou prática equivocada do aluno, "
-        "apontando a abordagem correta conforme o método High Ticket. Mostre por que o ajuste sugerido pode trazer melhores resultados, "
-        "especialmente em termos de posicionamento, fidelização ou faturamento.<br><br>"
+        "<strong>Objetivo:</strong> Aplicar roteiro de atendimento High Ticket na primeira consulta em 6 bullets "
+        "com títulos específicos.<br><br>"
     ),
     "capitacao_sem_marketing_digital": (
-        "<strong>Objetivo:</strong> Mostrar uma **estratégia 100% offline** do método Consultório High Ticket para atrair pacientes "
-        "de alto valor sem usar Instagram ou anúncios, passo a passo:<br>"
-        "➡ **Encantamento de pacientes atuais:** Envie um convite VIP impresso ou bilhete manuscrito;<br>"
-        "➡ **Parcerias com profissionais de saúde:** Conecte-se com médicos, fisioterapeutas, nutricionistas e psicólogos;<br>"
-        "➡ **Cartas personalizadas com proposta VIP:** Envie convites impressos destacando diferenciais;<br>"
-        "➡ **Manutenção via WhatsApp (sem automação):** Grave e envie mensagem de voz após a consulta;<br>"
-        "➡ **Construção de autoridade silenciosa:** Colete depoimentos reais e imprima folhetos;<br>"
-        "➡ **Fidelização e indicações espontâneas:** Implemente o programa “Indique um amigo VIP”;<br><br>"
-        "Com essa sequência você <strong>dobra seu faturamento</strong> e conquista pacientes de alto valor sem depender de redes sociais ou anúncios."
+        "<strong>Objetivo:</strong> Estratégia 100% offline para atrair pacientes de alto valor, passo a passo.<br><br>"
     ),
     "precificacao": (
-        "<strong>Objetivo:</strong> Explicar o conceito de precificação estratégica do Consultório High Ticket. "
-        "Use bullets iniciando com verbo de ação, mantenha **Health Plan** em inglês, e destaque como dobrar faturamento, "
-        "fidelizar pacientes e priorizar o bem-estar do paciente.<br><br>"
+        "<strong>Objetivo:</strong> Explicar conceito de precificação estratégica. Use bullets com verbo de ação e "
+        "destaque Health Plan em inglês.<br><br>"
     ),
     "health_plan": (
-        "<strong>Objetivo:</strong> Estruturar a apresentação de valor do **Health Plan** para demonstrar o retorno sobre o investimento. "
-        "Use passos sequenciais, inclua benefícios tangíveis e histórias de sucesso para emocionar o paciente.<br><br>"
+        "<strong>Objetivo:</strong> Estruturar apresentação de valor do Health Plan com passos sequenciais e "
+        "histórias de sucesso.<br><br>"
     ),
     "plano_de_acao": (
-        "<strong>Objetivo:</strong> Auxiliar o aluno a completar o **Plano de Ação (1ª Semana)**, "
-        "abordando etapas como **Bloqueios com dinheiro**, **Autoconfiança**, **Nicho**, **Val                                                or dos serviços**, "
-        "**Convênios vs Particulares**, **Ambiente do consultório** e **Ações de atração high ticket**.<br><br>"
+        "<strong>Objetivo:</strong> Auxiliar no Plano de Ação (1ª Semana), cobrindo Bloqueios com dinheiro, "
+        "Autoconfiança, Nicho, Valor dos serviços, Convênios vs Particulares, Ambiente do consultório e Ações de atração.<br><br>"
     ),
     "guia": (
-        "<strong>Objetivo:</strong> Explorar o **Guia do Curso Consultório High Ticket**, "
-        "apresentando o passo a passo sugerido no documento. Use uma estrutura sequencial clara, "
-        "destacando cada etapa conforme o PDF de referência.<br><br>"
+        "<strong>Objetivo:</strong> Explorar o Guia do Curso Consultório High Ticket, apresentando passo a passo do PDF "
+        "em formato sequencial claro.<br><br>"
     ),
+    "papelaria_brindes": (
+        "<strong>Objetivo:</strong> Fornecer as indicações de papelaria e brindes da aula 2.5, listando os links recomendados:<br>"
+        + "".join(f"➡ <a href=\"{url}\" target=\"_blank\">{name}</a><br>" for name, url in LINKS_PAPELARIA_BRINDES.items())
+        + "<br>"
+    )
 }
 
 # -----------------------------
@@ -208,13 +199,10 @@ def generate_answer(
         return OUT_OF_SCOPE_MSG
 
     tipo = cls["type"]
-    if tipo == "capitacao_sem_marketing_digital":
-        contexto_para_prompt = ""
-    else:
-        contexto_para_prompt = (
-            f"<br><br><strong>📚 Contexto relevante:</strong><br>{context}<br>"
-            if context.strip() else ""
-        )
+    # sem contexto para offline
+    contexto_para_prompt = "" if tipo == "capitacao_sem_marketing_digital" else (
+        f"<br><br><strong>📚 Contexto relevante:</strong><br>{context}<br>" if context.strip() else ""
+    )
 
     prompt = identidade + prompt_variacoes[tipo] + contexto_para_prompt
     if history:
