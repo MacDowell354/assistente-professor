@@ -54,6 +54,11 @@ def classify_prompt(question: str) -> dict:
       - scope: 'IN_SCOPE' ou 'OUT_OF_SCOPE'
       - type: nome exato de uma chave em prompt_variacoes (ou 'explicacao')
     """
+    # override manual para garantir revisão
+    lower_q = question.lower()
+    if "revisão" in lower_q or "revisao" in lower_q:
+        return {"scope": "IN_SCOPE", "type": "revisao"}
+
     payload = (
         "Você é um classificador inteligente. Com base no resumo e na pergunta abaixo, "
         "responda **apenas** um JSON com duas chaves:\n"
