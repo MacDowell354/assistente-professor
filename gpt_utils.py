@@ -27,40 +27,38 @@ OUT_OF_SCOPE_MSG = (
 # FUNÇÃO DE NORMALIZAÇÃO
 # -----------------------------
 def normalize(text: str) -> str:
-    # retira acentos, pontuação e deixa tudo em minúsculas
+    # 1) decompor acentos
     txt = unicodedata.normalize('NFD', text)
+    # 2) remover marcas
     txt = ''.join(ch for ch in txt if unicodedata.category(ch) != 'Mn')
+    # 3) tudo em minúsculo
+    txt = txt.lower()
+    # 4) remover pontuação e caracteres especiais
     txt = re.sub(r'[^a-z0-9\s]', '', txt)
-    return txt.lower().strip()
+    # 5) normalizar espaços
+    return re.sub(r'\s+', ' ', txt).strip()
 
 # -----------------------------
-# CARREGA TRANSCRIÇÕES E PDFs (1× NO STARTUP)
+# CARREGA TRANSCRIÇÕES E PDFs
 # -----------------------------
 BASE_DIR = os.path.dirname(__file__)
 
-# 1) texto das transcrições
-TRANSCRIPT_PATH = os.path.join(BASE_DIR, "transcricoes.txt")
-_raw_txt = open(TRANSCRIPT_PATH, encoding="utf-8").read()
+_raw_txt = open(os.path.join(BASE_DIR, "transcricoes.txt"), encoding="utf-8").read()
 
-# 2) texto do Plano de Ação (1ª Semana)
-PDF1_PATH = os.path.join(BASE_DIR, "PlanodeAcaoConsultorioHighTicket-1Semana (4)[1].pdf")
 _raw_pdf1 = ""
 try:
-    reader1 = PdfReader(PDF1_PATH)
+    reader1 = PdfReader(os.path.join(BASE_DIR, "PlanodeAcaoConsultorioHighTicket-1Semana (4)[1].pdf"))
     _raw_pdf1 = "\n\n".join(page.extract_text() or "" for page in reader1.pages)
 except:
-    _raw_pdf1 = ""
+    pass
 
-# 3) texto do Guia do Curso
-PDF2_PATH = os.path.join(BASE_DIR, "GuiadoCursoConsultorioHighTicket.-CHT21[1].pdf")
 _raw_pdf2 = ""
 try:
-    reader2 = PdfReader(PDF2_PATH)
+    reader2 = PdfReader(os.path.join(BASE_DIR, "GuiadoCursoConsultorioHighTicket.-CHT21[1].pdf"))
     _raw_pdf2 = "\n\n".join(page.extract_text() or "" for page in reader2.pages)
 except:
-    _raw_pdf2 = ""
+    pass
 
-# Combina tudo para resumo (usado apenas na classificação via GPT)
 _combined = _raw_txt + "\n\n" + _raw_pdf1 + "\n\n" + _raw_pdf2
 try:
     resp = client.chat.completions.create(
@@ -116,9 +114,9 @@ CANONICAL_QA = {
     ),
     "voce pode explicar como o desafio health plan esta organizado em fases": (
         "O Desafio Health Plan é dividido em três fases, **sem datas fixas**:\n"
-        "- **Fase 1 – Missão inicial:** Assistir aos módulos 1–6 e preencher o quiz.\n"
-        "- **Fase 2 – Masterclass & Envio:** Participar da Masterclass de Health Plan e enviar seu primeiro plano.\n"
-        "- **Fase 3 – Acompanhamento:** Realizar envios semanais de planners de consecutividade e atividades de encerramento."
+        "- **Fase 1 – Missão inicial:** assistir módulos 1–6 e preencher o quiz.\n"
+        "- **Fase 2 – Masterclass & Envio:** participar da Masterclass e enviar seu primeiro plano.\n"
+        "- **Fase 3 – Acompanhamento:** realizar envios semanais de planners e concluir as atividades."
     ),
     "caso o participante enfrente uma situacao critica qual procedimento deve ser adotado para solicitar suporte": (
         "Em caso de situação crítica, envie um e-mail para <strong>ajuda@nandamac.com</strong> "
@@ -126,7 +124,7 @@ CANONICAL_QA = {
     ),
     "onde e como o participante deve tirar duvidas sobre o metodo do curso": (
         "Poste suas dúvidas exclusivamente na <strong>Comunidade</strong> da Área de Membros. "
-        "Não utilize Direct, WhatsApp ou outros canais para dúvidas sobre o método."
+        "Não use Direct, WhatsApp ou outros canais."
     ),
     # — Plano de Ação (1ª Semana) —
     "no exercicio de bloqueios com dinheiro como escolho qual bloqueio priorizar e defino a atitude dia do chega": (
@@ -135,18 +133,19 @@ CANONICAL_QA = {
     ),
     "na parte de autoconfianca profissional o que devo escrever como atitude para nao deixar mais certas situacoes me abalar": (
         "Liste duas experiências que abalaram sua confiança. Em “Onde quero chegar”, defina uma atitude transformadora, ex.: "
-        "“Sempre que receber uma crítica, farei uma sessão de feedback construtivo com um colega.”"
+        "“Sempre que receber uma crítica, realizarei uma sessão de feedback construtivo com um colega.”"
     ),
     "como uso a atividade de nicho de atuacao para encontrar meu posicionamento e listar as acoes": (
         "Descreva seu posicionamento atual (forças e lacunas) e defina seu nicho ideal. "
-        "Liste ações específicas, com prazos, ex.: “Fazer especialização em [X] em 3 meses.”"
+        "Liste ações específicas com prazo, ex.: “Especializar em [X] em 3 meses.”"
     ),
     "no valor da consulta e procedimentos como encontro referencias de mercado e defino meus valores atuais e ideais": (
-        "Anote seus preços atuais, pesquise tabelas de associações ou colegas para médias de mercado e defina valores ideais, justificando seu diferencial, ex.: “R$ 300 por sessão de fisioterapia clínica.”"
+        "Anote seus preços atuais, pesquise médias de mercado via associações ou colegas e defina valores ideais, "
+        "justificando seu diferencial, ex.: “R$ 300 por sessão de fisioterapia clínica.”"
     ),
     "ainda nao tenho pacientes particulares qual estrategia de atracao de pacientes high ticket devo priorizar e como executar na agenda": (
-        "Reserve um bloco fixo na agenda (ex.: toda segunda 8h–10h) para enviar 5 mensagens personalizadas ao Mercado X usando o script do curso. "
-        "Quando iniciar atendimentos, implemente a Patient Letter com convites impressos para potenciais pacientes High Ticket."
+        "Reserve um bloco fixo na agenda (ex.: toda segunda 8h–10h) para enviar 5 mensagens personalizadas ao seu nicho "
+        "usando o script do curso. Depois, implemente a Patient Letter com convites impressos para potenciais pacientes HT."
     )
 }
 
@@ -155,13 +154,12 @@ CANONICAL_QA = {
 # -----------------------------
 def classify_prompt(question: str) -> dict:
     lower = normalize(question)
-    if "exercicio" in lower and "bloqueios" in lower:
-        # mas se for um dos canônicos, ele vai bater antes
+    # força plano_de_acao para exercícios
+    if "bloqueios com dinheiro" in lower or "nicho de atuacao" in lower:
         return {"scope": "IN_SCOPE", "type": "plano_de_acao"}
     for tipo, kws in TYPE_KEYWORDS.items():
         if any(normalize(k) in lower for k in kws):
             return {"scope": "IN_SCOPE", "type": tipo}
-    # fallback:
     return {"scope": "OUT_OF_SCOPE", "type": "explicacao"}
 
 # -----------------------------
@@ -172,41 +170,22 @@ identidade = (
     "<strong>Consultório High Ticket</strong>. Responda como uma professora experiente, ajudando o aluno a aplicar o método na prática.<br><br>"
 )
 prompt_variacoes = {
-    # ... (seus outros templates aqui)
     "explicacao": (
         "<strong>Objetivo:</strong> Explicar com base no conteúdo das aulas. "
         "Use linguagem clara e tópicos. Evite genéricos.<br><br>"
     ),
+    # demais templates...
 }
 
 # -----------------------------
 # GERAÇÃO DA RESPOSTA
 # -----------------------------
-def generate_answer(question: str, context: str = "", history: str = None) -> str:
+def generate_answer(
+    question: str,
+    context: str = "",
+    history: str = None,
+    tipo_de_prompt: str = "explicacao"
+) -> str:
     key = normalize(question)
     if key in CANONICAL_QA:
-        return CANONICAL_QA[key]
-
-    cls = classify_prompt(question)
-    if cls["scope"] == "OUT_OF_SCOPE":
-        return OUT_OF_SCOPE_MSG
-
-    # se não é canônica, chamamos o GPT normal
-    prompt = identidade + prompt_variacoes.get(cls["type"], "") 
-    if context:
-        prompt += f"<br><br><strong>📚 Contexto:</strong><br>{context}<br>"
-    if history:
-        prompt += f"<br><strong>📜 Histórico:</strong><br>{history}<br>"
-    prompt += f"<br><strong>🤔 Pergunta:</strong><br>{question}<br><br><strong>🧠 Resposta:</strong><br>"
-
-    try:
-        r = client.chat.completions.create(
-            model="gpt-4",
-            messages=[{"role": "user", "content": prompt}]
-        )
-    except OpenAIError:
-        r = client.chat.completions.create(
-            model="gpt-3.5-turbo",
-            messages=[{"role": "user", "content": prompt}]
-        )
-    return r.choices[0].message.content
+        retur
