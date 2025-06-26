@@ -52,18 +52,18 @@ try:
 except:
     pass
 
-# para classificação (não usado nas respostas canônicas)
+# combinado apenas para classificação via LLM
 _combined = "\n\n".join([_raw_txt, _raw_pdf1, _raw_pdf2])
 try:
     resp = client.chat.completions.create(
         model="gpt-4",
         messages=[
-            {"role": "system", "content":
+            {"role":"system","content":
                 "Você é um resumidor especialista em educação. Resuma em até 300 palavras todo o conteúdo "
                 "do curso Consultório High Ticket, incluindo Plano de Ação (1ª Semana) e Guia do Curso, "
                 "para servir de base na classificação de prompts."
             },
-            {"role": "user", "content": _combined}
+            {"role":"user","content":_combined}
         ]
     )
     COURSE_SUMMARY = resp.choices[0].message.content
@@ -81,7 +81,10 @@ TYPE_KEYWORDS = {
     "aplicacao":                      ["como aplico", "aplicação", "roteiro"],
     "faq":                            ["quais", "pergunta frequente", "duvidas", "dúvidas"],
     "explicacao":                     ["explique", "o que é", "defina", "conceito"],
-    "plano_de_acao":                  ["plano de ação", "primeira semana", "bloqueios com dinheiro", "nicho de atuacao"],
+    "plano_de_acao":                  ["plano de ação", "primeira semana",
+                                       "bloqueios com dinheiro", "nicho de atuacao",
+                                       "autoconfianca profissional", "valor da consulta",
+                                       "ainda nao tenho pacientes particulares"],
     "guia":                           ["guia do curso", "passo a passo", "cht21"]
 }
 
@@ -99,13 +102,12 @@ CANONICAL_QA = {
         "1. <strong>Clique em “Participar”</strong> no módulo Desafio Health Plan.<br>"
         "2. Feche a janela de confirmação.<br>"
         "3. Clique novamente em <strong>“Participar”</strong> para efetivar.<br>"
-        "4. Feche, e você estará inscrito.",
+        "4. Feche e você estará inscrito.",
     "voce pode explicar como o desafio health plan esta organizado em fases":
         "O Desafio Health Plan possui três fases (sem datas fixas):<br>"
         "- <strong>Fase 1 – Missão inicial:</strong> assistir módulos 1–6 e preencher quiz.<br>"
         "- <strong>Fase 2 – Masterclass & Envio:</strong> participar da masterclass e enviar seu plano.<br>"
         "- <strong>Fase 3 – Acompanhamento:</strong> enviar planners semanais e concluir atividades.",
-    # duplicata para outra forma de perguntar as fases
     "como esta dividido o mapa de atividades do desafio health plan em fases":
         "O Desafio Health Plan possui três fases (sem datas fixas):<br>"
         "- <strong>Fase 1 – Missão inicial:</strong> assistir módulos 1–6 e preencher quiz.<br>"
@@ -117,26 +119,23 @@ CANONICAL_QA = {
     "onde e como o participante deve tirar duvidas sobre o metodo do curso":
         "Poste dúvidas exclusivamente na <strong>Comunidade</strong> da Área de Membros. "
         "Não use Direct, WhatsApp ou outros canais.",
-    # nova entrada para variante do aluno
     "onde devo postar minhas duvidas sobre o metodo do curso":
         "Todas as dúvidas sobre o método devem ser postadas **exclusivamente na Comunidade** da Área de Membros. "
         "Não utilize outros canais para isso.",
+
     # — Plano de Ação (1ª Semana) —
-    "no exercicio de bloqueios com dinheiro como escolho qual bloqueio priorizar e defino a atitude dia do chega":
-        "Identifique o bloqueio de culpa que mais afeta (Síndrome do Sacerdote) como prioritário. "
-        "Em “Onde quero chegar”, escreva: “A partir de hoje, afirmarei meu valor em cada consulta.”",
+    "no exercicio de bloqueios com dinheiro como escolho qual bloqueio priorizar e defino minha atitude dia do chega":
+        "Identifique o sentimento de culpa (“Síndrome do Sacerdote”) que mais impacta sua cobrança e torne-o prioritário. "
+        "Em “Onde quero chegar”, escreva uma ação concreta, por exemplo: “A partir de hoje, afirmarei meu valor em cada consulta e não deixarei de cobrar pelo meu trabalho.”",
     "na parte de autoconfianca profissional o que devo escrever como atitude para nao deixar certas situacoes me abalar":
-        "Liste duas situações que abalaram sua confiança. "
-        "Em “Onde quero chegar”, defina: “Sempre que receber críticas, buscarei feedback construtivo.”",
-    "como uso a atividade de nicho de atuacao para encontrar meu posicionamento e listar as acoes":
-        "Descreva seu posicionamento (forças e lacunas) e defina seu nicho ideal. "
-        "Liste ações com prazo, ex.: “Especializar em [X] em 3 meses.”",
+        "Liste duas situações que abalaram sua confiança. Em “Onde quero chegar”, defina uma atitude transformadora, por exemplo: “Sempre que receber uma crítica, realizarei uma sessão de feedback construtivo com um colega.”",
+    "como uso a atividade de nicho de atuacao para definir meu foco e listar as acoes necessarias":
+        "Descreva seu posicionamento atual e identifique seu nicho ideal. Em seguida, liste ações específicas com prazo, por exemplo: “Especializar em [X] em 3 meses”, “Criar pacote online de avaliação inicial até o próximo mês” e “Revisar site e materiais de comunicação em 2 semanas.”",
     "no valor da consulta e procedimentos como encontro referencias de mercado e defino meus valores atuais e ideais":
-        "Anote preços atuais, pesquise médias em associações/colegas e defina valores ideais justificando seu diferencial, "
-        "ex.: “R$ 300 por sessão, com relatório personalizado.”",
-    "ainda nao tenho pacientes particulares qual estrategia de atracao de pacientes high ticket devo priorizar e como executar na agenda":
-        "Reserve um bloco fixo (ex.: segundas 8h–10h) para enviar 5 mensagens personalizadas ao seu nicho. "
-        "Depois, implemente a Patient Letter com convites impressos para potenciais clientes High Ticket."
+        "Anote seus valores atuais para consulta e procedimentos; pesquise referências de mercado em tabelas de associações ou colegas; considere custos, experiência e diferenciais; e defina seus valores ideais justificando seu diferencial, por exemplo: “R$ 300 por sessão de fisioterapia clínica, incluindo relatório personalizado de evolução.”",
+    "ainda nao tenho pacientes particulares qual estrategia de atracao high ticket devo priorizar e como executar na agenda":
+        "Reserve um bloco fixo na agenda (por exemplo, toda segunda, das 8h às 10h) para enviar 5 mensagens personalizadas a potenciais pacientes do seu nicho usando o roteiro do curso. "
+        "Quando iniciar atendimentos, implemente a Patient Letter enviando convites impressos aos pacientes para estimular indicações de alto valor."
 }
 
 # pré-normaliza as chaves
