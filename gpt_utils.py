@@ -29,24 +29,28 @@ BASE_DIR = os.path.dirname(__file__)
 TRANSCRIPT_PATH = os.path.join(BASE_DIR, "transcricoes.txt")
 _raw_txt = open(TRANSCRIPT_PATH, encoding="utf-8").read()
 
+# PDF do Plano de Ação (1ª Semana)
 PDF1_PATH = os.path.join(BASE_DIR, "PlanodeAcaoConsultorioHighTicket-1Semana (4)[1].pdf")
 _raw_pdf1 = ""
 try:
     reader1 = PdfReader(PDF1_PATH)
     _raw_pdf1 = "\n\n".join(page.extract_text() or "" for page in reader1.pages)
-except:
+except Exception:
     _raw_pdf1 = ""
 
+# PDF do Guia do Curso
 PDF2_PATH = os.path.join(BASE_DIR, "GuiadoCursoConsultorioHighTicket.-CHT21[1].pdf")
 _raw_pdf2 = ""
 try:
     reader2 = PdfReader(PDF2_PATH)
     _raw_pdf2 = "\n\n".join(page.extract_text() or "" for page in reader2.pages)
-except:
+except Exception:
     _raw_pdf2 = ""
 
+# Combina tudo para resumo
 _combined = _raw_txt + "\n\n" + _raw_pdf1 + "\n\n" + _raw_pdf2
 
+# Gera resumo para classificação
 try:
     resp = client.chat.completions.create(
         model="gpt-4",
@@ -54,7 +58,7 @@ try:
             {"role": "system", "content": (
                 "Você é um resumidor especialista em educação. "
                 "Resuma em até 300 palavras todo o conteúdo do curso ‘Consultório High Ticket’, "
-                "incluindo o plano de ação da primeira semana e o Guia do Curso, "
+                "incluindo o Plano de Ação (1ª Semana) e o Guia do Curso, "
                 "para servir de base na classificação de escopo e tipo de prompt."
             )},
             {"role": "user", "content": _combined}
@@ -65,7 +69,7 @@ except OpenAIError:
     COURSE_SUMMARY = ""
 
 # -----------------------------
-# KEYWORDS PARA TIPO DE PROMPT
+# KEYWORDS PARA CLASSIFICAÇÃO
 # -----------------------------
 TYPE_KEYWORDS = {
     "revisao": ["revisão", "revisao", "revise", "resumir"],
@@ -80,8 +84,9 @@ TYPE_KEYWORDS = {
 }
 
 # -----------------------------
-# RESPOSTAS CANÔNICAS (GUIDA + PLANO DE AÇÃO)
+# RESPOSTAS CANÔNICAS
 # -----------------------------
+# Baseadas nos PDFs de Plano de Ação e Guia do Curso fileciteturn6file1
 CANONICAL_QA = {
     # Guia do Curso
     "quais são os quatro passos iniciais descritos no guia do curso consultório high ticket para começar a participação?": (
@@ -92,40 +97,45 @@ CANONICAL_QA = {
     ),
     "o que o participante deve fazer após entrar na área de membros para dar o primeiro passo no desafio health plan?": (
         "1. <strong>Clicar em “Participar”</strong> no módulo Desafio Health Plan.<br>"
-        "2. <strong>Fechar</strong> a janela inicial.<br>"
-        "3. Na tela seguinte, <strong>clicar novamente em “Participar”</strong> para efetivar sua inscrição no desafio."
+        "2. <strong>Fechar</strong> a janela de confirmação.<br>"
+        "3. Clicar novamente em <strong>“Participar”</strong> na próxima tela."
     ),
     "como é estruturado o mapa de atividades do desafio health plan em termos de fases e prazos?": (
-        "O mapa de atividades do Desafio Health Plan é dividido em três fases, sem considerar datas específicas:<br>"
-        "<strong>Fase 1 – Missão inicial:</strong> assistir aos módulos 1–6 e preencher o quiz correspondente;<br>"
-        "<strong>Fase 2 – Masterclass e envio do Health Plan:</strong> participar da masterclass de Health Plan e enviar o primeiro plano produzido;<br>"
-        "<strong>Fase 3 – Missões semanais de acompanhamento:</strong> realizar envios semanais de planners de consecutividade e participar das atividades de encerramento."
+        "O Desafio Health Plan é dividido em três fases, sem considerar datas específicas:<br>"
+        "<strong>Fase 1 – Missão inicial:</strong> assistir módulos 1–6 e preencher quiz;<br>"
+        "<strong>Fase 2 – Masterclass e envio do Health Plan:</strong> participar da masterclass e enviar seu primeiro plano;<br>"
+        "<strong>Fase 3 – Missões semanais:</strong> enviar planners semanais e concluir atividades de encerramento."
     ),
     "caso o participante enfrente uma situação crítica, qual procedimento deve ser adotado para solicitar suporte?": (
-        "Em caso de situação crítica, envie um e-mail para <strong>ajuda@nandamac.com</strong> com o assunto <strong>‘S.O.S Crise’</strong>. "
-        "A equipe de suporte retornará em até 24 horas."
+        "Em situação crítica, envie e-mail para <strong>ajuda@nandamac.com</strong> com assunto <strong>‘S.O.S Crise’</strong>. "
+        "A equipe retornará em até 24h."
     ),
     "onde e como o participante deve tirar dúvidas sobre o método do curso?": (
-        "As dúvidas sobre o método devem ser postadas exclusivamente na <strong>Comunidade</strong> da Área de Membros. Não utilize Direct, WhatsApp ou outros canais para questionamentos metodológicos."
+        "Dúvidas sobre o método devem ser postadas exclusivamente na <strong>Comunidade</strong> da Área de Membros. "
+        "Não use Direct, WhatsApp ou outros canais."
     ),
     # Plano de Ação
     "nanda, no exercício de bloqueios com dinheiro, como faço para escolher qual bloqueio priorizar e definir minha atitude ‘dia do chega’?": (
-        "Identifique qual sentimento de culpa ao cobrar mais te afeta (\"Síndrome do Sacerdote\"). Escolha esse bloqueio como prioritário. "
-        "Em ‘Onde quero chegar’, escreva uma atitude concreta para o Dia do Chega, por exemplo: “A partir de hoje, vou afirmar meu valor em cada consulta.”"
+        "Identifique qual sentimento de culpa ao cobrar mais te afeta (\"Síndrome do Sacerdote\"). "
+        "Escolha esse bloqueio como prioritário. Em ‘Onde quero chegar’, escreva uma ação concreta, por exemplo: "
+        ""“A partir de hoje, afirmarei meu valor em cada consulta.”"
     ),
     "na parte de autoconfiança profissional, o que devo escrever como atitude para não deixar mais certas situações me abalar?": (
-        "Liste duas experiências que abalaram sua confiança. Em ‘Onde quero chegar’, defina uma atitude transformadora, por exemplo: “Sempre que receber uma crítica, farei uma sessão de feedback construtivo com um colega.”"
+        "Liste duas situações que abalaram sua confiança. Em ‘Onde quero chegar’, defina uma atitude transformadora, por exemplo: "
+        ""“Sempre que receber crítica, solicitarei feedback construtivo de um colega.”"
     ),
     "como eu uso a atividade de nicho de atuação para saber se devo mudar meu foco e quais ações listar?": (
-        "Descreva seu posicionamento atual (pontos fortes e lacunas) e defina o nicho ideal (pacientes sonhos). "
-        "Liste ações específicas com prazos, por exemplo: “Fazer especialização em [X] em 3 meses.”"
+        "Descreva seu posicionamento atual (pontos fortes e lacunas) e o nicho ideal. "
+        "Liste ações com prazo, ex.: "
+        ""“Especializar em [X] em 3 meses.”"
     ),
     "no valor da consulta e procedimentos, como encontro referências de mercado e defino meus valores atuais e ideais?": (
-        "Anote seus preços atuais, pesquise tabelas de associações ou colegas para médias de mercado, e defina valores ideais justificando seu diferencial, como “R$ 300 por sessão de fisioterapia clínica.”"
+        "Liste seus valores atuais, pesquise médias de mercado via associações ou colegas, "
+        ""e defina valores ideais justificando seu diferencial." 
     ),
     "ainda não tenho pacientes particulares. qual estratégia de atração de pacientes high ticket devo priorizar e como executar na agenda?": (
-        "Reserve um bloco fixo na agenda (ex.: toda segunda das 8h às 10h) para enviar 5 mensagens personalizadas ao Mercado X usando o script do curso. "
-        "Quando começar a atender, implemente a Patient Letter com convites impressos para potenciais HT."
+        "Reserve na agenda bloco fixo (ex.: toda segunda 8–10h) para enviar 5 mensagens personalizadas ao Mercado X. "
+        "Ao iniciar atendimentos, implemente a Patient Letter."
     )
 }
 
@@ -133,19 +143,19 @@ CANONICAL_QA = {
 # IDENTIDADE E TEMPLATES
 # -----------------------------
 identidade = (
-    "<strong>Você é Nanda Mac.ia</strong>, a IA oficial da Nanda Mac, treinada com o conteúdo do curso "
-    "<strong>Consultório High Ticket</strong>. Responda como uma professora experiente, ajudando o aluno a aplicar o método na prática.<br><br>"
+    "<strong>Você é Nanda Mac.ia</strong>, IA oficial da Nanda Mac, treinada com o conteúdo do curso "
+    "<strong>Consultório High Ticket</strong>. Responda como professora experiente, ajudando a aplicar o método.<br><br>"
 )
 
 prompt_variacoes = {
     "explicacao": (
-        "<strong>Objetivo:</strong> Explicar com base no conteúdo das aulas. Use uma linguagem clara e didática, com tópicos ou passos. Evite respostas genéricas."
+        "<strong>Objetivo:</strong> Explicar conceitos do curso de forma clara, com tópicos ou passos. Evite genéricos."
     ),
-    # outras variações...
+    # outras variações mantidas...
 }
 
 # -----------------------------
-# CLASSIFICADOR E GERAÇÃO DE RESPOSTA
+# CLASSIFICADOR + GERAÇÃO DE RESPOSTA
 # -----------------------------
 def classify_prompt(question: str) -> dict:
     lower_q = question.lower()
@@ -154,8 +164,9 @@ def classify_prompt(question: str) -> dict:
     for tipo, keywords in TYPE_KEYWORDS.items():
         if any(k in lower_q for k in keywords):
             return {"scope": "IN_SCOPE", "type": tipo}
+    # fallback LLM
     payload = (
-        "Você é um classificador inteligente. Com base no resumo e na pergunta abaixo, responda apenas JSON."
+        "Você é classificador inteligente. Responda apenas JSON com scope e type."
     )
     try:
         r = client.chat.completions.create(
@@ -168,18 +179,24 @@ def classify_prompt(question: str) -> dict:
 
 
 def generate_answer(question: str, context: str = "", history: str = None) -> str:
+    # Override imediato para perguntas canônicas
     key = question.strip().lower()
     if key in CANONICAL_QA:
         return CANONICAL_QA[key]
+
+    # fluxo normal
     cls = classify_prompt(question)
     if cls["scope"] == "OUT_OF_SCOPE":
         return OUT_OF_SCOPE_MSG
-    prompt = identidade + prompt_variacoes.get(cls["type"], "")
+
+    tipo = cls["type"]
+    prompt = identidade + prompt_variacoes.get(tipo, "")
     if context:
-        prompt += f"<br><strong>📚 Contexto relevante:</strong><br>{context}<br>"
+        prompt += f"<br><strong>📚 Contexto:</strong><br>{context}<br>"
     if history:
-        prompt += f"<br><strong>📜 Histórico anterior:</strong><br>{history}<br>"
+        prompt += f"<br><strong>📜 Histórico:</strong><br>{history}<br>"
     prompt += f"<br><strong>🤔 Pergunta:</strong><br>{question}<br><br><strong>🧠 Resposta:</strong><br>"
+
     try:
         r2 = client.chat.completions.create(
             model="gpt-4",
