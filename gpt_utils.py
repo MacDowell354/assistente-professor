@@ -22,39 +22,47 @@ OUT_OF_SCOPE_MSG = (
 )
 
 # -----------------------------
-# CARREGA TRANSCRIÇÕES E PDFs
+# CARREGA TRANSCRIÇÕES E PDFs (1× NO STARTUP)
 # -----------------------------
 BASE_DIR = os.path.dirname(__file__)
 
+# 1) texto das transcrições
 TRANSCRIPT_PATH = os.path.join(BASE_DIR, "transcricoes.txt")
 _raw_txt = open(TRANSCRIPT_PATH, encoding="utf-8").read()
 
+# 2) texto do Plano de Ação (1ª Semana)
 PDF1_PATH = os.path.join(BASE_DIR, "PlanodeAcaoConsultorioHighTicket-1Semana (4)[1].pdf")
 _raw_pdf1 = ""
 try:
     reader1 = PdfReader(PDF1_PATH)
     _raw_pdf1 = "\n\n".join(page.extract_text() or "" for page in reader1.pages)
-except:
+except Exception:
     _raw_pdf1 = ""
 
+# 3) texto do Guia do Curso
 PDF2_PATH = os.path.join(BASE_DIR, "GuiadoCursoConsultorioHighTicket.-CHT21[1].pdf")
 _raw_pdf2 = ""
 try:
     reader2 = PdfReader(PDF2_PATH)
     _raw_pdf2 = "\n\n".join(page.extract_text() or "" for page in reader2.pages)
-except:
+except Exception:
     _raw_pdf2 = ""
 
-# Combina tudo para gerar um resumo (usado para classificação)
+# Combina tudo para resumo
 _combined = _raw_txt + "\n\n" + _raw_pdf1 + "\n\n" + _raw_pdf2
+
+# Pede resumo ao GPT-4 (usado para classificação)
 try:
     resp = client.chat.completions.create(
         model="gpt-4",
         messages=[
-            {"role": "system", "content":
-                "Você é um resumidor especialista em educação. "
-                "Resuma em até 300 palavras todo o conteúdo do curso 'Consultório High Ticket', "
-                "incluindo o Plano de Ação (1ª Semana) e o Guia do Curso, para servir de base na classificação."
+            {
+                "role": "system",
+                "content": (
+                    "Você é um resumidor especialista em educação. "
+                    "Resuma em até 300 palavras todo o conteúdo do curso 'Consultório High Ticket', "
+                    "incluindo o Plano de Ação (1ª Semana) e o Guia do Curso, para servir de base na classificação."
+                )
             },
             {"role": "user", "content": _combined}
         ]
@@ -64,22 +72,22 @@ except OpenAIError:
     COURSE_SUMMARY = ""
 
 # -----------------------------
-# MAPA DE KEYWORDS PARA CLASSIFICAÇÃO
+# MAPA DE KEYWORDS PARA TIPO DE PROMPT
 # -----------------------------
 TYPE_KEYWORDS = {
-    "revisao": ["revisão", "revisao", "revise", "resumir"],
-    "precificacao": ["precificação", "precificacao", "precificar", "preço", "valor", "faturamento"],
-    "health_plan": ["health plan", "valor do health plan", "retorno do investimento"],
-    "capitacao_sem_marketing_digital": ["offline", "sem usar instagram", "sem instagram", "sem anúncios", "sem anuncios"],
-    "aplicacao": ["como aplico", "aplicação", "aplico", "roteiro", "aplicação"],
-    "faq": ["quais", "dúvidas", "duvidas", "pergunta frequente"],
-    "explicacao": ["explique", "o que é", "defina", "conceito"],
-    "plano_de_acao": ["plano de ação", "primeira semana", "1ª semana"],
-    "guia": ["guia do curso", "passo a passo", "CHT21"]
+    "revisao":                        ["revisão", "revisao", "revise", "resumir"],
+    "precificacao":                   ["precificação", "precificacao", "precificar", "preço", "valor", "faturamento"],
+    "health_plan":                    ["health plan", "valor do health plan", "retorno do investimento"],
+    "capitacao_sem_marketing_digital":["offline", "sem usar instagram", "sem instagram", "sem anúncios", "sem anuncios"],
+    "aplicacao":                      ["como aplico", "aplicação", "aplico", "roteiro", "aplicação"],
+    "faq":                            ["quais", "dúvidas", "duvidas", "pergunta frequente"],
+    "explicacao":                     ["explique", "o que é", "defina", "conceito"],
+    "plano_de_acao":                  ["plano de ação", "primeira semana", "1ª semana"],
+    "guia":                           ["guia do curso", "passo a passo", "CHT21"]
 }
 
 # -----------------------------
-# RESPOSTAS CANÔNICAS (Guia + Plano de Ação)
+# RESPOSTAS CANÔNICAS (GUIDA + PLANO DE AÇÃO)
 # -----------------------------
 CANONICAL_QA = {
     # Guia do Curso
@@ -153,7 +161,7 @@ prompt_variacoes = {
         "➡ **Mapear Expectativas:** Pergunte objetivos e preocupações do paciente, construindo rapport.<br>"
         "➡ **Elaborar Health Plan:** Explique o **Health Plan** personalizado, detalhando etapas e investimento.<br>"
         "➡ **Validar Compromisso:** Confirme entendimento do paciente e mencione potencial de dobrar faturamento.<br>"
-        "➡ **Usar Two-Options:** Ofereça duas opções de pacote, reduzindo objeções e gerando segurança.<br>"   
+        "➡ **Usar Two-Options:** Ofereça duas opções de pacote, reduzindo objeções e gerando segurança.<br>"
         "➡ **Agendar Follow-up:** Marque retorno imediato para manter engajamento e fidelizar pacientes.<br><br>"
     ),
     "correcao": (
@@ -219,13 +227,22 @@ def classify_prompt(question: str) -> dict:
 # -----------------------------
 # FUNÇÃO PRINCIPAL
 # -----------------------------
-def generate_answer(question: str, context: str = "", history: str = None) -> str:
+def generate_answer(
+    question: str,
+    context: str = "",
+    history: str = None,
+    tipo_de_prompt: str = "explicacao"
+) -> str:
+    # Override imediato para perguntas canônicas
     key = question.strip().lower()
     if key in CANONICAL_QA:
         return CANONICAL_QA[key]
+
+    # Fluxo normal
     cls = classify_prompt(question)
     if cls["scope"] == "OUT_OF_SCOPE":
         return OUT_OF_SCOPE_MSG
+
     tipo = cls["type"]
     prompt = identidade + prompt_variacoes.get(tipo, "")
     if context:
@@ -233,6 +250,7 @@ def generate_answer(question: str, context: str = "", history: str = None) -> st
     if history:
         prompt += f"<br><strong>📜 Histórico anterior:</strong><br>{history}<br>"
     prompt += f"<br><strong>🤔 Pergunta:</strong><br>{question}<br><br><strong>🧠 Resposta:</strong><br>"
+
     try:
         r2 = client.chat.completions.create(
             model="gpt-4",
