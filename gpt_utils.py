@@ -36,28 +36,23 @@ def normalize_key(text: str) -> str:
 # -----------------------------
 BASE_DIR = os.path.dirname(__file__)
 
-# 1) Transcrições
 _raw_txt = open(os.path.join(BASE_DIR, "transcricoes.txt"), encoding="utf-8").read()
 
-# 2) Plano de Ação (1ª Semana)
-PDF1_PATH = os.path.join(BASE_DIR, "PlanodeAcaoConsultorioHighTicket-1Semana (4)[1].pdf")
 _raw_pdf1 = ""
 try:
-    reader1 = PdfReader(PDF1_PATH)
+    reader1 = PdfReader(os.path.join(BASE_DIR, "PlanodeAcaoConsultorioHighTicket-1Semana (4)[1].pdf"))
     _raw_pdf1 = "\n\n".join(page.extract_text() or "" for page in reader1.pages)
 except:
-    _raw_pdf1 = ""
+    pass
 
-# 3) Guia do Curso
-PDF2_PATH = os.path.join(BASE_DIR, "GuiadoCursoConsultorioHighTicket.-CHT21[1].pdf")
 _raw_pdf2 = ""
 try:
-    reader2 = PdfReader(PDF2_PATH)
+    reader2 = PdfReader(os.path.join(BASE_DIR, "GuiadoCursoConsultorioHighTicket.-CHT21[1].pdf"))
     _raw_pdf2 = "\n\n".join(page.extract_text() or "" for page in reader2.pages)
 except:
-    _raw_pdf2 = ""
+    pass
 
-# resumo combinado (usado apenas para classification, não em respostas canônicas)
+# para classificação (não usado nas respostas canônicas)
 _combined = "\n\n".join([_raw_txt, _raw_pdf1, _raw_pdf2])
 try:
     resp = client.chat.completions.create(
@@ -84,9 +79,9 @@ TYPE_KEYWORDS = {
     "health_plan":                    ["health plan", "retorno do investimento"],
     "capitacao_sem_marketing_digital":["offline", "sem instagram", "sem anúncios"],
     "aplicacao":                      ["como aplico", "aplicação", "roteiro"],
-    "faq":                            ["quais", "pergunta frequente"],
-    "explicacao":                     ["explique", "o que é", "defina"],
-    "plano_de_acao":                  ["plano de ação", "primeira semana"],
+    "faq":                            ["quais", "pergunta frequente", "duvidas", "dúvidas"],
+    "explicacao":                     ["explique", "o que é", "defina", "conceito"],
+    "plano_de_acao":                  ["plano de ação", "primeira semana", "bloqueios com dinheiro", "nicho de atuacao"],
     "guia":                           ["guia do curso", "passo a passo", "cht21"]
 }
 
@@ -104,18 +99,28 @@ CANONICAL_QA = {
         "1. <strong>Clique em “Participar”</strong> no módulo Desafio Health Plan.<br>"
         "2. Feche a janela de confirmação.<br>"
         "3. Clique novamente em <strong>“Participar”</strong> para efetivar.<br>"
-        "4. Feche e você estará inscrito.",
+        "4. Feche, e você estará inscrito.",
     "voce pode explicar como o desafio health plan esta organizado em fases":
+        "O Desafio Health Plan possui três fases (sem datas fixas):<br>"
+        "- <strong>Fase 1 – Missão inicial:</strong> assistir módulos 1–6 e preencher quiz.<br>"
+        "- <strong>Fase 2 – Masterclass & Envio:</strong> participar da masterclass e enviar seu plano.<br>"
+        "- <strong>Fase 3 – Acompanhamento:</strong> enviar planners semanais e concluir atividades.",
+    # duplicata para outra forma de perguntar as fases
+    "como esta dividido o mapa de atividades do desafio health plan em fases":
         "O Desafio Health Plan possui três fases (sem datas fixas):<br>"
         "- <strong>Fase 1 – Missão inicial:</strong> assistir módulos 1–6 e preencher quiz.<br>"
         "- <strong>Fase 2 – Masterclass & Envio:</strong> participar da masterclass e enviar seu plano.<br>"
         "- <strong>Fase 3 – Acompanhamento:</strong> enviar planners semanais e concluir atividades.",
     "caso o participante enfrente uma situacao critica qual procedimento deve ser adotado para solicitar suporte":
         "Em caso crítico, envie e-mail para <strong>ajuda@nandamac.com</strong> com assunto <strong>S.O.S Crise</strong>. "
-        "A equipe retornará em até 24 h.",
+        "A equipe retornará em até 24h.",
     "onde e como o participante deve tirar duvidas sobre o metodo do curso":
         "Poste dúvidas exclusivamente na <strong>Comunidade</strong> da Área de Membros. "
         "Não use Direct, WhatsApp ou outros canais.",
+    # nova entrada para variante do aluno
+    "onde devo postar minhas duvidas sobre o metodo do curso":
+        "Todas as dúvidas sobre o método devem ser postadas **exclusivamente na Comunidade** da Área de Membros. "
+        "Não utilize outros canais para isso.",
     # — Plano de Ação (1ª Semana) —
     "no exercicio de bloqueios com dinheiro como escolho qual bloqueio priorizar e defino a atitude dia do chega":
         "Identifique o bloqueio de culpa que mais afeta (Síndrome do Sacerdote) como prioritário. "
@@ -150,9 +155,9 @@ identidade = (
 prompt_variacoes = {
     "explicacao": (
         "<strong>Objetivo:</strong> Explicar com base no conteúdo das aulas. "
-        "Use uma linguagem clara e didática, com tópicos ou passos. Evite genéricos.<br><br>"
+        "Use linguagem clara e tópicos. Evite genéricos.<br><br>"
     ),
-    # demais variações mantidas conforme seu design original...
+    # demais variações mantidas...
 }
 
 # -----------------------------
@@ -176,17 +181,17 @@ def generate_answer(
     history: str = None,
     tipo_de_prompt: str = None
 ) -> str:
-    # 1) Resposta canônica se houver
+    # 1) Resposta canônica
     key = normalize_key(question)
     if key in CANONICAL_QA_NORMALIZED:
         return CANONICAL_QA_NORMALIZED[key]
 
-    # 2) Classificação de escopo
+    # 2) Escopo/tipo
     cls = classify_prompt(question)
     if cls["scope"] == "OUT_OF_SCOPE":
         return OUT_OF_SCOPE_MSG
 
-    # 3) Monta prompt dinâmico
+    # 3) Prompt dinâmico
     tipo = cls["type"]
     prompt = identidade + prompt_variacoes.get(tipo, "")
     if context:
@@ -195,7 +200,7 @@ def generate_answer(
         prompt += f"<br><strong>📜 Histórico:</strong><br>{history}<br>"
     prompt += f"<br><strong>🤔 Pergunta:</strong><br>{question}<br><br><strong>🧠 Resposta:</strong><br>"
 
-    # 4) Chama OpenAI
+    # 4) Chamada OpenAI
     try:
         r = client.chat.completions.create(
             model="gpt-4",
