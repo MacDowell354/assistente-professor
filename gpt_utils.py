@@ -27,30 +27,26 @@ OUT_OF_SCOPE_MSG = (
 # NORMALIZAÇÃO DE CHAVE (removendo acentos)
 # -----------------------------
 def normalize_key(text: str) -> str:
-    nfkd = unicodedata.normalize('NFD', text)
-    ascii_only = ''.join(ch for ch in nfkd if unicodedata.category(ch) != 'Mn')
+    nfkd = unicodedata.normalize("NFD", text)
+    ascii_only = "".join(ch for ch in nfkd if unicodedata.category(ch) != "Mn")
     s = ascii_only.lower()
     s = re.sub(r"[^\w\s]", "", s)
     return re.sub(r"\s+", " ", s).strip()
 
 # -----------------------------
-# LEITURA DE TRANSCRIÇÕES E PDFs
+# LEITURA DE ARQUIVOS
 # -----------------------------
 BASE_DIR = os.path.dirname(__file__)
-
 _raw_txt = open(os.path.join(BASE_DIR, "transcricoes.txt"), encoding="utf-8").read()
-
 def read_pdf(path):
     try:
         reader = PdfReader(path)
         return "\n\n".join(page.extract_text() or "" for page in reader.pages)
     except:
         return ""
-
 _raw_pdf1 = read_pdf(os.path.join(BASE_DIR, "PlanodeAcaoConsultorioHighTicket-1Semana (4)[1].pdf"))
 _raw_pdf2 = read_pdf(os.path.join(BASE_DIR, "GuiadoCursoConsultorioHighTicket.-CHT21[1].pdf"))
 _raw_pdf3 = read_pdf(os.path.join(BASE_DIR, "Papelaria e brindes  lista de links e indicações.pdf"))
-
 # combinado apenas para classificação via LLM
 _combined = "\n\n".join([_raw_txt, _raw_pdf1, _raw_pdf2, _raw_pdf3])
 try:
@@ -59,7 +55,8 @@ try:
         messages=[
             {"role":"system","content":
                 "Você é um resumidor especialista em educação. Resuma em até 300 palavras todo o conteúdo "
-                "do curso Consultório High Ticket, incluindo Plano de Ação (1ª Semana), Guia do Curso e o material de Papelaria e Brindes."
+                "do curso Consultório High Ticket, incluindo Plano de Ação (1ª Semana), Guia do Curso e "
+                "os materiais de Papelaria & Brindes e a playlist Spotify."
             },
             {"role":"user","content":_combined}
         ]
@@ -77,14 +74,12 @@ TYPE_KEYWORDS = {
     "health_plan":                    ["health plan", "retorno do investimento"],
     "capitacao_sem_marketing_digital":["offline", "sem instagram", "sem anúncios"],
     "aplicacao":                      ["como aplico", "aplicação", "roteiro"],
-    "faq":                            ["quais", "pergunta frequente", "duvidas", "dúvidas"],
+    "faq":                            ["quais", "pergunta frequente", "duvidas", "dúvidas", "playlist", "spotify"],
     "explicacao":                     ["explique", "o que é", "defina", "conceito"],
     "plano_de_acao":                  [
         "plano de ação", "primeira semana",
-        "bloqueios com dinheiro",
-        "autoconfianca profissional",
-        "nicho de atuacao",
-        "valor da consulta",
+        "bloqueios com dinheiro", "autoconfianca profissional",
+        "nicho de atuacao", "valor da consulta",
         "ainda nao tenho pacientes particulares"
     ],
     "guia":                           ["guia do curso", "passo a passo", "cht21"]
@@ -107,18 +102,18 @@ CANONICAL_QA = {
         "4. Feche e você estará inscrito.",
     "voce pode explicar como o desafio health plan esta organizado em fases":
         "O Desafio Health Plan possui três fases (sem datas fixas):<br>"
-        "- <strong>Fase 1 – Missão inicial:</strong> assistir módulos 1–6 e preencher quiz.<br>"
-        "- <strong>Fase 2 – Masterclass & Envio:</strong> participar da masterclass e enviar seu plano.<br>"
-        "- <strong>Fase 3 – Acompanhamento:</strong> enviar planners semanais e concluir atividades.",
+        "- **Fase 1 – Missão inicial:** assistir módulos 1–6 e preencher quiz.<br>"
+        "- **Fase 2 – Masterclass & Envio:** participar da masterclass e enviar seu plano.<br>"
+        "- **Fase 3 – Acompanhamento:** enviar planners semanais e concluir atividades.",
     "como esta dividido o mapa de atividades do desafio health plan em fases":
         "O Desafio Health Plan possui três fases (sem datas fixas):<br>"
-        "- <strong>Fase 1 – Missão inicial:</strong> assistir módulos 1–6 e preencher quiz.<br>"
-        "- <strong>Fase 2 – Masterclass & Envio:</strong> participar da masterclass e enviar seu plano.<br>"
-        "- <strong>Fase 3 – Acompanhamento:</strong> enviar planners semanais e concluir atividades.",
+        "- **Fase 1 – Missão inicial:** assistir módulos 1–6 e preencher quiz.<br>"
+        "- **Fase 2 – Masterclass & Envio:** participar da masterclass e enviar seu plano.<br>"
+        "- **Fase 3 – Acompanhamento:** enviar planners semanais e concluir atividades.",
     "caso o participante enfrente uma situacao critica qual procedimento deve ser adotado para solicitar suporte":
-        "Em caso crítico, envie e-mail para <strong>ajuda@nandamac.com</strong> com assunto <strong>S.O.S Crise</strong>. A equipe retornará em até 24h.",
+        "Em caso crítico, envie e-mail para **ajuda@nandamac.com** com assunto **S.O.S Crise**. A equipe retornará em até 24h.",
     "onde e como o participante deve tirar duvidas sobre o metodo do curso":
-        "Poste dúvidas exclusivamente na <strong>Comunidade</strong> da Área de Membros. Não use Direct, WhatsApp ou outros canais.",
+        "Poste dúvidas exclusivamente na **Comunidade** da Área de Membros. Não use Direct, WhatsApp ou outros canais.",
     "onde devo postar minhas duvidas sobre o metodo do curso":
         "Todas as dúvidas sobre o método devem ser postadas **exclusivamente na Comunidade** da Área de Membros.",
 
@@ -134,19 +129,20 @@ CANONICAL_QA = {
     "ainda nao tenho pacientes particulares qual estrategia de atracao high ticket devo priorizar e como executar na agenda":
         "Reserve um bloco fixo na agenda (por exemplo, toda segunda, das 8h às 10h) para enviar 5 mensagens personalizadas a potenciais pacientes do seu nicho usando o roteiro do curso. Quando iniciar atendimentos, implemente a Patient Letter enviando convites impressos aos pacientes para estimular indicações de alto valor.",
 
-    # — Papelaria & Brindes —
-    "onde encontro produtos jo malone no brasil":
-        "Você pode encontrar aromas de ambiente Jo Malone no Brasil em https://www.jomalone.com.br, incluindo colônias Blackberry & Bay, Wood Sage & Sea Salt, Lime Basil & Mandarin e Nectarine Blossom & Honey. :contentReference[oaicite:0]{index=0}",
-    "quais importadoras posso usar para produtos nao encontrados no brasil":
-        "Para produtos não encontrados no Brasil, use importadoras como Easy to go Orlando (https://easytogoorlando.com/) ou marketplaces internacionais como Amazon. :contentReference[oaicite:1]{index=1}",
-    "quais marcas de cafeteiras foram mencionadas":
-        "As marcas de cafeteiras recomendadas incluem Delonghi, Nespresso e Breville. :contentReference[oaicite:2]{index=2}",
-    "onde posso comprar chocolates mencionados no curso":
-        "Os chocolates indicados são Laderach e Daim, disponíveis em chocolaterias especializadas e lojas online. :contentReference[oaicite:3]{index=3}",
-    "quais opcoes de chas foram indicadas":
-        "As opções de chás recomendadas são New English Teas Vintage Victorian Round Tea Caddy e Twinings Earl Grey Loose Tea Tins. :contentReference[oaicite:4]{index=4}"
+    # — Playlist Spotify —
+    "onde posso acessar a playlist do consultorio high ticket":
+        "Você pode acessar nossa playlist do Consultório High Ticket no Spotify: https://open.spotify.com/playlist/5Vop9zNsLcz0pkpD9aLQML?si=vJDC7OfcQXWpTernDbzwHA&nd=1&dlsi=964d4360d35e4b80 :contentReference[oaicite:5]{index=5}",
+    "qual e o link da playlist recomendada no modulo 4":
+        "O link da playlist mencionada na aula 4.17 do Módulo 4 é: https://open.spotify.com/playlist/5Vop9zNsLcz0pkpD9aLQML?si=vJDC7OfcQXWpTernDbzwHA&nd=1&dlsi=964d4360d35e4b80 :contentReference[oaicite:6]{index=6}",
+    "como ouco a playlist do curso":
+        "Para ouvir a playlist, basta clicar no link do Spotify e apertar “Play” no app ou navegador: https://open.spotify.com/playlist/5Vop9zNsLcz0pkpD9aLQML?si=vJDC7OfcQXWpTernDbzwHA&nd=1&dlsi=964d4360d35e4b80 :contentReference[oaicite:7]{index=7}",
+    "em que aula e mencionada a playlist do consultorio high ticket":
+        "A playlist é mencionada na **Aula 4.17** do Módulo 4 – A Jornada do Paciente High Ticket. :contentReference[oaicite:8]{index=8}",
+    "como encontro a playlist do consultorio high ticket no spotify":
+        "Você encontra a playlist buscando “Consultório High Ticket” no Spotify ou acessando diretamente: https://open.spotify.com/playlist/5Vop9zNsLcz0pkpD9aLQML?si=vJDC7OfcQXWpTernDbzwHA&nd=1&dlsi=964d4360d35e4b80 :contentReference[oaicite:9]{index=9}"
 }
 
+# pré-normaliza as chaves
 CANONICAL_QA_NORMALIZED = { normalize_key(k): v for k, v in CANONICAL_QA.items() }
 
 # -----------------------------
@@ -191,8 +187,7 @@ def generate_answer(
     cls = classify_prompt(question)
     if cls["scope"] == "OUT_OF_SCOPE":
         return OUT_OF_SCOPE_MSG
-    tipo = cls["type"]
-    prompt = identidade + prompt_variacoes.get(tipo, "")
+    prompt = identidade + prompt_variacoes.get(cls["type"], "")
     if context:
         prompt += f"<br><strong>📚 Contexto:</strong><br>{context}<br>"
     if history:
