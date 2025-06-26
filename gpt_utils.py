@@ -26,7 +26,7 @@ OUT_OF_SCOPE_MSG = (
 # FUNÇÃO DE NORMALIZAÇÃO DE CHAVE
 # -----------------------------
 def normalize_key(text: str) -> str:
-    # remove acentos, pontuação e deixa lowercase
+    # remove pontuação e deixa lowercase
     s = text.lower()
     s = re.sub(r"[^\w\s]", "", s)      # remove tudo que não seja letra, número ou espaço
     s = re.sub(r"\s+", " ", s).strip() # normaliza espaços
@@ -56,7 +56,7 @@ try:
 except:
     _raw_pdf2 = ""
 
-# resumo para classificação
+# Combina tudo para gerar o resumo usado na classificação
 _combined = _raw_txt + "\n\n" + _raw_pdf1 + "\n\n" + _raw_pdf2
 try:
     resp = client.chat.completions.create(
@@ -133,9 +133,7 @@ CANONICAL_QA = {
 }
 
 # pré-normaliza o dicionário
-CANONICAL_QA_NORMALIZED = {
-    normalize_key(k): v for k, v in CANONICAL_QA.items()
-}
+CANONICAL_QA_NORMALIZED = { normalize_key(k): v for k, v in CANONICAL_QA.items() }
 
 # -----------------------------
 # IDENTIDADE E TEMPLATES
@@ -150,7 +148,7 @@ prompt_variacoes = {
         "<strong>Objetivo:</strong> Explicar com base no conteúdo das aulas. Use uma linguagem clara e didática, "
         "com tópicos ou passos. Evite respostas genéricas. Mostre o conteúdo como se fosse uma aula de **Posicionamento High Ticket**.<br><br>"
     ),
-    # (mantém as demais variações igual ao original...)
+    # mantenha as demais variações inalteradas...
 }
 
 # -----------------------------
