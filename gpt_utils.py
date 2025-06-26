@@ -1,6 +1,7 @@
 import os
 import json
 import re
+import unicodedata
 from openai import OpenAI, OpenAIError
 from pypdf import PdfReader
 
@@ -23,19 +24,21 @@ OUT_OF_SCOPE_MSG = (
 )
 
 # -----------------------------
-# NORMALIZAÇÃO DE CHAVE
+# NORMALIZAÇÃO DE CHAVE (removendo acentos)
 # -----------------------------
 def normalize_key(text: str) -> str:
-    s = text.lower()
-    s = re.sub(r"[^\w\s]", "", s)      # remove pontuação
-    s = re.sub(r"\s+", " ", s).strip() # normaliza espaços
-    return s
+    # decompor e remover diacríticos
+    nfkd = unicodedata.normalize('NFD', text)
+    ascii_only = ''.join(ch for ch in nfkd if unicodedata.category(ch) != 'Mn')
+    # lower + remover pontuação + normalizar espaços
+    s = ascii_only.lower()
+    s = re.sub(r"[^\w\s]", "", s)
+    return re.sub(r"\s+", " ", s).strip()
 
 # -----------------------------
 # LEITURA DE TRANSCRIÇÕES E PDFs
 # -----------------------------
 BASE_DIR = os.path.dirname(__file__)
-
 _raw_txt = open(os.path.join(BASE_DIR, "transcricoes.txt"), encoding="utf-8").read()
 
 _raw_pdf1 = ""
@@ -52,7 +55,7 @@ try:
 except:
     pass
 
-# combinado apenas para classificação via LLM
+# combinado apenas para classificação
 _combined = "\n\n".join([_raw_txt, _raw_pdf1, _raw_pdf2])
 try:
     resp = client.chat.completions.create(
@@ -60,8 +63,7 @@ try:
         messages=[
             {"role":"system","content":
                 "Você é um resumidor especialista em educação. Resuma em até 300 palavras todo o conteúdo "
-                "do curso Consultório High Ticket, incluindo Plano de Ação (1ª Semana) e Guia do Curso, "
-                "para servir de base na classificação de prompts."
+                "do curso Consultório High Ticket, incluindo Plano de Ação (1ª Semana) e Guia do Curso."
             },
             {"role":"user","content":_combined}
         ]
@@ -81,10 +83,14 @@ TYPE_KEYWORDS = {
     "aplicacao":                      ["como aplico", "aplicação", "roteiro"],
     "faq":                            ["quais", "pergunta frequente", "duvidas", "dúvidas"],
     "explicacao":                     ["explique", "o que é", "defina", "conceito"],
-    "plano_de_acao":                  ["plano de ação", "primeira semana",
-                                       "bloqueios com dinheiro", "nicho de atuacao",
-                                       "autoconfianca profissional", "valor da consulta",
-                                       "ainda nao tenho pacientes particulares"],
+    "plano_de_acao":                  [
+        "plano de ação", "primeira semana",
+        "bloqueios com dinheiro",
+        "autoconfianca profissional",
+        "nicho de atuacao",
+        "valor da consulta",
+        "ainda nao tenho pacientes particulares"
+    ],
     "guia":                           ["guia do curso", "passo a passo", "cht21"]
 }
 
@@ -114,19 +120,14 @@ CANONICAL_QA = {
         "- <strong>Fase 2 – Masterclass & Envio:</strong> participar da masterclass e enviar seu plano.<br>"
         "- <strong>Fase 3 – Acompanhamento:</strong> enviar planners semanais e concluir atividades.",
     "caso o participante enfrente uma situacao critica qual procedimento deve ser adotado para solicitar suporte":
-        "Em caso crítico, envie e-mail para <strong>ajuda@nandamac.com</strong> com assunto <strong>S.O.S Crise</strong>. "
-        "A equipe retornará em até 24h.",
+        "Em caso crítico, envie e-mail para <strong>ajuda@nandamac.com</strong> com assunto <strong>S.O.S Crise</strong>. A equipe retornará em até 24h.",
     "onde e como o participante deve tirar duvidas sobre o metodo do curso":
-        "Poste dúvidas exclusivamente na <strong>Comunidade</strong> da Área de Membros. "
-        "Não use Direct, WhatsApp ou outros canais.",
+        "Poste dúvidas exclusivamente na <strong>Comunidade</strong> da Área de Membros. Não use Direct, WhatsApp ou outros canais.",
     "onde devo postar minhas duvidas sobre o metodo do curso":
-        "Todas as dúvidas sobre o método devem ser postadas **exclusivamente na Comunidade** da Área de Membros. "
-        "Não utilize outros canais para isso.",
-
+        "Todas as dúvidas sobre o método devem ser postadas **exclusivamente na Comunidade** da Área de Membros.",
     # — Plano de Ação (1ª Semana) —
     "no exercicio de bloqueios com dinheiro como escolho qual bloqueio priorizar e defino minha atitude dia do chega":
-        "Identifique o sentimento de culpa (“Síndrome do Sacerdote”) que mais impacta sua cobrança e torne-o prioritário. "
-        "Em “Onde quero chegar”, escreva uma ação concreta, por exemplo: “A partir de hoje, afirmarei meu valor em cada consulta e não deixarei de cobrar pelo meu trabalho.”",
+        "Identifique o bloqueio de culpa que mais afeta (Síndrome do Sacerdote) como prioritário. Em “Onde quero chegar”, escreva: “A partir de hoje, afirmarei meu valor em cada consulta e não deixarei de cobrar pelo meu trabalho.”",
     "na parte de autoconfianca profissional o que devo escrever como atitude para nao deixar certas situacoes me abalar":
         "Liste duas situações que abalaram sua confiança. Em “Onde quero chegar”, defina uma atitude transformadora, por exemplo: “Sempre que receber uma crítica, realizarei uma sessão de feedback construtivo com um colega.”",
     "como uso a atividade de nicho de atuacao para definir meu foco e listar as acoes necessarias":
@@ -134,14 +135,11 @@ CANONICAL_QA = {
     "no valor da consulta e procedimentos como encontro referencias de mercado e defino meus valores atuais e ideais":
         "Anote seus valores atuais para consulta e procedimentos; pesquise referências de mercado em tabelas de associações ou colegas; considere custos, experiência e diferenciais; e defina seus valores ideais justificando seu diferencial, por exemplo: “R$ 300 por sessão de fisioterapia clínica, incluindo relatório personalizado de evolução.”",
     "ainda nao tenho pacientes particulares qual estrategia de atracao high ticket devo priorizar e como executar na agenda":
-        "Reserve um bloco fixo na agenda (por exemplo, toda segunda, das 8h às 10h) para enviar 5 mensagens personalizadas a potenciais pacientes do seu nicho usando o roteiro do curso. "
-        "Quando iniciar atendimentos, implemente a Patient Letter enviando convites impressos aos pacientes para estimular indicações de alto valor."
+        "Reserve um bloco fixo na agenda (por exemplo, toda segunda, das 8h às 10h) para enviar 5 mensagens personalizadas a potenciais pacientes do seu nicho usando o roteiro do curso. Quando iniciar atendimentos, implemente a Patient Letter enviando convites impressos aos pacientes para estimular indicações de alto valor."
 }
 
 # pré-normaliza as chaves
-CANONICAL_QA_NORMALIZED = {
-    normalize_key(k): v for k, v in CANONICAL_QA.items()
-}
+CANONICAL_QA_NORMALIZED = { normalize_key(k): v for k, v in CANONICAL_QA.items() }
 
 # -----------------------------
 # IDENTIDADE E TEMPLATES
@@ -153,8 +151,7 @@ identidade = (
 
 prompt_variacoes = {
     "explicacao": (
-        "<strong>Objetivo:</strong> Explicar com base no conteúdo das aulas. "
-        "Use linguagem clara e tópicos. Evite genéricos.<br><br>"
+        "<strong>Objetivo:</strong> Explicar com base no conteúdo das aulas. Use linguagem clara e tópicos. Evite genéricos.<br><br>"
     ),
     # demais variações mantidas...
 }
@@ -163,11 +160,11 @@ prompt_variacoes = {
 # CLASSIFICADOR DE ESCOPO + TIPO
 # -----------------------------
 def classify_prompt(question: str) -> dict:
-    lower = question.lower()
-    if "exercício" in lower or "exercicios" in lower:
-        return {"scope": "OUT_OF_SCOPE", "type": "explicacao"}
+    lower = normalize_key(question)
+    if lower in CANONICAL_QA_NORMALIZED:
+        return {"scope": "IN_SCOPE", "type": "plano_de_acao" if any(k in lower for k in TYPE_KEYWORDS["plano_de_acao"]) else "guia"}
     for t, kws in TYPE_KEYWORDS.items():
-        if any(k in lower for k in kws):
+        if any(normalize_key(k) in lower for k in kws):
             return {"scope": "IN_SCOPE", "type": t}
     return {"scope": "OUT_OF_SCOPE", "type": "explicacao"}
 
@@ -180,17 +177,15 @@ def generate_answer(
     history: str = None,
     tipo_de_prompt: str = None
 ) -> str:
-    # 1) Resposta canônica
     key = normalize_key(question)
+    # 1) se canônica
     if key in CANONICAL_QA_NORMALIZED:
         return CANONICAL_QA_NORMALIZED[key]
-
-    # 2) Escopo/tipo
+    # 2) classifica
     cls = classify_prompt(question)
     if cls["scope"] == "OUT_OF_SCOPE":
         return OUT_OF_SCOPE_MSG
-
-    # 3) Prompt dinâmico
+    # 3) monta prompt dinâmico
     tipo = cls["type"]
     prompt = identidade + prompt_variacoes.get(tipo, "")
     if context:
@@ -198,8 +193,7 @@ def generate_answer(
     if history:
         prompt += f"<br><strong>📜 Histórico:</strong><br>{history}<br>"
     prompt += f"<br><strong>🤔 Pergunta:</strong><br>{question}<br><br><strong>🧠 Resposta:</strong><br>"
-
-    # 4) Chamada OpenAI
+    # 4) chama OpenAI
     try:
         r = client.chat.completions.create(
             model="gpt-4",
