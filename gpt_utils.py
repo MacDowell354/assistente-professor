@@ -1,7 +1,6 @@
 import os
 import json
 import re
-import unicodedata
 from openai import OpenAI, OpenAIError
 from pypdf import PdfReader
 
@@ -17,52 +16,60 @@ client = OpenAI(api_key=api_key)
 # MENSAGEM PADRÃO PARA FORA DE ESCOPO
 # -----------------------------
 OUT_OF_SCOPE_MSG = (
-    "Essa pergunta é muito boa, mas no momento ela está <strong>fora do conteúdo abordado nas aulas do curso "
-    "Consultório High Ticket</strong>. Isso pode indicar uma oportunidade de melhoria do nosso material! 😊<br><br>"
-    "Vamos sinalizar esse tema para a equipe pedagógica avaliar a inclusão em versões futuras do curso. "
-    "Enquanto isso, recomendamos focar nos ensinamentos já disponíveis para ter os melhores resultados possíveis no consultório."
+    "Essa pergunta é muito boa, mas no momento ela está "
+    "<strong>fora do conteúdo abordado nas aulas do curso "
+    "Consultório High Ticket</strong>. Isso pode indicar uma "
+    "oportunidade de melhoria do nosso material! 😊<br><br>"
+    "Vamos sinalizar esse tema para a equipe pedagógica avaliar "
+    "a inclusão em versões futuras do curso. Enquanto isso, "
+    "recomendamos focar nos ensinamentos já disponíveis para ter "
+    "os melhores resultados possíveis no consultório."
 )
 
 # -----------------------------
-# NORMALIZAÇÃO DE CHAVE (removendo acentos)
+# NORMALIZAÇÃO DE CHAVE
 # -----------------------------
 def normalize_key(text: str) -> str:
-    nfkd = unicodedata.normalize("NFD", text)
-    ascii_only = "".join(ch for ch in nfkd if unicodedata.category(ch) != "Mn")
-    s = ascii_only.lower()
+    s = text.lower()
     s = re.sub(r"[^\w\s]", "", s)
-    return re.sub(r"\s+", " ", s).strip()
+    s = re.sub(r"\s+", " ", s).strip()
+    return s
 
 # -----------------------------
-# LEITURA DE ARQUIVOS
+# LEITURA DE TRANSCRIÇÕES E PDFs
 # -----------------------------
 BASE_DIR = os.path.dirname(__file__)
 
-def read_pdf(path):
-    try:
-        reader = PdfReader(path)
-        return "\n\n".join(page.extract_text() or "" for page in reader.pages)
-    except:
-        return ""
-
 _raw_txt = open(os.path.join(BASE_DIR, "transcricoes.txt"), encoding="utf-8").read()
-_raw_pdf1 = read_pdf(os.path.join(BASE_DIR, "PlanodeAcaoConsultorioHighTicket-1Semana (4)[1].pdf"))
-_raw_pdf2 = read_pdf(os.path.join(BASE_DIR, "GuiadoCursoConsultorioHighTicket.-CHT21[1].pdf"))
-_raw_pdf3 = read_pdf(os.path.join(BASE_DIR, "Papelaria e brindes  lista de links e indicações.pdf"))
 
-# combinado apenas para classificação via LLM
-_combined = "\n\n".join([_raw_txt, _raw_pdf1, _raw_pdf2, _raw_pdf3])
+PDF1_PATH = os.path.join(BASE_DIR, "PlanodeAcaoConsultorioHighTicket-1Semana (4)[1].pdf")
+_raw_pdf1 = ""
+try:
+    reader1 = PdfReader(PDF1_PATH)
+    _raw_pdf1 = "\n\n".join(page.extract_text() or "" for page in reader1.pages)
+except:
+    _raw_pdf1 = ""
 
+PDF2_PATH = os.path.join(BASE_DIR, "GuiadoCursoConsultorioHighTicket.-CHT21[1].pdf")
+_raw_pdf2 = ""
+try:
+    reader2 = PdfReader(PDF2_PATH)
+    _raw_pdf2 = "\n\n".join(page.extract_text() or "" for page in reader2.pages)
+except:
+    _raw_pdf2 = ""
+
+# para classificação (não usado nas respostas canônicas)
+_combined = "\n\n".join([_raw_txt, _raw_pdf1, _raw_pdf2])
 try:
     resp = client.chat.completions.create(
         model="gpt-4",
         messages=[
-            {"role":"system","content":
+            {"role": "system", "content":
                 "Você é um resumidor especialista em educação. Resuma em até 300 palavras todo o conteúdo "
-                "do curso Consultório High Ticket, incluindo Plano de Ação (1ª Semana), Guia do Curso e "
-                "os materiais de Papelaria & Brindes e a playlist Spotify."
+                "do curso Consultório High Ticket, incluindo Plano de Ação (1ª Semana) e Guia do Curso, "
+                "para servir de base na classificação de prompts."
             },
-            {"role":"user","content":_combined}
+            {"role": "user", "content": _combined}
         ]
     )
     COURSE_SUMMARY = resp.choices[0].message.content
@@ -78,13 +85,9 @@ TYPE_KEYWORDS = {
     "health_plan":                    ["health plan", "retorno do investimento"],
     "capitacao_sem_marketing_digital":["offline", "sem instagram", "sem anúncios"],
     "aplicacao":                      ["como aplico", "aplicação", "roteiro"],
-    "faq":                            ["quais", "pergunta frequente", "duvidas", "dúvidas", "playlist", "spotify"],
-    "explicacao":                     ["explique", "o que é", "defina", "conceito"],
-    "plano_de_acao":                  [
-        "plano de ação", "primeira semana", "bloqueios com dinheiro",
-        "autoconfiança profissional", "nicho de atuação", "valor da consulta",
-        "ainda não tenho pacientes particulares"
-    ],
+    "faq":                            ["quais", "pergunta frequente"],
+    "explicacao":                     ["explique", "o que é", "defina"],
+    "plano_de_acao":                  ["plano de ação", "primeira semana"],
     "guia":                           ["guia do curso", "passo a passo", "cht21"]
 }
 
@@ -110,9 +113,10 @@ CANONICAL_QA = {
         "- <strong>Fase 3 – Acompanhamento:</strong> enviar planners semanais e concluir atividades.",
     "caso o participante enfrente uma situacao critica qual procedimento deve ser adotado para solicitar suporte":
         "Em caso crítico, envie e-mail para <strong>ajuda@nandamac.com</strong> com assunto <strong>S.O.S Crise</strong>. "
-        "A equipe retornará em até 24h.",
+        "A equipe retornará em até 24 h.",
     "onde e como o participante deve tirar duvidas sobre o metodo do curso":
         "Poste dúvidas exclusivamente na <strong>Comunidade</strong> da Área de Membros. Não use Direct, WhatsApp ou outros canais.",
+
     # — Plano de Ação (1ª Semana) —
     "no exercicio de bloqueios com dinheiro como escolho qual bloqueio priorizar e defino minha atitude dia do chega":
         "Identifique o bloqueio de culpa que mais afeta (Síndrome do Sacerdote) como prioritário. "
@@ -125,58 +129,65 @@ CANONICAL_QA = {
         "Liste ações específicas com prazo, ex.: “Especializar em [X] em 3 meses”, “Criar pacote online de avaliação inicial até o próximo mês” e “Revisar site e materiais de comunicação em 2 semanas.”",
     "no valor da consulta e procedimentos como encontro referencias de mercado e defino meus valores atuais e ideais":
         "Anote seus valores atuais; pesquise referências de mercado em associações ou colegas; considere custos, experiência e diferenciais; "
-        "e defina seus valores ideais justificando seu diferencial, ex.: “R$ 300 por sessão de fisioterapia clínica, incluindo relatório personalizado de evolução.”",
-    "ainda nao tenho pacientes particulares qual estrategia de atracao high ticket devo priorizar e como executar na agenda":
-        "Reserve um bloco fixo na agenda (ex.: toda segunda das 8h às 10h) para enviar 5 mensagens personalizadas a potenciais pacientes do seu nicho. "
-        "Quando iniciar atendimentos, implemente a Patient Letter enviando convites impressos para estimular indicações de alto valor.",
-    # — Playlist Spotify —
-    "onde posso acessar a playlist do consultorio high ticket":
-        'Você pode acessar nossa playlist do Consultório High Ticket no Spotify: '
-        '<a href="https://open.spotify.com/playlist/5Vop9zNsLcz0pkpD9aLQML?si=vJDC7OfcQXWpTernDbzwHA&nd=1&dlsi=964d4360d35e4b80" target="_blank">'
-        'Spotify – Consultório High Ticket</a>.',
-    "qual e o link da playlist recomendada no modulo 4":
-        'O link da playlist mencionada na aula 4.17 do Módulo 4 é: '
-        '<a href="https://open.spotify.com/playlist/5Vop9zNsLcz0pkpD9aLQML?si=vJDC7OfcQXWpTernDbzwHA&nd=1&dlsi=964d4360d35e4b80" target="_blank">'
-        'Spotify – Aula 4.17</a>.',
-    "como ouco a playlist do curso":
-        'Para ouvir a playlist, basta clicar em “Play” neste link: '
-        '<a href="https://open.spotify.com/playlist/5Vop9zNsLcz0pkpD9aLQML?si=vJDC7OfcQXWpTernDbzwHA&nd=1&dlsi=964d4360d35e4b80" target="_blank">'
-        'Ouvir Playlist</a>.',
-    "em que aula e mencionada a playlist do consultorio high ticket":
-        'A playlist é mencionada na <strong>Aula 4.17</strong> do Módulo 4 – A Jornada do Paciente High Ticket.',
-    "como encontro a playlist do consultorio high ticket no spotify":
-        'Você encontra a playlist buscando “Consultório High Ticket” no Spotify ou acessando diretamente: '
-        '<a href="https://open.spotify.com/playlist/5Vop9zNsLcz0pkpD9aLQML?si=vJDC7OfcQXWpTernDbzwHA&nd=1&dlsi=964d4360d35e4b80" '
-        'target="_blank">Playlist no Spotify</a>.'
+        "e defina seus valores ideais justificando seu diferencial, ex.: “R$ 300 por sessão, com relatório personalizado.”",
+    "ainda nao tenho pacientes particulares qual estrategia de atracao de pacientes high ticket devo priorizar e como executar na agenda":
+        "Reserve um bloco fixo (ex.: segundas 8h–10h) para enviar 5 mensagens personalizadas ao seu nicho. "
+        "Quando iniciar atendimentos, implemente a Patient Letter com convites impressos para potenciais pacientes High Ticket.",
+
+    # — Dossiê 007 —
+    "qual e o objetivo principal do dossie 007 e para quem ele e indicado":
+        "O Dossiê 007 ensina as estratégias iniciais do Método Consultório High Ticket para captar e reter Pacientes High Ticket. "
+        "É indicado para profissionais que começam do zero, atendem convênios e querem migrar para particulares, ou já têm pacientes e desejam dobrar o faturamento do consultório.",
+
+    "como implementar a acao 1 de networking descrita no dossie 007":
+        "A Ação 1 de Networking exige que você identifique os outros profissionais que atendem seus pacientes e entre em contato "
+        "seguindo o script: “Oi |Nome do Profissional|, aqui é o Dr. |Seu Nome|... Vamos conversar 10 minutos sobre o paciente X?” "
+        "e registre as indicações geradas.",
+
+    "quais scripts devo usar para confirmar e remarcar consultas na acao 2 do dossie 007":
+        "Use o Script de Confirmação de Consultas dois dias antes: “Oi [nome], confirmo sua consulta dia X às Y. Digite 1 para confirmar, 2 para cancelar...” "
+        "e o Script de Remarcação, mostrando surpresa e alertando que a agenda está bloqueada, perguntando se o paciente realmente deseja remarcar.",
+
+    "como funciona a acao 3 de reativacao high ticket e qual script usar para pacientes antigos":
+        "Após 6 meses sem visita, envie: “Oi [nome], aqui é a assistente da Dra X, faz X meses da última consulta. Vamos agendar sua próxima avaliação? (2 Options/1 choice)”. "
+        "Se não responder em 48 h, siga com: “Aconteceu algo? Não sei se viu minha mensagem. Seu feedback é importante.”",
+
+    "quais sao as orientacoes finais do dossie 007 e como aplica-las":
+        "1. Sempre destaque sua especialidade específica; "
+        "2. Lembre-se: tudo é sobre o paciente, não sobre você; "
+        "3. Ligue e agradeça pessoalmente aos profissionais que recomendaram seus pacientes."
 }
 
-# pré-normaliza as chaves
-CANONICAL_QA_NORMALIZED = {normalize_key(k): v for k, v in CANONICAL_QA.items()}
+# normaliza as chaves para busca
+CANONICAL_QA_NORMALIZED = {
+    normalize_key(k): v for k, v in CANONICAL_QA.items()
+}
 
 # -----------------------------
 # IDENTIDADE E TEMPLATES
 # -----------------------------
 identidade = (
-    '<strong>Você é Nanda Mac.ia</strong>, a IA oficial da Nanda Mac, treinada com o conteúdo do curso '
-    '<strong>Consultório High Ticket</strong>. Responda como uma professora experiente, ajudando o aluno a aplicar o método na prática.<br><br>'
+    "<strong>Você é Nanda Mac.ia</strong>, a IA oficial da Nanda Mac, treinada com o conteúdo do curso "
+    "<strong>Consultório High Ticket</strong>. Responda como uma professora experiente, ajudando o aluno a aplicar o método na prática.<br><br>"
 )
 
 prompt_variacoes = {
     "explicacao": (
-        "<strong>Objetivo:</strong> Explicar com base no conteúdo das aulas. Use linguagem clara e tópicos. Evite genéricos.<br><br>"
+        "<strong>Objetivo:</strong> Explicar com base no conteúdo das aulas. "
+        "Use uma linguagem clara e didática, com tópicos ou passos. Evite genéricos.<br><br>"
     ),
-    # demais variações mantidas conforme seu design original...
+    # ... (demais variações mantidas conforme seu design original)
 }
 
 # -----------------------------
 # CLASSIFICADOR DE ESCOPO + TIPO
 # -----------------------------
 def classify_prompt(question: str) -> dict:
-    lower = normalize_key(question)
-    if lower in CANONICAL_QA_NORMALIZED:
-        return {"scope": "IN_SCOPE", "type": "faq"}
+    lower = question.lower()
+    if "exercício" in lower or "exercicios" in lower:
+        return {"scope": "OUT_OF_SCOPE", "type": "explicacao"}
     for t, kws in TYPE_KEYWORDS.items():
-        if any(normalize_key(k) in lower for k in kws):
+        if any(k in lower for k in kws):
             return {"scope": "IN_SCOPE", "type": t}
     return {"scope": "OUT_OF_SCOPE", "type": "explicacao"}
 
@@ -189,21 +200,25 @@ def generate_answer(
     history: str = None,
     tipo_de_prompt: str = None
 ) -> str:
+    # 1) Resposta canônica se existir
     key = normalize_key(question)
-    # 1) Resposta canônica se houver
     if key in CANONICAL_QA_NORMALIZED:
         return CANONICAL_QA_NORMALIZED[key]
+
     # 2) Classificação de escopo
     cls = classify_prompt(question)
     if cls["scope"] == "OUT_OF_SCOPE":
         return OUT_OF_SCOPE_MSG
+
     # 3) Monta prompt dinâmico
-    prompt = identidade + prompt_variacoes.get(cls["type"], "")
+    tipo = cls["type"]
+    prompt = identidade + prompt_variacoes.get(tipo, "")
     if context:
         prompt += f"<br><strong>📚 Contexto:</strong><br>{context}<br>"
     if history:
         prompt += f"<br><strong>📜 Histórico:</strong><br>{history}<br>"
     prompt += f"<br><strong>🤔 Pergunta:</strong><br>{question}<br><br><strong>🧠 Resposta:</strong><br>"
+
     # 4) Chama OpenAI
     try:
         r = client.chat.completions.create(
