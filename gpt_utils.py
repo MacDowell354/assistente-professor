@@ -81,8 +81,10 @@ TYPE_KEYWORDS = {
     "explicacao":                     ["explique", "o que é", "defina", "conceito"],
     "plano_de_acao":                  [
         "plano de ação", "primeira semana",
-        "bloqueios com dinheiro", "autoconfianca profissional",
-        "nicho de atuacao", "valor da consulta",
+        "bloqueios com dinheiro",
+        "autoconfianca profissional",
+        "nicho de atuacao",
+        "valor da consulta",
         "ainda nao tenho pacientes particulares"
     ],
     "guia":                           ["guia do curso", "passo a passo", "cht21"]
@@ -105,18 +107,18 @@ CANONICAL_QA = {
         "4. Feche e você estará inscrito.",
     "voce pode explicar como o desafio health plan esta organizado em fases":
         "O Desafio Health Plan possui três fases (sem datas fixas):<br>"
-        "- **Fase 1 – Missão inicial:** assistir módulos 1–6 e preencher quiz.<br>"
-        "- **Fase 2 – Masterclass & Envio:** participar da masterclass e enviar seu plano.<br>"
-        "- **Fase 3 – Acompanhamento:** enviar planners semanais e concluir atividades.",
+        "- <strong>Fase 1 – Missão inicial:</strong> assistir módulos 1–6 e preencher quiz.<br>"
+        "- <strong>Fase 2 – Masterclass & Envio:</strong> participar da masterclass e enviar seu plano.<br>"
+        "- <strong>Fase 3 – Acompanhamento:</strong> enviar planners semanais e concluir atividades.",
     "como esta dividido o mapa de atividades do desafio health plan em fases":
         "O Desafio Health Plan possui três fases (sem datas fixas):<br>"
-        "- **Fase 1 – Missão inicial:** assistir módulos 1–6 e preencher quiz.<br>"
-        "- **Fase 2 – Masterclass & Envio:** participar da masterclass e enviar seu plano.<br>"
-        "- **Fase 3 – Acompanhamento:** enviar planners semanais e concluir atividades.",
+        "- <strong>Fase 1 – Missão inicial:</strong> assistir módulos 1–6 e preencher quiz.<br>"
+        "- <strong>Fase 2 – Masterclass & Envio:</strong> participar da masterclass e enviar seu plano.<br>"
+        "- <strong>Fase 3 – Acompanhamento:</strong> enviar planners semanais e concluir atividades.",
     "caso o participante enfrente uma situacao critica qual procedimento deve ser adotado para solicitar suporte":
-        "Em caso crítico, envie e-mail para **ajuda@nandamac.com** com assunto **S.O.S Crise**. A equipe retornará em até 24h.",
+        "Em caso crítico, envie e-mail para <strong>ajuda@nandamac.com</strong> com assunto <strong>S.O.S Crise</strong>. A equipe retornará em até 24h.",
     "onde e como o participante deve tirar duvidas sobre o metodo do curso":
-        "Poste dúvidas exclusivamente na **Comunidade** da Área de Membros. Não use Direct, WhatsApp ou outros canais.",
+        "Poste dúvidas exclusivamente na <strong>Comunidade</strong> da Área de Membros. Não use Direct, WhatsApp ou outros canais.",
     "onde devo postar minhas duvidas sobre o metodo do curso":
         "Todas as dúvidas sobre o método devem ser postadas **exclusivamente na Comunidade** da Área de Membros.",
 
@@ -134,15 +136,15 @@ CANONICAL_QA = {
 
     # — Papelaria & Brindes —
     "onde encontro produtos jo malone no brasil":
-        "Você pode encontrar aromas de ambiente Jo Malone no Brasil em https://www.jomalone.com.br, incluindo colônias Blackberry & Bay, Wood Sage & Sea Salt, Lime Basil & Mandarin e Nectarine Blossom & Honey. :contentReference[oaicite:5]{index=5}",
+        "Você pode encontrar aromas de ambiente Jo Malone no Brasil em https://www.jomalone.com.br, incluindo colônias Blackberry & Bay, Wood Sage & Sea Salt, Lime Basil & Mandarin e Nectarine Blossom & Honey. :contentReference[oaicite:0]{index=0}",
     "quais importadoras posso usar para produtos nao encontrados no brasil":
-        "Para produtos não encontrados no Brasil, use importadoras como Easy to go Orlando (https://easytogoorlando.com/) ou marketplaces internacionais como Amazon. :contentReference[oaicite:6]{index=6}",
+        "Para produtos não encontrados no Brasil, use importadoras como Easy to go Orlando (https://easytogoorlando.com/) ou marketplaces internacionais como Amazon. :contentReference[oaicite:1]{index=1}",
     "quais marcas de cafeteiras foram mencionadas":
-        "As marcas de cafeteiras recomendadas incluem Delonghi, Nespresso e Breville. :contentReference[oaicite:7]{index=7}",
+        "As marcas de cafeteiras recomendadas incluem Delonghi, Nespresso e Breville. :contentReference[oaicite:2]{index=2}",
     "onde posso comprar chocolates mencionados no curso":
-        "Os chocolates indicados são Laderach e Daim, disponíveis em chocolaterias especializadas e lojas online. :contentReference[oaicite:8]{index=8}",
+        "Os chocolates indicados são Laderach e Daim, disponíveis em chocolaterias especializadas e lojas online. :contentReference[oaicite:3]{index=3}",
     "quais opcoes de chas foram indicadas":
-        "As opções de chás recomendadas são New English Teas Vintage Victorian Round Tea Caddy e Twinings Earl Grey Loose Tea Tins. :contentReference[oaicite:9]{index=9}"
+        "As opções de chás recomendadas são New English Teas Vintage Victorian Round Tea Caddy e Twinings Earl Grey Loose Tea Tins. :contentReference[oaicite:4]{index=4}"
 }
 
 CANONICAL_QA_NORMALIZED = { normalize_key(k): v for k, v in CANONICAL_QA.items() }
@@ -184,14 +186,11 @@ def generate_answer(
     tipo_de_prompt: str = None
 ) -> str:
     key = normalize_key(question)
-    # 1) se canônica
     if key in CANONICAL_QA_NORMALIZED:
         return CANONICAL_QA_NORMALIZED[key]
-    # 2) escopo/tipo
     cls = classify_prompt(question)
     if cls["scope"] == "OUT_OF_SCOPE":
         return OUT_OF_SCOPE_MSG
-    # 3) prompt dinâmico
     tipo = cls["type"]
     prompt = identidade + prompt_variacoes.get(tipo, "")
     if context:
@@ -199,15 +198,14 @@ def generate_answer(
     if history:
         prompt += f"<br><strong>📜 Histórico:</strong><br>{history}<br>"
     prompt += f"<br><strong>🤔 Pergunta:</strong><br>{question}<br><br><strong>🧠 Resposta:</strong><br>"
-    # 4) chamada OpenAI
     try:
         r = client.chat.completions.create(
             model="gpt-4",
-            messages=[{"role":"user","content":prompt}]
+            messages=[{"role": "user", "content": prompt}]
         )
     except OpenAIError:
         r = client.chat.completions.create(
             model="gpt-3.5-turbo",
-            messages=[{"role":"user","content":prompt}]
+            messages=[{"role": "user", "content": prompt}]
         )
     return r.choices[0].message.content
