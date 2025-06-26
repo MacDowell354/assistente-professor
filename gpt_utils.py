@@ -27,10 +27,8 @@ OUT_OF_SCOPE_MSG = (
 # NORMALIZAÇÃO DE CHAVE (removendo acentos)
 # -----------------------------
 def normalize_key(text: str) -> str:
-    # decompor e remover diacríticos
     nfkd = unicodedata.normalize('NFD', text)
     ascii_only = ''.join(ch for ch in nfkd if unicodedata.category(ch) != 'Mn')
-    # lower + remover pontuação + normalizar espaços
     s = ascii_only.lower()
     s = re.sub(r"[^\w\s]", "", s)
     return re.sub(r"\s+", " ", s).strip()
@@ -39,31 +37,29 @@ def normalize_key(text: str) -> str:
 # LEITURA DE TRANSCRIÇÕES E PDFs
 # -----------------------------
 BASE_DIR = os.path.dirname(__file__)
+
 _raw_txt = open(os.path.join(BASE_DIR, "transcricoes.txt"), encoding="utf-8").read()
 
-_raw_pdf1 = ""
-try:
-    reader1 = PdfReader(os.path.join(BASE_DIR, "PlanodeAcaoConsultorioHighTicket-1Semana (4)[1].pdf"))
-    _raw_pdf1 = "\n\n".join(page.extract_text() or "" for page in reader1.pages)
-except:
-    pass
+def read_pdf(path):
+    try:
+        reader = PdfReader(path)
+        return "\n\n".join(page.extract_text() or "" for page in reader.pages)
+    except:
+        return ""
 
-_raw_pdf2 = ""
-try:
-    reader2 = PdfReader(os.path.join(BASE_DIR, "GuiadoCursoConsultorioHighTicket.-CHT21[1].pdf"))
-    _raw_pdf2 = "\n\n".join(page.extract_text() or "" for page in reader2.pages)
-except:
-    pass
+_raw_pdf1 = read_pdf(os.path.join(BASE_DIR, "PlanodeAcaoConsultorioHighTicket-1Semana (4)[1].pdf"))
+_raw_pdf2 = read_pdf(os.path.join(BASE_DIR, "GuiadoCursoConsultorioHighTicket.-CHT21[1].pdf"))
+_raw_pdf3 = read_pdf(os.path.join(BASE_DIR, "Papelaria e brindes  lista de links e indicações.pdf"))
 
-# combinado apenas para classificação
-_combined = "\n\n".join([_raw_txt, _raw_pdf1, _raw_pdf2])
+# combinado apenas para classificação via LLM
+_combined = "\n\n".join([_raw_txt, _raw_pdf1, _raw_pdf2, _raw_pdf3])
 try:
     resp = client.chat.completions.create(
         model="gpt-4",
         messages=[
             {"role":"system","content":
                 "Você é um resumidor especialista em educação. Resuma em até 300 palavras todo o conteúdo "
-                "do curso Consultório High Ticket, incluindo Plano de Ação (1ª Semana) e Guia do Curso."
+                "do curso Consultório High Ticket, incluindo Plano de Ação (1ª Semana), Guia do Curso e o material de Papelaria e Brindes."
             },
             {"role":"user","content":_combined}
         ]
@@ -85,10 +81,8 @@ TYPE_KEYWORDS = {
     "explicacao":                     ["explique", "o que é", "defina", "conceito"],
     "plano_de_acao":                  [
         "plano de ação", "primeira semana",
-        "bloqueios com dinheiro",
-        "autoconfianca profissional",
-        "nicho de atuacao",
-        "valor da consulta",
+        "bloqueios com dinheiro", "autoconfianca profissional",
+        "nicho de atuacao", "valor da consulta",
         "ainda nao tenho pacientes particulares"
     ],
     "guia":                           ["guia do curso", "passo a passo", "cht21"]
@@ -111,20 +105,21 @@ CANONICAL_QA = {
         "4. Feche e você estará inscrito.",
     "voce pode explicar como o desafio health plan esta organizado em fases":
         "O Desafio Health Plan possui três fases (sem datas fixas):<br>"
-        "- <strong>Fase 1 – Missão inicial:</strong> assistir módulos 1–6 e preencher quiz.<br>"
-        "- <strong>Fase 2 – Masterclass & Envio:</strong> participar da masterclass e enviar seu plano.<br>"
-        "- <strong>Fase 3 – Acompanhamento:</strong> enviar planners semanais e concluir atividades.",
+        "- **Fase 1 – Missão inicial:** assistir módulos 1–6 e preencher quiz.<br>"
+        "- **Fase 2 – Masterclass & Envio:** participar da masterclass e enviar seu plano.<br>"
+        "- **Fase 3 – Acompanhamento:** enviar planners semanais e concluir atividades.",
     "como esta dividido o mapa de atividades do desafio health plan em fases":
         "O Desafio Health Plan possui três fases (sem datas fixas):<br>"
-        "- <strong>Fase 1 – Missão inicial:</strong> assistir módulos 1–6 e preencher quiz.<br>"
-        "- <strong>Fase 2 – Masterclass & Envio:</strong> participar da masterclass e enviar seu plano.<br>"
-        "- <strong>Fase 3 – Acompanhamento:</strong> enviar planners semanais e concluir atividades.",
+        "- **Fase 1 – Missão inicial:** assistir módulos 1–6 e preencher quiz.<br>"
+        "- **Fase 2 – Masterclass & Envio:** participar da masterclass e enviar seu plano.<br>"
+        "- **Fase 3 – Acompanhamento:** enviar planners semanais e concluir atividades.",
     "caso o participante enfrente uma situacao critica qual procedimento deve ser adotado para solicitar suporte":
-        "Em caso crítico, envie e-mail para <strong>ajuda@nandamac.com</strong> com assunto <strong>S.O.S Crise</strong>. A equipe retornará em até 24h.",
+        "Em caso crítico, envie e-mail para **ajuda@nandamac.com** com assunto **S.O.S Crise**. A equipe retornará em até 24h.",
     "onde e como o participante deve tirar duvidas sobre o metodo do curso":
-        "Poste dúvidas exclusivamente na <strong>Comunidade</strong> da Área de Membros. Não use Direct, WhatsApp ou outros canais.",
+        "Poste dúvidas exclusivamente na **Comunidade** da Área de Membros. Não use Direct, WhatsApp ou outros canais.",
     "onde devo postar minhas duvidas sobre o metodo do curso":
         "Todas as dúvidas sobre o método devem ser postadas **exclusivamente na Comunidade** da Área de Membros.",
+
     # — Plano de Ação (1ª Semana) —
     "no exercicio de bloqueios com dinheiro como escolho qual bloqueio priorizar e defino minha atitude dia do chega":
         "Identifique o bloqueio de culpa que mais afeta (Síndrome do Sacerdote) como prioritário. Em “Onde quero chegar”, escreva: “A partir de hoje, afirmarei meu valor em cada consulta e não deixarei de cobrar pelo meu trabalho.”",
@@ -135,10 +130,21 @@ CANONICAL_QA = {
     "no valor da consulta e procedimentos como encontro referencias de mercado e defino meus valores atuais e ideais":
         "Anote seus valores atuais para consulta e procedimentos; pesquise referências de mercado em tabelas de associações ou colegas; considere custos, experiência e diferenciais; e defina seus valores ideais justificando seu diferencial, por exemplo: “R$ 300 por sessão de fisioterapia clínica, incluindo relatório personalizado de evolução.”",
     "ainda nao tenho pacientes particulares qual estrategia de atracao high ticket devo priorizar e como executar na agenda":
-        "Reserve um bloco fixo na agenda (por exemplo, toda segunda, das 8h às 10h) para enviar 5 mensagens personalizadas a potenciais pacientes do seu nicho usando o roteiro do curso. Quando iniciar atendimentos, implemente a Patient Letter enviando convites impressos aos pacientes para estimular indicações de alto valor."
+        "Reserve um bloco fixo na agenda (por exemplo, toda segunda, das 8h às 10h) para enviar 5 mensagens personalizadas a potenciais pacientes do seu nicho usando o roteiro do curso. Quando iniciar atendimentos, implemente a Patient Letter enviando convites impressos aos pacientes para estimular indicações de alto valor.",
+
+    # — Papelaria & Brindes —
+    "onde encontro produtos jo malone no brasil":
+        "Você pode encontrar aromas de ambiente Jo Malone no Brasil em https://www.jomalone.com.br, incluindo colônias Blackberry & Bay, Wood Sage & Sea Salt, Lime Basil & Mandarin e Nectarine Blossom & Honey. :contentReference[oaicite:5]{index=5}",
+    "quais importadoras posso usar para produtos nao encontrados no brasil":
+        "Para produtos não encontrados no Brasil, use importadoras como Easy to go Orlando (https://easytogoorlando.com/) ou marketplaces internacionais como Amazon. :contentReference[oaicite:6]{index=6}",
+    "quais marcas de cafeteiras foram mencionadas":
+        "As marcas de cafeteiras recomendadas incluem Delonghi, Nespresso e Breville. :contentReference[oaicite:7]{index=7}",
+    "onde posso comprar chocolates mencionados no curso":
+        "Os chocolates indicados são Laderach e Daim, disponíveis em chocolaterias especializadas e lojas online. :contentReference[oaicite:8]{index=8}",
+    "quais opcoes de chas foram indicadas":
+        "As opções de chás recomendadas são New English Teas Vintage Victorian Round Tea Caddy e Twinings Earl Grey Loose Tea Tins. :contentReference[oaicite:9]{index=9}"
 }
 
-# pré-normaliza as chaves
 CANONICAL_QA_NORMALIZED = { normalize_key(k): v for k, v in CANONICAL_QA.items() }
 
 # -----------------------------
@@ -162,7 +168,7 @@ prompt_variacoes = {
 def classify_prompt(question: str) -> dict:
     lower = normalize_key(question)
     if lower in CANONICAL_QA_NORMALIZED:
-        return {"scope": "IN_SCOPE", "type": "plano_de_acao" if any(k in lower for k in TYPE_KEYWORDS["plano_de_acao"]) else "guia"}
+        return {"scope": "IN_SCOPE", "type": "faq"}
     for t, kws in TYPE_KEYWORDS.items():
         if any(normalize_key(k) in lower for k in kws):
             return {"scope": "IN_SCOPE", "type": t}
@@ -181,11 +187,11 @@ def generate_answer(
     # 1) se canônica
     if key in CANONICAL_QA_NORMALIZED:
         return CANONICAL_QA_NORMALIZED[key]
-    # 2) classifica
+    # 2) escopo/tipo
     cls = classify_prompt(question)
     if cls["scope"] == "OUT_OF_SCOPE":
         return OUT_OF_SCOPE_MSG
-    # 3) monta prompt dinâmico
+    # 3) prompt dinâmico
     tipo = cls["type"]
     prompt = identidade + prompt_variacoes.get(tipo, "")
     if context:
@@ -193,15 +199,15 @@ def generate_answer(
     if history:
         prompt += f"<br><strong>📜 Histórico:</strong><br>{history}<br>"
     prompt += f"<br><strong>🤔 Pergunta:</strong><br>{question}<br><br><strong>🧠 Resposta:</strong><br>"
-    # 4) chama OpenAI
+    # 4) chamada OpenAI
     try:
         r = client.chat.completions.create(
             model="gpt-4",
-            messages=[{"role": "user", "content": prompt}]
+            messages=[{"role":"user","content":prompt}]
         )
     except OpenAIError:
         r = client.chat.completions.create(
             model="gpt-3.5-turbo",
-            messages=[{"role": "user", "content": prompt}]
+            messages=[{"role":"user","content":prompt}]
         )
     return r.choices[0].message.content
