@@ -88,20 +88,48 @@ TYPE_KEYWORDS = {
 }
 
 # -----------------------------
+# RESPOSTAS CANÔNICAS PARA 5 PERGUNTAS DO GUIA
+# -----------------------------
+CANONICAL_QA = {
+    "quais são os quatro passos iniciais descritos no guia do curso consultório high ticket para começar a participação?": (
+        "1. <strong>Passo 1:</strong> Assista à aula de Onboarding completo.<br>"
+        "2. <strong>Passo 2:</strong> Entre no grupo exclusivo de avisos da turma.<br>"
+        "3. <strong>Passo 3:</strong> Acesse a Área de Membros e preencha seu perfil.<br>"
+        "4. <strong>Passo 4:</strong> Participe do Desafio Health Plan clicando em “Participar”."
+    ),
+    "o que o participante deve fazer após entrar na área de membros para dar o primeiro passo no desafio health plan?": (
+        "1. <strong>Clicar em “Participar”</strong> no módulo Desafio Health Plan.<br>"
+        "2. <strong>Fechar</strong> a janela inicial.<br>"
+        "3. Na tela seguinte, <strong>clicar novamente em “Participar”</strong> para efetivar sua inscrição no desafio."
+    ),
+    "como é estruturado o mapa de atividades do desafio health plan em termos de fases e prazos?": (
+        "O mapa de atividades do Desafio Health Plan é dividido em três fases, sem considerar datas específicas:<br>"
+        "<strong>Fase 1 – Missão inicial:</strong> Assistir aos módulos 1–6 e preencher o quiz correspondente;<br>"
+        "<strong>Fase 2 – Masterclass e envio do Health Plan:</strong> Participar da masterclass de Health Plan e enviar o primeiro plano produzido;<br>"
+        "<strong>Fase 3 – Missões semanais de acompanhamento:</strong> Realizar envios semanais de planners de consecutividade e participar das atividades de encerramento."
+    ),
+    "caso o participante enfrente uma situação crítica, qual procedimento deve ser adotado para solicitar suporte?": (
+        "Em caso de situação crítica, envie um e-mail para <strong>ajuda@nandamac.com</strong> com o assunto <strong>“S.O.S Crise”</strong>. "
+        "A equipe de suporte retornará em até 24 horas."
+    ),
+    "onde e como o participante deve tirar dúvidas sobre o método do curso?": (
+        "As dúvidas sobre o método devem ser postadas exclusivamente na <strong>Comunidade</strong> da Área de Membros. "
+        "Não utilize Direct, WhatsApp ou outros canais para questionamentos metodológicos."
+    )
+}
+
+# -----------------------------
 # CLASSIFICADOR DE ESCOPO + TIPO
 # -----------------------------
 def classify_prompt(question: str) -> dict:
     lower_q = question.lower()
-
     # bloquear exercícios físicos
     if "exercício" in lower_q or "exercicios" in lower_q:
         return {"scope": "OUT_OF_SCOPE", "type": "explicacao"}
-
     # 1) match rápido por keyword
     for tipo, keywords in TYPE_KEYWORDS.items():
         if any(k in lower_q for k in keywords):
             return {"scope": "IN_SCOPE", "type": tipo}
-
     # 2) fallback via GPT
     payload = (
         "Você é um classificador inteligente. Com base no resumo e na pergunta abaixo, "
@@ -188,10 +216,13 @@ prompt_variacoes = {
         "**Convênios vs Particulares**, **Ambiente do consultório** e **Ações de atração high ticket**.<br><br>"
     ),
     "guia": (
-        "<strong>Objetivo:</strong> Explorar o **Guia do Curso Consultório High Ticket**, "
-        "apresentando o passo a passo sugerido no documento. Use uma estrutura sequencial clara, "
-        "destacando cada etapa conforme o PDF de referência.<br><br>"
-    ),
+        "<strong>Objetivo:</strong> Explorar o **Guia do Curso Consultório High Ticket**, apresentando o passo a passo sugerido no documento. "
+        "Use uma estrutura sequencial clara, destacando cada etapa:<br>"
+        "1. <strong>Passo 1:</strong> Assista à aula de Onboarding completo.<br>"
+        "2. <strong>Passo 2:</strong> Entre no grupo exclusivo de avisos da turma.<br>"
+        "3. <strong>Passo 3:</strong> Acesse a Área de Membros e preencha seu perfil.<br>"
+        "4. <strong>Passo 4:</strong> Participe do Desafio Health Plan clicando em “Participar”.<br><br>"
+    )
 }
 
 # -----------------------------
@@ -203,11 +234,18 @@ def generate_answer(
     history: str = None,
     tipo_de_prompt: str = "explicacao"
 ) -> str:
+    # Override imediato para as 5 perguntas do Guia
+    key = question.strip().lower()
+    if key in CANONICAL_QA:
+        return CANONICAL_QA[key]
+
+    # Classificação normal de escopo/tipo
     cls = classify_prompt(question)
     if cls["scope"] == "OUT_OF_SCOPE":
         return OUT_OF_SCOPE_MSG
 
     tipo = cls["type"]
+    # Monta contexto
     if tipo == "capitacao_sem_marketing_digital":
         contexto_para_prompt = ""
     else:
@@ -216,11 +254,13 @@ def generate_answer(
             if context.strip() else ""
         )
 
+    # Constrói prompt
     prompt = identidade + prompt_variacoes[tipo] + contexto_para_prompt
     if history:
         prompt += f"<br><strong>📜 Histórico anterior:</strong><br>{history}<br>"
     prompt += f"<br><strong>🤔 Pergunta:</strong><br>{question}<br><br><strong>🧠 Resposta:</strong><br>"
 
+    # Chama OpenAI
     try:
         r2 = client.chat.completions.create(
             model="gpt-4",
@@ -231,4 +271,5 @@ def generate_answer(
             model="gpt-3.5-turbo",
             messages=[{"role": "user", "content": prompt}]
         )
+
     return r2.choices[0].message.content
