@@ -99,7 +99,7 @@ CANONICAL_QA = {
         "Ele também está disponível diretamente na Aula 10.4 do curso.",
     # Checklist Consultório High Ticket:
     "o que significa implementar health plan para apresentar os valores de tratamentos na fase 1 do checklist":
-        "Significa que você deve usar o modelo de Health Plan para detalhar cada opção de tratamento, incluindo cirurgias ou protocolos, expondo investimento e benefícios de forma clara para o paciente. fileciteturn35file0", cirurgias ou protocolos, expondo investimento e benefícios de forma clara para o paciente. fileciteturn35file0",
+        "Significa que você deve usar o modelo de Health Plan para detalhar cada opção de tratamento, incluindo cirurgias ou protocolos, expondo investimento e benefícios de forma clara para o paciente. fileciteturn35file0", incluindo cirurgias ou protocolos, expondo investimento e benefícios de forma clara para o paciente. fileciteturn35file0", cirurgias ou protocolos, expondo investimento e benefícios de forma clara para o paciente. fileciteturn35file0",
     "na fase 2 como defino quais brindes high ticket oferecer aos meus melhores pacientes":
         "Escolha brindes que reforcem o posicionamento premium do seu consultório, como kits personalizados ou vouchers de experiências exclusivas, alinhados ao perfil Key Man e Key Woman. fileciteturn35file0",
     "por que retirar o jardim vertical na area de recepcao":
