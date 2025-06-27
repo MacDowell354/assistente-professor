@@ -84,7 +84,8 @@ TYPE_KEYWORDS = {
     "explicacao":                     ["explique", "o que é", "defina", "conceito"],
     "plano_de_acao":                  ["plano de ação", "primeira semana"],
     "guia":                           ["guia do curso", "passo a passo", "cht21"],
-    "dossie":                         ["dossiê 007", "acao 1", "acao 2", "acao 3", "orientações finais"]
+    "dossie":                         ["dossiê 007", "acao 1", "acao 2", "acao 3", "orientações finais"],
+    "canva_health_plan":              ["modelo compartilhado do health plan", "link do health plan"],
 }
 
 # -----------------------------
@@ -108,11 +109,9 @@ CANONICAL_QA = {
         "- <strong>Fase 2 – Masterclass & Envio:</strong> participar da masterclass e enviar seu plano.<br>"
         "- <strong>Fase 3 – Acompanhamento:</strong> enviar planners semanais e concluir atividades.",
     "caso o participante enfrente uma situacao critica qual procedimento deve ser adotado para solicitar suporte":
-        "Em caso crítico, envie e-mail para <strong>ajuda@nandamac.com</strong> com assunto <strong>S.O.S Crise</strong>. "
-        "A equipe retornará em até 24 h.",
+        "Em caso crítico, envie e-mail para <strong>ajuda@nandamac.com</strong> com assunto <strong>S.O.S Crise</strong>. A equipe retornará em até 24 h.",
     "onde e como o participante deve tirar duvidas sobre o metodo do curso":
-        "Poste dúvidas exclusivamente na <strong>Comunidade</strong> da Área de Membros. "
-        "Não use Direct, WhatsApp ou outros canais.",
+        "Poste dúvidas exclusivamente na <strong>Comunidade</strong> da Área de Membros. Não use Direct, WhatsApp ou outros canais.",
 
     # — Plano de Ação (1ª Semana) —
     "no exercicio de bloqueios com dinheiro como escolho qual bloqueio priorizar e defino minha atitude dia do chega":
@@ -122,42 +121,50 @@ CANONICAL_QA = {
         "Liste duas situações que abalaram sua confiança. "
         "Em “Onde quero chegar”, defina: “Sempre que receber críticas, realizarei uma sessão de feedback construtivo com um colega.”",
     "como uso a atividade de nicho de atuacao para definir meu foco e listar as acoes necessarias":
-        "Descreva seu posicionamento atual e identifique seu nicho ideal. "
-        "Liste ações específicas com prazo, por exemplo: “Especializar em [X] em 3 meses”, “Criar pacote online de avaliação inicial até o próximo mês” e “Revisar site e materiais de comunicação em 2 semanas.”",
+        "Descreva seu posicionamento atual e identifique seu nicho ideal. Liste ações específicas com prazo, como “Especializar em [X] em 3 meses”.",
     "no valor da consulta e procedimentos como encontro referencias de mercado e defino meus valores atuais e ideais":
-        "Anote seus valores atuais; pesquise referências de mercado em associações ou colegas; considere custos, experiência e diferenciais; "
-        "e defina seus valores ideais justificando seu diferencial, ex.: “R$ 300 por sessão de fisioterapia clínica, incluindo relatório personalizado de evolução.”",
+        "Anote seus valores atuais; pesquise referências de mercado; considere custos, experiência e diferenciais; defina valores ideais, ex.: “R$ 300 por sessão, com relatório personalizado.”",
     "ainda nao tenho pacientes particulares qual estrategia de atracao de pacientes high ticket devo priorizar e como executar na agenda":
-        "Reserve um bloco fixo na agenda (ex.: toda segunda das 8h – 10h) para enviar 5 mensagens personalizadas a potenciais pacientes do seu nicho. "
-        "Quando iniciar atendimentos, implemente a Patient Letter com convites impressos para estimular indicações de alto valor.",
+        "Reserve um bloco fixo (ex.: segundas 8h–10h) para enviar 5 mensagens personalizadas ao seu nicho. Depois, implemente a Patient Letter com convites impressos.",
 
     # — Dossiê 007 —
     "qual e o objetivo principal do dossie 007 e para quem ele e indicado":
         "O Dossiê 007 ensina as estratégias iniciais do Método Consultório High Ticket para atrair e reter Pacientes High Ticket. "
-        "É indicado para: profissionais da saúde começando do zero sem pacientes; quem deseja parar de atender convênios; "
-        "e quem já atende particulares e quer dobrar o faturamento do consultório. :contentReference[oaicite:0]{index=0}",
+        "É indicado para profissionais sem pacientes, quem atende convênios e quem já atende particulares e quer dobrar faturamento.",
 
     "como implementar a acao 1 de networking descrita no dossie 007":
-        "Durante a consulta, pergunte ao paciente quais outros profissionais da saúde o atendem e anote nome e especialidades. "
-        "Depois, envie um áudio de até 40 segundos pelo WhatsApp seguindo este script: "
-        "“Oi |Nome|, aqui é o Dr. |Seu Nome|. Estou com o paciente |X| e gostaria de conversar 10 minutos sobre ele. "
-        "Pode ser às X h ou Y h? Qual você prefere?” ",
+        "Identifique outros profissionais que atendem seus pacientes e envie um áudio de até 40s: "
+        "“Oi |Nome|, aqui é o Dr. |Seu Nome|. Podemos conversar 10min sobre o paciente X? Horário: X h ou Y h?”",
 
     "quais scripts devo usar para confirmar e remarcar consultas na acao 2 do dossie 007":
-        "• Script de confirmação (2 dias antes): “Oi [nome], confirmo sua consulta dia X às Y h. "
-        "Digite 1 para confirmar, 2 para cancelar. Se não responder em 24 h, a consulta será cancelada.”<br>"
-        "• Script de remarcação (1 h antes): “Tem certeza que quer remarcar? A agenda está concorrida e o próximo horário disponível é em X meses. Não é melhor resolver logo?” ",
+        "• Confirmação (2 dias antes): “Oi [nome], confirmo sua consulta dia X às Y h. Digite 1 para confirmar, 2 para cancelar.”<br>"
+        "• Remarcação (1 h antes): “A agenda está concorrida; próximo horário disponível em X meses. Tem certeza de remarcar?”",
 
     "como funciona a acao 3 de reativacao high ticket e qual script usar para pacientes antigos":
-        "Após 6 meses sem visita, envie: “Oi [nome], sou assistente da Dra X. "
-        "Notei que faz X meses desde sua última consulta. Vamos agendar sua próxima avaliação?” "
-        "(2 Options/1 choice). Se não responder em 48 h, continue com: "
-        "“Aconteceu algo? Se algo mudou ou teve algum incômodo, por favor me fale—seu feedback é importante.” ",
+        "Após 6 meses sem visita, envie: “Oi [nome], sou assistente da Dra X, faz X meses desde sua última consulta. Vamos agendar?” "
+        "Se não responder em 48 h, envie: “Seu feedback é importante. Algo mudou?”",
 
     "quais sao as orientacoes finais do dossie 007 e como aplica-las":
-        "1. Conte sempre sua especialidade de forma específica (não apenas “nutricionista”).<br>"
-        "2. Regra de ouro: tudo é sobre o paciente, não sobre você.<br>"
-        "3. Ligue e agradeça pessoalmente aos profissionais que recomendaram seus pacientes. "
+        "1. Destaque sua especialidade específica;<br>"
+        "2. Tudo é sobre o paciente;<br>"
+        "3. Ligue e agradeça pessoalmente aos profissionais que recomendaram pacientes.",
+
+    # — Health Plan Compartilhado (Canva) —
+    "onde posso acessar o modelo compartilhado do health plan":
+        "Acesse o modelo de Health Plan nas aulas 6.8 e 10.4 via Canva: "
+        "<a href=\"https://www.canva.com/design/DAEteeUPSUQ/0isBewvgUTJF0gZaRYZw2g/view?utm_content=DAEteeUPSUQ&utm_campaign=designshare&utm_medium=link&utm_source=publishsharelink&mode=preview\" target=\"_blank\">Modelo Health Plan (Canva)</a>. :contentReference[oaicite:0]{index=0}",
+
+    "em qual aula e apresentado o link do health plan compartilhado":
+        "O link do Health Plan compartilhado aparece na Aula 6.8 e na Aula 10.4. :contentReference[oaicite:1]{index=1}",
+
+    "para que serve o link do health plan compartilhado":
+        "Esse link oferece um modelo editável no Canva para você personalizar e apresentar o Health Plan aos pacientes. :contentReference[oaicite:2]{index=2}",
+
+    "como editar o health plan no canva":
+        "Abra o link, clique em “Editar este modelo” (login no Canva requerido) e altere textos, imagens e cores conforme sua marca. :contentReference[oaicite:3]{index=3}",
+
+    "posso compartilhar o health plan com meus pacientes":
+        "Após editar, clique em “Compartilhar” e copie o link de visualização para enviar a seus pacientes. :contentReference[oaicite:4]{index=4}",
 }
 
 # pré-normaliza as chaves
@@ -170,30 +177,26 @@ CANONICAL_QA_NORMALIZED = {
 # -----------------------------
 identidade = (
     "<strong>Você é Nanda Mac.ia</strong>, a IA oficial da Nanda Mac, treinada com o conteúdo do curso "
-    "<strong>Consultório High Ticket</strong>. Responda como uma professora experiente, ajudando o aluno a aplicar o método na prática.<br><br>"
+    "<strong>Consultório High Ticket</strong>. Responda como uma professora experiente,<br>ajudando o aluno a aplicar o método na prática.<br><br>"
 )
 
 prompt_variacoes = {
-    "explicacao": (
-        "<strong>Objetivo:</strong> Explicar com base no conteúdo das aulas. "
-        "Use uma linguagem clara e didática, com tópicos ou passos. Evite genéricos.<br><br>"
-    ),
     "faq": (
         "<strong>Objetivo:</strong> Responder de forma direta a dúvidas frequentes do curso. "
-        "Use exemplos práticos e mencione etapas conforme o material."
+        "Use exemplos práticos e links ativos conforme o material."
     ),
-    # demais variações mantidas conforme seu design original...
+    # demais variações mantidas...
 }
 
 # -----------------------------
 # CLASSIFICADOR DE ESCOPO + TIPO
 # -----------------------------
 def classify_prompt(question: str) -> dict:
-    lower = normalize_key(question)
-    if lower in CANONICAL_QA_NORMALIZED:
+    key = normalize_key(question)
+    if key in CANONICAL_QA_NORMALIZED:
         return {"scope": "IN_SCOPE", "type": "faq"}
     for t, kws in TYPE_KEYWORDS.items():
-        if any(normalize_key(k) in lower for k in kws):
+        if any(normalize_key(k) in key for k in kws):
             return {"scope": "IN_SCOPE", "type": t}
     return {"scope": "OUT_OF_SCOPE", "type": "explicacao"}
 
@@ -217,8 +220,7 @@ def generate_answer(
         return OUT_OF_SCOPE_MSG
 
     # 3) Monta prompt dinâmico
-    tipo = cls["type"]
-    prompt = identidade + prompt_variacoes.get(tipo, "")
+    prompt = identidade + prompt_variacoes.get(cls["type"], "")
     if context:
         prompt += f"<br><strong>📚 Contexto:</strong><br>{context}<br>"
     if history:
