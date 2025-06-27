@@ -66,10 +66,10 @@ CANONICAL_QA = {
     "qual a importancia de implementar som ambiente com a playlist consultorio high ticket":
         "A trilha sonora certa cria uma atmosfera acolhedora e profissional, melhorando a experiência do paciente e reforçando seu posicionamento High Ticket. fileciteturn36file0",
     # Checklist — PDF preenchível
-    "como usar o checklist em pdf para acompanhar minhas tarefas concluídas":
+    "como usar o checklist em pdf para acompanhar minhas tarefas concluídas": (
         "Você pode baixar o PDF preenchível abaixo e ir marcando cada item à medida que conclui. Assim, terá um registro visual do seu progresso:<br>"
-        "<a href=\"sandbox:/mnt/data/CHECKLISTCONSULTORIOHIGHTICKET.pdf\" target=\"_blank\">🔽 Download do Checklist Consultório High Ticket (PDF preenchível)</a> fileciteturn36file0"](sandbox:/mnt/data/CHECKLISTCONSULTORIOHIGHTICKET.pdf) fileciteturn36file0"
-}
+        "<a href=\"sandbox:/mnt/data/CHECKLISTCONSULTORIOHIGHTICKET.pdf\" target=\"_blank\">🔽 Download do Checklist Consultório High Ticket (PDF preenchível)</a> fileciteturn36file0"
+    ),
 CANONICAL_QA_NORMALIZED = { normalize_key(k): v for k, v in CANONICAL_QA.items() }
 
 # -----------------------------
