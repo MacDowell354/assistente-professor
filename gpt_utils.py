@@ -20,7 +20,7 @@ OUT_OF_SCOPE_MSG = (
     "Essa pergunta é muito boa, mas no momento ela está "
     "<strong>fora do conteúdo abordado nas aulas do curso "
     "Consultório High Ticket</strong>. Isso pode indicar uma "
-    "oportunidade de melhoria do nosso material! 😊<br><br>"  
+    "oportunidade de melhoria do nosso material! 😊<br><br>"
     "Vamos sinalizar esse tema para a equipe pedagógica avaliar "
     "a inclusão em versões futuras do curso. Enquanto isso, "
     "recomendamos focar nos ensinamentos já disponíveis para ter "
@@ -30,6 +30,7 @@ OUT_OF_SCOPE_MSG = (
 # -----------------------------
 # NORMALIZAÇÃO DE CHAVE
 # -----------------------------
+
 def normalize_key(text: str) -> str:
     nfkd = unicodedata.normalize("NFD", text)
     no_accents = ''.join(ch for ch in nfkd if unicodedata.category(ch) != 'Mn')
@@ -41,43 +42,10 @@ def normalize_key(text: str) -> str:
     return s
 
 # -----------------------------
-# LEITURA DE PDFs (não usado nas respostas canônicas)
-# -----------------------------
-BASE_DIR = os.path.dirname(__file__)
-def read_pdf(path):
-    try:
-        reader = PdfReader(path)
-        return "\n\n".join(page.extract_text() or "" for page in reader.pages)
-    except:
-        return ""
-
-_raw_txt  = open(os.path.join(BASE_DIR, "transcricoes.txt"), encoding="utf-8").read()
-_raw_pdf1 = read_pdf(os.path.join(BASE_DIR, "PlanodeAcaoConsultorioHighTicket-1Semana (4)[1].pdf"))
-_raw_pdf2 = read_pdf(os.path.join(BASE_DIR, "GuiadoCursoConsultorioHighTicket.-CHT21[1].pdf"))
-_raw_pdf3 = read_pdf(os.path.join(BASE_DIR, "5.8 - Dossiê 007 - (3)[1].pdf"))
-_raw_pdf4 = read_pdf(os.path.join(BASE_DIR, "CHECKLISTCONSULTORIOHIGHTICKET.pdf"))
-
-_combined = "\n\n".join([_raw_txt, _raw_pdf1, _raw_pdf2, _raw_pdf3])
-try:
-    resp = client.chat.completions.create(
-        model="gpt-4",
-        messages=[
-            {"role": "system", "content": (
-                "Você é um resumidor especialista em educação. Resuma em até 300 palavras todo o conteúdo "
-                "do curso Consultório High Ticket, incluindo Plano de Ação (1ª Semana), Guia do Curso, Dossiê 007 e Checklist." 
-            )},
-            {"role": "user", "content": _combined}
-        ]
-    )
-    COURSE_SUMMARY = resp.choices[0].message.content
-except OpenAIError:
-    COURSE_SUMMARY = ""
-
-# -----------------------------
-# PALAVRAS-CHAVE PARA CLASSIFICAÇÃO
+# CLASSIFICAÇÃO DE PROMPTS
 # -----------------------------
 TYPE_KEYWORDS = {
-    "faq":        ["quais", "pergunta frequente"],
+    "faq":        ["quais", "pergunta frequente", "como usar"],
     "checklist":  ["checklist", "fase 1", "fase 2", "fase 3", "fase 4"]
 }
 
@@ -100,7 +68,7 @@ CANONICAL_QA = {
     # Checklist — PDF preenchível
     "como usar o checklist em pdf para acompanhar minhas tarefas concluídas":
         "Você pode baixar o PDF preenchível abaixo e ir marcando cada item à medida que conclui. Assim, terá um registro visual do seu progresso:<br>"
-        "[📥 Download do Checklist Consultório High Ticket (PDF preenchível)](sandbox:/mnt/data/CHECKLISTCONSULTORIOHIGHTICKET.pdf) fileciteturn36file0"
+        "<a href=\"sandbox:/mnt/data/CHECKLISTCONSULTORIOHIGHTICKET.pdf\" target=\"_blank\">🔽 Download do Checklist Consultório High Ticket (PDF preenchível)</a> fileciteturn36file0"](sandbox:/mnt/data/CHECKLISTCONSULTORIOHIGHTICKET.pdf) fileciteturn36file0"
 }
 CANONICAL_QA_NORMALIZED = { normalize_key(k): v for k, v in CANONICAL_QA.items() }
 
@@ -127,7 +95,7 @@ def classify_prompt(question: str) -> dict:
     for t, kws in TYPE_KEYWORDS.items():
         if any(normalize_key(k) in key for k in kws):
             return {"scope": "IN_SCOPE", "type": t}
-    return {"scope": "OUT_OF_SCOPE", "type": "explicacao"}
+    return {"scope": "OUT_OF_SCOPE", "type": "faq"}
 
 # -----------------------------
 # FUNÇÃO PRINCIPAL
@@ -139,17 +107,24 @@ def generate_answer(
     tipo_de_prompt: str = None
 ) -> str:
     key = normalize_key(question)
+    # Resposta canônica
     if key in CANONICAL_QA_NORMALIZED:
         return CANONICAL_QA_NORMALIZED[key]
+
+    # Classificação de escopo
     cls = classify_prompt(question)
     if cls["scope"] == "OUT_OF_SCOPE":
         return OUT_OF_SCOPE_MSG
+
+    # Monta prompt dinâmico
     prompt = identidade + prompt_variacoes.get(cls["type"], "")
     if context:
         prompt += f"<br><strong>📚 Contexto:</strong><br>{context}<br>"
     if history:
         prompt += f"<br><strong>📜 Histórico:</strong><br>{history}<br>"
     prompt += f"<br><strong>🤔 Pergunta:</strong><br>{question}<br><br><strong>🧠 Resposta:</strong><br>"
+
+    # Chama OpenAI
     try:
         r = client.chat.completions.create(
             model="gpt-4",
