@@ -149,8 +149,15 @@ CANONICAL_QA = {
     "para que serve o link do health plan compartilhado":
         "Esse link oferece um modelo editável no Canva para você personalizar e apresentar o Health Plan aos pacientes. fileciteturn31file0",
     "onde encontro o link do formulario para criar no canva o health plan personalizado para o paciente":
-        "Acesse o formulário para criar seu Health Plan personalizado no Canva: "
-        "<a href=\"https://www.canva.com/design/DAEteeUPSUQ/0isBewvgUTJF0gZaRYZw2g/view?utm_content=DAEteeUPSUQ&utm_campaign=designshare&utm_medium=link&utm_source=publishsharelink&mode=preview\" target=\"_blank\">Formulário Health Plan (Canva)</a>. Este link também está disponível na Aula 10.4.",
+        "<strong>Esse é, sem dúvida, um dos conteúdos mais importantes do nosso curso</strong>, pois um Health Plan bem elaborado faz toda a diferença na percepção de valor dos seus pacientes!<br><br>"
+        "Para acessar e personalizar o seu formulário de Health Plan no Canva, basta clicar neste link abaixo:<br>"
+        "<a href=\"https://www.canva.com/design/DAEteeUPSUQ/0isBewvgUTJF0gZaRYZw2g/view?utm_content=DAEteeUPSUQ&utm_campaign=designshare&utm_medium=link&utm_source=publishsharelink&mode=preview\" target=\"_blank\">👉 Acesse o Formulário Health Plan (Canva)</a><br><br>"
+        "Você também encontra esse mesmo link na <strong>Aula 10.4</strong>, na seção de Recursos. Lá, logo abaixo do vídeo, clique em “Formulário Health Plan”.<br><br>"
+        "<strong>Lembre-se de:</strong><br>"
+        "1. <strong>Editar os campos</strong> para inserir objetivos e necessidades de cada paciente.<br>"
+        "2. <strong>Ajustar cores e fontes</strong> de acordo com a identidade do seu consultório.<br>"
+        "3. <strong>Adicionar imagens ou gráficos</strong> que ilustrem o progresso esperado.<br><br>"
+        "Se surgir qualquer dúvida durante a edição—desde trocar textos até incorporar fotos—me avise que eu te guio em cada passo do processo! fileciteturn33file0",
     "como editar o health plan no canva":
         "Abra o link, clique em “Editar este modelo” (login no Canva requerido) e altere textos, imagens e cores conforme sua marca. fileciteturn31file0",
     "posso compartilhar o health plan com meus pacientes":
