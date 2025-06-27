@@ -123,15 +123,23 @@ def classify_prompt(question: str) -> dict:
 # -----------------------------
 # FUNÇÃO PRINCIPAL
 # -----------------------------
-def generate_answer(question: str, context: str = "", history: str = None) -> str:
+def generate_answer(
+    question: str,
+    context: str = "",
+    history: str = None,
+    tipo_de_prompt: str = None
+) -> str:
     key = normalize_key(question)
+    # 1) Resposta canônica
     if key in CANONICAL_QA_NORMALIZED:
         return CANONICAL_QA_NORMALIZED[key]
 
+    # 2) Escopo
     cls = classify_prompt(question)
     if cls["scope"] == "OUT_OF_SCOPE":
         return OUT_OF_SCOPE_MSG
 
+    # 3) Prompt dinâmico
     prompt = identidade + prompt_variacoes.get("faq", "")
     if context:
         prompt += f"<br><strong>Contexto:</strong><br>{context}<br>"
@@ -139,6 +147,7 @@ def generate_answer(question: str, context: str = "", history: str = None) -> st
         prompt += f"<br><strong>Histórico:</strong><br>{history}<br>"
     prompt += f"<br><strong>Pergunta:</strong><br>{question}<br><br><strong>Resposta:</strong><br>"
 
+    # 4) Fallback GPT-4 / GPT-3.5
     try:
         r = client.chat.completions.create(
             model="gpt-4",
