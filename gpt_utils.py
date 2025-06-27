@@ -20,7 +20,7 @@ OUT_OF_SCOPE_MSG = (
     "Essa pergunta é muito boa, mas no momento ela está "
     "<strong>fora do conteúdo abordado nas aulas do curso "
     "Consultório High Ticket</strong>. Isso pode indicar uma "
-    "oportunidade de melhoria do nosso material! 😊<br><br>"  
+    "oportunidade de melhoria do nosso material! 😊<br><br>"
     "Vamos sinalizar esse tema para a equipe pedagógica avaliar "
     "a inclusão em versões futuras do curso. Enquanto isso, "
     "recomendamos focar nos ensinamentos já disponíveis para ter "
@@ -129,33 +129,29 @@ CANONICAL_QA = {
 
     # — Dossiê 007 —
     "qual e o objetivo principal do dossie 007 e para quem ele e indicado":
-        "O Dossiê 007 ensina as estratégias iniciais do Método Consultório High Ticket para atrair e reter Pacientes High Ticket. "
-        "É indicado para profissionais sem pacientes, quem atende convênios e quem já atende particulares e quer dobrar faturamento.",
+        "O Dossiê 007 ensina as estratégias iniciais do Método Consultório High Ticket para atrair e reter Pacientes High Ticket. É indicado para profissionais sem pacientes, quem atende convênios e quem já atende particulares e quer dobrar faturamento.",
     "como implementar a acao 1 de networking descrita no dossie 007":
-        "Identifique outros profissionais que atendem seus pacientes e envie um áudio de até 40s: “Oi |Nome|, aqui é o Dr. |Seu Nome|. Podemos conversar 10min sobre o paciente X? Horário: X h ou Y h?”,
+        "Identifique outros profissionais que atendem seus pacientes e envie um áudio de até 40s: 'Oi |Nome|, aqui é o Dr. |Seu Nome|. Podemos conversar 10min sobre o paciente X? Horário: X h ou Y h?' ",
     "quais scripts devo usar para confirmar e remarcar consultas na acao 2 do dossie 007":
         "• Confirmação (2 dias antes): “Oi [nome], confirmo sua consulta dia X às Y h. Digite 1 para confirmar, 2 para cancelar.”<br>"
-        "• Remarcação (1 h antes): “A agenda está concorrida; próximo horário disponível em X meses. Tem certeza de remarcar?”,
+        "• Remarcação (1 h antes): “A agenda está concorrida; próximo horário disponível em X meses. Tem certeza de remarcar?”",
     "como funciona a acao 3 de reativacao high ticket e qual script usar para pacientes antigos":
-        "Após 6 meses sem visita, envie: “Oi [nome], sou assistente da Dra X, faz X meses desde sua última consulta. Vamos agendar?” "
-        "Se não responder em 48 h, envie: “Seu feedback é importante. Algo mudou?”,
+        "Após 6 meses sem visita, envie: “Oi [nome], sou assistente da Dra X, faz X meses desde sua última consulta. Vamos agendar?” Se não responder em 48 h, envie: “Seu feedback é importante. Algo mudou?”",
     "quais sao as orientacoes finais do dossie 007 e como aplica-las":
-        "1. Destaque sua especialidade específica;<br>"
-        "2. Tudo é sobre o paciente;<br>"
-        "3. Ligue e agradeça pessoalmente aos profissionais que recomendaram pacientes.",
+        "1. Destaque sua especialidade específica;<br>2. Tudo é sobre o paciente;<br>3. Ligue e agradeça pessoalmente aos profissionais que recomendaram pacientes.",
 
     # — Health Plan Compartilhado (Canva) —
     "onde posso acessar o modelo compartilhado do health plan":
         "Acesse o modelo de Health Plan nas aulas 6.8 e 10.4 via Canva: "
-        "<a href=\"https://www.canva.com/design/DAEteeUPSUQ/0isBewvgUTJF0gZaRYZw2g/view?utm_content=DAEteeUPSUQ&utm_campaign=designshare&utm_medium=link&utm_source=publishsharelink&mode=preview\" target=\"_blank\">Modelo Health Plan (Canva)</a>. fileciteturn31file0",
+        "<a href=\"https://www.canva.com/design/DAEteeUPSUQ/0isBewvgUTJF0gZaRYZw2g/view?utm_content=DAEteeUPSUQ&utm_campaign=designshare&utm_medium=link&utm_source=publishsharelink&mode=preview\" target=\"_blank\">Modelo Health Plan (Canva)</a>. :contentReference[oaicite:1]{index=1}",
     "em qual aula e apresentado o link do health plan compartilhado":
-        "O link do Health Plan compartilhado aparece na Aula 6.8 e na Aula 10.4. fileciteturn31file0",
+        "O link do Health Plan compartilhado aparece na Aula 6.8 e na Aula 10.4. :contentReference[oaicite:2]{index=2}",
     "para que serve o link do health plan compartilhado":
-        "Esse link oferece um modelo editável no Canva para você personalizar e apresentar o Health Plan aos pacientes. fileciteturn31file0",
+        "Esse link oferece um modelo editável no Canva para você personalizar e apresentar o Health Plan aos pacientes. :contentReference[oaicite:3]{index=3}",
     "como editar o health plan no canva":
-        "Abra o link, clique em “Editar este modelo” (login no Canva requerido) e altere textos, imagens e cores conforme sua marca. fileciteturn31file0",
+        "Abra o link, clique em “Editar este modelo” (login no Canva requerido) e altere textos, imagens e cores conforme sua marca. :contentReference[oaicite:4]{index=4}",
     "posso compartilhar o health plan com meus pacientes":
-        "Após editar, clique em “Compartilhar” e copie o link de visualização para enviar a seus pacientes. fileciteturn31file0",
+        "Após editar, clique em “Compartilhar” e copie o link de visualização para enviar a seus pacientes. :contentReference[oaicite:5]{index=5}",
 }
 
 # pré-normaliza as chaves
