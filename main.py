@@ -22,7 +22,7 @@ templates = Jinja2Templates(directory="templates")
 app.include_router(logs_router)
 
 # 🔐 Autenticação
-SECRET_KEY = "segredo-teste"
+SECRET_KEY = os.getenv("SECRET_KEY", "segredo-teste")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -50,7 +50,9 @@ def login_get(request: Request):
 @app.post("/login")
 def login_post(request: Request, username: str = Form(...), password: str = Form(...)):
     if not authenticate_user(username, password):
-        return templates.TemplateResponse("login.html", {"request": request, "error": "Usuário ou senha inválidos."})
+        return templates.TemplateResponse(
+            "login.html", {"request": request, "error": "Usuário ou senha inválidos."}
+        )
     token = create_access_token({"sub": username})
     response = RedirectResponse(url="/chat", status_code=302)
     response.set_cookie(key="token", value=token, httponly=True)
@@ -73,31 +75,31 @@ async def ask(
     history_str = form_data.get("history", "[]")
     try:
         history = json.loads(history_str)
-    except Exception:
+    except:
         history = []
 
-    # 🔍 Recupera o contexto com base na transcrição
+    # 🔍 Contexto
     context = retrieve_relevant_context(question)
 
-    # 🧠 Inferência automática do tipo de prompt
+    # 🧠 Tipo de prompt
     tipo_de_prompt = inferir_tipo_de_prompt(question)
 
-    # 📝 Registra se for relacionado a Health Plan
+    # 📑 Log de Health Plan
     if tipo_de_prompt == "health_plan":
         registrar_healthplan(pergunta=question, usuario=user)
 
-    # 🧠 Gera resposta
-    answer_markdown = generate_answer(
+    # 🧠 Geração de resposta
+    answer_md = generate_answer(
         question=question,
         context=context,
         history=history,
         tipo_de_prompt=tipo_de_prompt
     )
 
-    # 🖥️ Renderiza markdown como HTML
-    answer_html = markdown2.markdown(answer_markdown)
+    # Markdown → HTML
+    answer_html = markdown2.markdown(answer_md)
 
-    # 🧾 Salva log da conversa
+    # 📋 Registro de log
     registrar_log(
         username=user,
         pergunta=question,
@@ -107,7 +109,7 @@ async def ask(
     )
 
     new_history = history + [{"user": question, "ai": answer_html}]
-    return templates.TemplateResponse("chat.html", {
-        "request": request,
-        "history": new_history
-    })
+    return templates.TemplateResponse(
+        "chat.html",
+        {"request": request, "history": new_history}
+    )
