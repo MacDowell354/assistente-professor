@@ -1085,6 +1085,7 @@ Mostre que a decisão é parte do processo clínico e não algo pessoal.
 Incentive o paciente a agendar e destaque os horários disponíveis.
 
 Essa abordagem fortalece a autoridade do consultório, evita desgastes futuros e garante o cuidado ético e de qualidade com o paciente.
+
 ==== PERGUNTAS FREQUENTES - FAQ OPERACIONAL ====
 
 Pergunta: Onde encontro o link do formulário para criar no Canva o Health Plan personalizado para o paciente?
