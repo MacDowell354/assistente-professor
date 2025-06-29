@@ -17,9 +17,10 @@ def generate_answer(
     history: str = None,
     tipo_de_prompt: str = None
 ) -> str:
-    # Só responde se houver contexto relevante
     if context and len(context.strip()) > 20:
-        # Aqui a IA responde de forma didática como professora (pode ajustar template)
-        return f"<strong>Explicação com base no curso:</strong><br>{context.strip()}"
-    else:
-        return OUT_OF_SCOPE_MSG
+        # Responde somente se contexto realmente mencionar áreas do curso
+        if any(palavra in context.lower() for palavra in [
+            "consultório", "high ticket", "paciente", "atendimento", "valorização", "captação", "secretária"
+        ]):
+            return f"<strong>Explicação com base no curso:</strong><br>{context.strip()}"
+    return OUT_OF_SCOPE_MSG
