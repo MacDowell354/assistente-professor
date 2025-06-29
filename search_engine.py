@@ -8,7 +8,6 @@ from llama_index.core import (
 )
 from llama_index.embeddings.openai import OpenAIEmbedding
 
-# 📁 Diretório e caminho do índice
 INDEX_DIR = "storage"
 INDEX_FILE = os.path.join(INDEX_DIR, "index.json")
 
@@ -40,19 +39,17 @@ def retrieve_relevant_context(
     question: str,
     top_k: int = 3,
     chunk_size: int = 512,
-    min_length: int = 40,     # mínimo de caracteres para considerar contexto válido
-    min_words: int = 8,       # mínimo de palavras para considerar contexto válido
+    min_length: int = 120,     # aumente o mínimo de caracteres
+    min_words: int = 25,       # aumente o mínimo de palavras
+    palavras_chave=None,
     proibidos=None,
 ) -> str:
-    """
-    Busca por trechos relevantes que respondam à pergunta.
-    Só retorna contexto se for realmente significativo.
-    """
+    palavras_chave = palavras_chave or [
+        "consultório", "high ticket", "paciente", "método", "captação", "posicionamento", "valorização", "agenda", "secretária"
+    ]
     proibidos = proibidos or [
-        "instagram", "vídeos para instagram", "celular para gravar", "smartphone",
-        "tiktok", "post viral", "gravar vídeos", "microfone", "câmera",
-        "edição de vídeo", "hashtags", "stories", "marketing de conteúdo",
-        "produção de vídeo", "influencer"
+        "exercício", "exercícios", "prancha", "superman", "alongamento", "remada", "costas", "lombar",
+        "trabalho físico", "fisioterapia", "treino", "musculação", "coluna", "ginástica", "flexão", "abdominal", "elevação pélvica"
     ]
     print("🔎 DEBUG — Pergunta para contexto:", question)
     engine = index.as_query_engine(
@@ -61,14 +58,15 @@ def retrieve_relevant_context(
     )
     response = engine.query(question)
     response_str = str(response).strip()
-    print("🔎 DEBUG — Contexto bruto retornado:", response_str)
     lower = response_str.lower()
+    print("🔎 DEBUG — Contexto bruto retornado:", response_str)
     if (
         not lower or lower in ("none", "null") or
         any(frase in lower for frase in ["não tenho certeza", "desculpe", "não sei"]) or
         any(tp in lower for tp in proibidos) or
         len(response_str) < min_length or
-        len(response_str.split()) < min_words
+        len(response_str.split()) < min_words or
+        not any(palavra in lower for palavra in palavras_chave)
     ):
         print("🔎 DEBUG — Contexto considerado INSUFICIENTE")
         return ""
