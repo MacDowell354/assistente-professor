@@ -1074,8 +1074,6 @@ Os próximos horários disponíveis na agenda do Dr(a) são [hora e data] ou [ho
 
 Qual desses fica melhor para você?
 
------------------------------------------------------------------------------------------------------------
-
 🟩 ORIENTAÇÃO GERAL:
 
 Nunca envie receitas por mensagem sem reavaliação do profissional.
@@ -1087,8 +1085,6 @@ Mostre que a decisão é parte do processo clínico e não algo pessoal.
 Incentive o paciente a agendar e destaque os horários disponíveis.
 
 Essa abordagem fortalece a autoridade do consultório, evita desgastes futuros e garante o cuidado ético e de qualidade com o paciente.
-
------------------------------------------------------------------------------------------------------------
 
 ==== PERGUNTAS FREQUENTES - FAQ OPERACIONAL ====
 
