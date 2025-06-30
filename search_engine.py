@@ -39,14 +39,10 @@ def retrieve_relevant_context(
     question: str,
     top_k: int = 3,
     chunk_size: int = 512,
-    min_length: int = 120,     # aumente o mínimo de caracteres
-    min_words: int = 25,       # aumente o mínimo de palavras
-    palavras_chave=None,
+    min_length: int = 60,     # Mais flexível
+    min_words: int = 10,      # Mais flexível
     proibidos=None,
 ) -> str:
-    palavras_chave = palavras_chave or [
-        "consultório", "high ticket", "paciente", "método", "captação", "posicionamento", "valorização", "agenda", "secretária"
-    ]
     proibidos = proibidos or [
         "exercício", "exercícios", "prancha", "superman", "alongamento", "remada", "costas", "lombar",
         "trabalho físico", "fisioterapia", "treino", "musculação", "coluna", "ginástica", "flexão", "abdominal", "elevação pélvica"
@@ -65,8 +61,7 @@ def retrieve_relevant_context(
         any(frase in lower for frase in ["não tenho certeza", "desculpe", "não sei"]) or
         any(tp in lower for tp in proibidos) or
         len(response_str) < min_length or
-        len(response_str.split()) < min_words or
-        not any(palavra in lower for palavra in palavras_chave)
+        len(response_str.split()) < min_words
     ):
         print("🔎 DEBUG — Contexto considerado INSUFICIENTE")
         return ""
