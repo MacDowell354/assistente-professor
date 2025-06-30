@@ -1177,6 +1177,52 @@ Reserve um bloco fixo na agenda (ex.: toda segunda, das 8h às 10h) para:
 2. Após iniciar atendimentos, implemente a Patient Letter: envie um convite impresso com seu nome, valor e benefícios, para reforçar o contato.
 
 ---------------------------------------------------------------------
+==== EXERCÍCIOS – PLANO DE AÇÃO (1ª SEMANA) ====
+
+**1) Bloqueios com Dinheiro**  
+Onde estou:  
+“De algum modo você se sente desconfortável ou culpado por cobrar valores por sua atividade? Como você lida com a ‘Síndrome do Sacerdote’? Se você não se acha merecedor de ser bem remunerado… Qual é a origem? Por que você se sente culpado(a)?”  
+Onde quero chegar:  
+“Dentre os bloqueios com o dinheiro que você pode ter identificado, qual deles você prioriza para decretar o DIA DO CHEGA? Escolha uma ATITUDE que você vai adotar para decretar CHEGA!” :contentReference[oaicite:0]{index=0}
+
+**2) Autoconfiança Profissional**  
+Onde estou:  
+“Busque na memória situações que você já passou em sua vida profissional e que foram desconfortáveis, abalando sua autoconfiança. Relembre reclamações realizadas pelo paciente nas redes sociais, em círculo de amigos… Agora descreva duas dessas principais situações que te incomodaram profundamente.”  
+Onde quero chegar:  
+“Agora descreva qual ATITUDE você precisa tomar para que essa situação deixe de ser incômoda. Pense sobre isso de maneira ampla… Pense nisso durante esse exercício.” :contentReference[oaicite:1]{index=1}
+
+**3) Nicho de Atuação**  
+Onde estou:  
+“Entenda ‘Nicho’ como a segmentação de pacientes que você quer atingir de acordo com sua especialização. Descreva como seus pacientes te reconhecem hoje, relacionando pontos fortes e lacunas.”  
+Onde quero chegar:  
+“Descreva como você quer ser reconhecido(a). Detalhe as características de seu novo nicho e quais AÇÕES você precisa fazer para se reposicionar, como nova especialização, mudança de local ou atendimento online.” :contentReference[oaicite:2]{index=2}
+
+**4) Valor da Consulta, Procedimentos, Cirurgias e Outros**  
+Onde estou:  
+“Relacione o valor atual dos seus principais serviços.”  
+Onde quero chegar:  
+“Informe o valor que você pretende chegar como ideal de remuneração. Busque referenciais em sua região e área de atuação.” :contentReference[oaicite:3]{index=3}
+
+**5) Dilema Convênios x Particulares**  
+Onde estou:  
+“Caso você atue com convênios, reflita e descreva sua relação com eles: importância financeira, impactos de parar totalmente, se a relação é imutável e se deve manter convênios para certos serviços.”  
+Onde quero chegar:  
+“Descreva o cenário ideal: abandonar convênios ou manter alguns serviços? Em quanto tempo (3, 6, 12 meses)? Relacione quais AÇÕES são necessárias para chegar nesse cenário.” :contentReference[oaicite:4]{index=4}
+
+**6) O Consultório**  
+Onde estou:  
+“Descreva o que te incomoda no consultório, não só aspectos físicos, mas relação com sócios, secretária, coworking etc.”  
+Onde quero chegar:  
+“Priorize e escreva as 3 AÇÕES PRIORITÁRIAS para corrigir o que mais te incomoda, com prazo de execução.” :contentReference[oaicite:5]{index=5}
+
+**7) Ações para Atração de Pacientes High Ticket**  
+- **Se você tem Zero Pacientes**: envie pelo menos 5 mensagens ao “Mercado X” (Onboarding).  
+- **Se você atua só com convênios**: reserve um bloco na agenda (ex.: toda segunda das 8h–10h) para atendimentos particulares e combine com sua secretária; execute ações de atração.  
+- **Já atende particular**: implemente a Patient Letter (carta de encaminhamento), incluindo motivo técnico e seus contatos, e use como ferramenta de indicação.  
+1) Assistir a Master Class com a Dra. Marina Leão: CLIQUE AQUI  
+2) Assistir a Oficina Atração de Pacientes High Ticket (acesso ao modelo de Patient Letter). :contentReference[oaicite:6]{index=6}
+
+--------------------------------------------------------------------
 
 E) Suporte Técnico e Comunidade
 
