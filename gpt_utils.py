@@ -38,7 +38,7 @@ def normalize_key(text: str) -> str:
     return re.sub(r"\s+", " ", s).strip()
 
 # -----------------------------
-# LEITURA DOS ARQUIVOS
+# LEITURA DE ARQUIVOS PDF
 # -----------------------------
 BASE_DIR = os.path.dirname(__file__)
 
@@ -59,8 +59,11 @@ try:
     resp = client.chat.completions.create(
         model="gpt-4",
         messages=[
-            {"role": "system", "content": "Você é um resumidor especialista em educação. Resuma em até 300 palavras todo o conteúdo do curso Consultório High Ticket, incluindo Plano de Ação (1ª Semana), Guia do Curso e Dossiê 007."},
-            {"role": "user", "content": _combined}
+            {"role":"system","content":
+                "Você é um resumidor especialista em educação. Resuma em até 300 palavras todo o conteúdo "
+                "do curso Consultório High Ticket, incluindo Plano de Ação (1ª Semana), Guia do Curso e Dossiê 007."
+            },
+            {"role":"user","content":_combined}
         ]
     )
     COURSE_SUMMARY = resp.choices[0].message.content
@@ -87,26 +90,18 @@ TYPE_KEYWORDS = {
 # RESPOSTAS CANÔNICAS NORMALIZADAS
 # -----------------------------
 CANONICAL_QA = {
-    # Guia do Curso
-    "oi nanda acabei de me inscrever no curso qual e o primeiro passo que devo dar assim que entrar":
-        "1. <strong>Passo 1:</strong> Assista à aula de Onboarding completo.<br>2. <strong>Passo 2:</strong> Entre no grupo de avisos da turma.<br>3. <strong>Passo 3:</strong> Acesse a Área de Membros e preencha seu perfil.<br>4. <strong>Passo 4:</strong> Participe do Desafio Health Plan clicando em “Participar”.",
-    "depois de entrar na area de membros como eu me inscrevo no desafio health plan":
-        "1. <strong>Clique em “Participar”</strong> no módulo Desafio Health Plan.<br>2. Feche a janela de confirmação.<br>3. Clique novamente em <strong>“Participar”</strong> para efetivar.<br>4. Feche e você estará inscrito.",
-    "voce pode explicar como o desafio health plan esta organizado em fases":
-        "O Desafio Health Plan possui três fases (sem datas fixas):<br>- <strong>Fase 1 – Missão inicial:</strong> assistir módulos 1–6 e preencher quiz.<br>- <strong>Fase 2 – Masterclass & Envio:</strong> participar da masterclass e enviar seu plano.<br>- <strong>Fase 3 – Acompanhamento:</strong> enviar planners semanais e concluir atividades.",
-    "caso o participante enfrente uma situacao critica qual procedimento deve ser adotado para solicitar suporte":
-        "Em caso crítico, envie e-mail para <strong>ajuda@nandamac.com</strong> com assunto <strong>S.O.S Crise</strong>. A equipe retornará em até 24 h.",
-    "onde e como o participante deve tirar duvidas sobre o metodo do curso":
-        "Poste dúvidas exclusivamente na <strong>Comunidade</strong> da Área de Membros. Não use Direct, WhatsApp ou outros canais.",
     "como entro na comunidade high ticket":
-        "A Comunidade High Ticket Doctors está dentro da plataforma do curso. Assim que você receber o e-mail com o título “Chegou seu acesso”, cadastre sua senha. Depois de logado, preencha seu perfil e entre na Comunidade para tirar dúvidas sobre o método, fazer networking e participar das oficinas.",
-
-    # Pergunta nova adicionada
+        "A Comunidade High Ticket Doctors está dentro da plataforma do curso. "
+        "Assim que você receber o e-mail com o título “Chegou seu acesso”, cadastre sua senha. "
+        "Depois de logado, preencha seu perfil e entre na Comunidade para tirar dúvidas sobre o método, "
+        "fazer networking e participar das oficinas.",
+    
     "quais sao as principais duvidas que alunos normalmente tem sobre captacao de pacientes sem usar redes sociais":
-        "Ótima pergunta! No curso, muitos alunos relatam dúvidas sobre como atrair pacientes sem depender do Instagram, anúncios ou tráfego pago. A Nanda ensina diversas estratégias offline, como indicações qualificadas, cartas de paciente, networking com outros profissionais da saúde e scripts personalizados. Você pode começar organizando um roteiro de Patient Letter e distribuindo para pacientes estratégicos.",
-
-    # Plano de Ação e Dossiê mantidos (mesmo conteúdo original)
-    # ...
+        "As dúvidas mais comuns dos alunos sobre captação sem redes sociais envolvem: "
+        "<br>• Como atrair pacientes fiéis apenas por indicação;<br>"
+        "• Quais são os canais offline mais eficientes para o consultório;<br>"
+        "• Como ajustar o posicionamento para gerar valor sem Instagram;<br>"
+        "• Como manter uma agenda cheia sem depender de tráfego pago ou conteúdo constante."
 }
 
 CANONICAL_QA_NORMALIZED = {
@@ -129,12 +124,11 @@ prompt_variacoes = {
     "faq": (
         "<strong>Objetivo:</strong> Responder de forma direta a dúvidas frequentes do curso. "
         "Use exemplos práticos e mencione etapas conforme o material."
-    ),
-    # demais variações seguem conforme o projeto
+    )
 }
 
 # -----------------------------
-# CLASSIFICADOR
+# CLASSIFICADOR DE ESCOPO + TIPO
 # -----------------------------
 def classify_prompt(question: str) -> dict:
     lower = normalize_key(question)
@@ -148,15 +142,24 @@ def classify_prompt(question: str) -> dict:
 # -----------------------------
 # FUNÇÃO PRINCIPAL
 # -----------------------------
-def generate_answer(question: str, context: str = "", history: str = None, tipo_de_prompt: str = None) -> str:
+def generate_answer(
+    question: str,
+    context: str = "",
+    history: str = None,
+    tipo_de_prompt: str = None
+) -> str:
     key = normalize_key(question)
+
+    # 1. Verifica resposta canônica
     if key in CANONICAL_QA_NORMALIZED:
         return CANONICAL_QA_NORMALIZED[key]
 
+    # 2. Classifica tipo
     cls = classify_prompt(question)
     if cls["scope"] == "OUT_OF_SCOPE":
         return OUT_OF_SCOPE_MSG
 
+    # 3. Monta o prompt
     tipo = cls["type"]
     prompt = identidade + prompt_variacoes.get(tipo, "")
     if context:
@@ -165,6 +168,7 @@ def generate_answer(question: str, context: str = "", history: str = None, tipo_
         prompt += f"<br><strong>📜 Histórico:</strong><br>{history}<br>"
     prompt += f"<br><strong>🤔 Pergunta:</strong><br>{question}<br><br><strong>🧠 Resposta:</strong><br>"
 
+    # 4. Chamada à OpenAI com fallback
     try:
         r = client.chat.completions.create(
             model="gpt-4",
@@ -172,4 +176,8 @@ def generate_answer(question: str, context: str = "", history: str = None, tipo_
         )
     except OpenAIError:
         r = client.chat.completions.create(
-            model="gpt-3.
+            model="gpt-3.5-turbo",
+            messages=[{"role": "user", "content": prompt}]
+        )
+
+    return r.choices[0].message.content
