@@ -1,14 +1,10 @@
 import os
 
 OUT_OF_SCOPE_MSG = (
-    "Essa pergunta é muito boa, mas no momento ela está "
-    "<strong>fora do conteúdo abordado nas aulas do curso "
-    "Consultório High Ticket</strong>. Isso pode indicar uma "
-    "oportunidade de melhoria do nosso material! 😊<br><br>"
-    "Vamos sinalizar esse tema para a equipe pedagógica avaliar "
-    "a inclusão em versões futuras do curso. Enquanto isso, "
-    "recomendamos focar nos ensinamentos já disponíveis para ter "
-    "os melhores resultados possíveis no consultório."
+    "Sua pergunta demonstra interesse e vontade de aprender! No entanto, esse tema ainda não faz parte do conteúdo oficial do curso Consultório High Ticket. "
+    "Recomendo focar nas estratégias, conceitos e práticas ensinadas nas aulas para transformar seu consultório. "
+    "Sua dúvida será encaminhada à equipe pedagógica para avaliarmos uma possível inclusão em futuras atualizações. "
+    "Continue participando!"
 )
 
 def generate_answer(
@@ -18,9 +14,5 @@ def generate_answer(
     tipo_de_prompt: str = None
 ) -> str:
     if context and len(context.strip()) > 20:
-        # Responde somente se contexto realmente mencionar áreas do curso
-        if any(palavra in context.lower() for palavra in [
-            "consultório", "high ticket", "paciente", "atendimento", "valorização", "captação", "secretária"
-        ]):
-            return context.strip()
+        return context.strip()
     return OUT_OF_SCOPE_MSG
