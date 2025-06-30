@@ -92,6 +92,7 @@ TYPE_KEYWORDS = {
 # RESPOSTAS CANÔNICAS
 # -----------------------------
 CANONICAL_QA = {
+    # — Captação sem redes sociais —
     "e possivel atrair pacientes sem usar redes sociais":
         "Sim! Um dos pilares do curso Consultório High Ticket é justamente mostrar que "
         "é possível atrair pacientes fiéis e de alto valor sem depender de redes sociais. "
@@ -99,19 +100,46 @@ CANONICAL_QA = {
         "e um método validado que funciona offline, baseado em relacionamento e experiência. "
         "Você aprenderá tudo isso nas aulas, especialmente nas que tratam de captação sem marketing digital.",
 
+    # — Comunidade —
     "como entro na comunidade high ticket":
         "A Comunidade High Ticket Doctors está dentro da plataforma do curso. Assim que você receber "
         "o e-mail com o título “Chegou seu acesso”, cadastre sua senha. Depois de logado, preencha seu perfil "
         "e entre na Comunidade para tirar dúvidas sobre o método, fazer networking e participar das oficinas.",
 
+    # — Suporte urgente —
     "se eu tiver um problema urgente durante o curso como solicito suporte rapidamente":
         "Em caso de urgência no curso, envie um e-mail para **ajuda@nandamac.com** com o assunto “S.O.S Crise” "
         "para receber suporte em até 24 h úteis.",
 
+    # — Dúvidas metodológicas —
     "onde devo postar minhas duvidas sobre o metodo do curso":
         "Todas as dúvidas metodológicas devem ser postadas exclusivamente na Comunidade da Área de Membros. "
         "Não use Direct, WhatsApp ou outros canais para questionar o método; assim sua pergunta fica visível "
-        "a todos e recebe resposta mais rápida."
+        "a todos e recebe resposta mais rápida.",
+
+    # — Plano de Ação (1ª Semana) —
+    "no exercicio de bloqueios com dinheiro como escolho qual bloqueio priorizar e defino minha atitude dia do chega":
+        "Identifique qual sentimento de culpa ao cobrar mais te afeta (a “Síndrome do Sacerdote”) e coloque-o como bloqueio prioritário. "
+        "Em ‘Onde quero chegar’, escreva uma ação concreta, por exemplo: “A partir de hoje, afirmarei meu valor em cada consulta.”",  # :contentReference[oaicite:0]{index=0}
+
+    "na parte de autoconfianca profissional o que devo escrever como atitude para nao deixar certas situacoes me abalar":
+        "Liste duas experiências que minaram sua confiança. "
+        "Em ‘Onde quero chegar’, defina uma ação transformadora, por exemplo: “Sempre que receber uma crítica, realizarei uma sessão de feedback construtivo com um colega.”",  # :contentReference[oaicite:1]{index=1}
+
+    "como uso a atividade de nicho de atuacao para definir meu foco e listar as acoes necessarias":
+        "Posicionamento Atual: descreva seus pontos fortes e lacunas. "
+        "Nicho Ideal: defina quem são seus “pacientes-sonho”. "
+        "Ações: liste etapas específicas com prazo, por exemplo: “Especializar em [X] em 3 meses.”, “Criar pacote online de avaliação inicial até o próximo mês.”, “Revisar site e materiais de comunicação em 2 semanas.”",  # :contentReference[oaicite:2]{index=2}
+
+    "no valor da consulta e procedimentos como encontro referencias de mercado e defino meus valores atuais e ideais":
+        "Anote seus preços atuais e pesquise médias de associações ou colegas. "
+        "Defina seus valores ideais justificando seu diferencial, por exemplo: “R$ 300 por sessão de fisioterapia clínica, pois ofereço acompanhamento personalizado e relatório de progresso.”",  # :contentReference[oaicite:3]{index=3}
+
+    "ainda nao tenho pacientes particulares qual estrategia de atracao high ticket devo priorizar e como executar na agenda":
+        "Reserve um bloco fixo na agenda (ex.: toda segunda, das 8h–10h) para:\n"
+        "1. Enviar 5 mensagens personalizadas a potenciais pacientes do seu nicho, usando o script do curso.\n"
+        "2. Após iniciar atendimentos, implemente a Patient Letter: envie um convite impresso com seu nome, valor e benefícios, para reforçar o contato.",  # :contentReference[oaicite:4]{index=4}
+    
     # ... mantenha as demais entradas canônicas originais ...
 }
 
@@ -163,15 +191,15 @@ def generate_answer(
 ) -> str:
     key = normalize_key(question)
 
-    # 0) Exercícios não fazem parte do curso
-    if "exercicio" in key:
+    # 0) Exercícios não fazem parte, exceto as canônicas
+    if "exercicio" in key and key not in CANONICAL_QA_NORMALIZED:
         return OUT_OF_SCOPE_MSG
 
     # 1) Resposta canônica
     if key in CANONICAL_QA_NORMALIZED:
         return CANONICAL_QA_NORMALIZED[key]
 
-    # 2) Fora de escopo
+    # 2) Classifica escopo
     cls = classify_prompt(question)
     if cls["scope"] == "OUT_OF_SCOPE":
         return OUT_OF_SCOPE_MSG
