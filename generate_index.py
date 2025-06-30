@@ -1,4 +1,5 @@
 import os
+import shutil
 from llama_index.core import (
     SimpleDirectoryReader,
     GPTVectorStoreIndex,
@@ -8,6 +9,11 @@ from llama_index.embeddings.openai import OpenAIEmbedding
 
 # Caminho de saída
 INDEX_DIR = "storage"
+
+# Apaga índice antigo (importante!)
+if os.path.exists(INDEX_DIR):
+    print("🧹 Limpando índice anterior...")
+    shutil.rmtree(INDEX_DIR)
 
 # Carrega a chave da API da OpenAI
 api_key = os.getenv("OPENAI_API_KEY")
