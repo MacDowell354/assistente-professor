@@ -85,7 +85,8 @@ TYPE_KEYWORDS = {
     "explicacao":                     ["explique", "o que é", "defina", "conceito"],
     "plano_de_acao":                  ["plano de ação", "primeira semana"],
     "guia":                           ["guia do curso", "passo a passo", "cht21"],
-    "dossie":                         ["dossiê 007", "acao 1", "acao 2", "acao 3", "orientações finais"]
+    "dossie":                         ["dossiê 007", "acao 1", "acao 2", "acao 3", "orientações finais"],
+    "papelaria":                      ["jo malone", "importadoras", "cafeteiras", "chocolates", "chás"]
 }
 
 # -----------------------------
@@ -120,26 +121,53 @@ CANONICAL_QA = {
     # — Plano de Ação (1ª Semana) —
     "no exercicio de bloqueios com dinheiro como escolho qual bloqueio priorizar e defino minha atitude dia do chega":
         "Identifique qual sentimento de culpa ao cobrar mais te afeta (a “Síndrome do Sacerdote”) e coloque-o como bloqueio prioritário. "
-        "Em ‘Onde quero chegar’, escreva uma ação concreta, por exemplo: “A partir de hoje, afirmarei meu valor em cada consulta.”",  # :contentReference[oaicite:0]{index=0}
+        "Em ‘Onde quero chegar’, escreva uma ação concreta, por exemplo: “A partir de hoje, afirmarei meu valor em cada consulta.”",
 
     "na parte de autoconfianca profissional o que devo escrever como atitude para nao deixar certas situacoes me abalar":
         "Liste duas experiências que minaram sua confiança. "
-        "Em ‘Onde quero chegar’, defina uma ação transformadora, por exemplo: “Sempre que receber uma crítica, realizarei uma sessão de feedback construtivo com um colega.”",  # :contentReference[oaicite:1]{index=1}
+        "Em ‘Onde quero chegar’, defina uma ação transformadora, por exemplo: “Sempre que receber uma crítica, realizarei uma sessão de feedback construtivo com um colega.”",
 
     "como uso a atividade de nicho de atuacao para definir meu foco e listar as acoes necessarias":
         "Posicionamento Atual: descreva seus pontos fortes e lacunas. "
         "Nicho Ideal: defina quem são seus “pacientes-sonho”. "
-        "Ações: liste etapas específicas com prazo, por exemplo: “Especializar em [X] em 3 meses.”, “Criar pacote online de avaliação inicial até o próximo mês.”, “Revisar site e materiais de comunicação em 2 semanas.”",  # :contentReference[oaicite:2]{index=2}
+        "Ações: liste etapas específicas com prazo, por exemplo: “Especializar em [X] em 3 meses.”, “Criar pacote online de avaliação inicial até o próximo mês.”, “Revisar site e materiais de comunicação em 2 semanas.”",
 
     "no valor da consulta e procedimentos como encontro referencias de mercado e defino meus valores atuais e ideais":
         "Anote seus preços atuais e pesquise médias de associações ou colegas. "
-        "Defina seus valores ideais justificando seu diferencial, por exemplo: “R$ 300 por sessão de fisioterapia clínica, pois ofereço acompanhamento personalizado e relatório de progresso.”",  # :contentReference[oaicite:3]{index=3}
+        "Defina seus valores ideais justificando seu diferencial, por exemplo: “R$ 300 por sessão de fisioterapia clínica, pois ofereço acompanhamento personalizado e relatório de progresso.”",
 
     "ainda nao tenho pacientes particulares qual estrategia de atracao high ticket devo priorizar e como executar na agenda":
         "Reserve um bloco fixo na agenda (ex.: toda segunda, das 8h–10h) para:\n"
         "1. Enviar 5 mensagens personalizadas a potenciais pacientes do seu nicho, usando o script do curso.\n"
-        "2. Após iniciar atendimentos, implemente a Patient Letter: envie um convite impresso com seu nome, valor e benefícios, para reforçar o contato.",  # :contentReference[oaicite:4]{index=4}
-    
+        "2. Após iniciar atendimentos, implemente a Patient Letter: envie um convite impresso com seu nome, valor e benefícios, para reforçar o contato.",
+
+    # — Papelaria & Brindes —
+    "onde encontro produtos jo malone no brasil":
+        "Você pode encontrar os aromas de ambiente Jo Malone no Brasil diretamente no site oficial:\n"
+        "https://www.jomalone.com.br\n"
+        "Lá estão disponíveis colônias como Blackberry & Bay, Wood Sage & Sea Salt, Lime Basil & Mandarin e Nectarine Blossom & Honey, além de velas e sabonetes.",
+
+    "quais importadoras posso usar para comprar produtos que nao encontro no brasil":
+        "Para produtos que não são facilmente encontrados aqui, você pode recorrer a importadoras como:\n"
+        "• Easy to go Orlando: https://easytogoorlando.com/\n"
+        "Ou fazer pedidos em grandes marketplaces internacionais, como a Amazon.",
+
+    "quais marcas de cafeteiras foram mencionadas na aula":
+        "As marcas de cafeteiras recomendadas durante o módulo são:\n"
+        "• Delonghi\n"
+        "• Nespresso\n"
+        "• Breville",
+
+    "onde posso comprar os chocolates indicados no curso":
+        "Os chocolates mencionados foram:\n"
+        "• Läderach\n"
+        "• Daim\n"
+        "Você os encontra em chocolaterias especializadas ou através de lojas online/importadoras.",
+
+    "quais opcoes de chas foram indicadas no material":
+        "Foram indicados dois tipos de chá:\n"
+        "• New English Teas Vintage Victorian Round Tea Caddy\n"
+        "• Twinings Earl Grey Loose Tea Tins"
     # ... mantenha as demais entradas canônicas originais ...
 }
 
