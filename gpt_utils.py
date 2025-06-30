@@ -18,17 +18,10 @@ def normalize_key(text: str) -> str:
     return re.sub(r"\s+", " ", s).strip()
 
 CANONICAL_QA = {
-    # Apenas para perguntas operacionais (links, etc.)
+    # Perguntas operacionais, se necessário
 }
 
 CANONICAL_QA_NORMALIZED = {normalize_key(k): v for k, v in CANONICAL_QA.items()}
-
-PROMPT_PROFESSORA = (
-    "Você é uma professora experiente do curso Consultório High Ticket. "
-    "Responda de forma didática, detalhada e acolhedora, sempre em português do Brasil. "
-    "Utilize tópicos, listas, exemplos práticos, e explique passo a passo, como em uma verdadeira aula para alunos profissionais da saúde. "
-    "Use somente as informações do curso abaixo."
-)
 
 def generate_answer(
     question: str,
@@ -50,7 +43,6 @@ def format_as_teacher(context: str) -> str:
     texto = texto.replace('\n', '<br>')
     return (
         "<div style='line-height:1.7em;font-size:1.05em;'>"
-        f"{PROMPT_PROFESSORA}<br><br>"
         f"{texto.strip()}"
         "</div>"
     )
