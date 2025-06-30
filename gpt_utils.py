@@ -106,6 +106,10 @@ CANONICAL_QA = {
         "o e-mail com o título “Chegou seu acesso”, cadastre sua senha. Depois de logado, preencha seu perfil "
         "e entre na Comunidade para tirar dúvidas sobre o método, fazer networking e participar das oficinas.",
 
+    "se eu tiver um problema urgente durante o curso como solicito suporte rapidamente":
+        "Em caso de problema urgente durante o curso, envie um e-mail para "
+        "<strong>ajuda@nandamac.com</strong> com o assunto “S.O.S Crise” para receber suporte em até 24 h.",
+
     # ... (mantenha aqui todas as outras entradas canônicas originais)
 }
 
