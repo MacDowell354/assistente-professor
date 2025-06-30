@@ -18,7 +18,7 @@ def normalize_key(text: str) -> str:
     return re.sub(r"\s+", " ", s).strip()
 
 CANONICAL_QA = {
-    # Perguntas operacionais, se necessário
+    # Coloque aqui perguntas operacionais ou fixas, se desejar.
 }
 
 CANONICAL_QA_NORMALIZED = {normalize_key(k): v for k, v in CANONICAL_QA.items()}
@@ -39,10 +39,25 @@ def generate_answer(
 def format_as_teacher(context: str) -> str:
     import re
     texto = context.strip()
-    texto = re.sub(r'(?m)^(\d+\.|\-|\•)', r'<br>\1', texto)
+
+    # Negrito no título/frase inicial se houver dois pontos
+    texto = re.sub(r"^(.*?)([:：])", r"<b>\1\2</b>", texto, 1)
+
+    # Transformar listas numeradas (1., 2., 3.) em tópicos com negrito
+    texto = re.sub(r"(\d+\.)(\s*)", r"<br><b>\1</b> ", texto)
+
+    # Transformar bullets ("-", "•") em lista não numerada
+    texto = re.sub(r"[\n\r]\s*[\-\•]\s*", r"<br>&bull; ", texto)
+
+    # Quebra de linha para parágrafos
     texto = texto.replace('\n', '<br>')
+
+    # Evitar múltiplos <br>
+    texto = re.sub(r'(<br>\s*){2,}', '<br>', texto)
+
+    # Caixa um pouco maior e espaçamento agradável
     return (
-        "<div style='line-height:1.7em;font-size:1.05em;'>"
+        "<div style='line-height:1.7em;font-size:1.07em; margin-bottom:12px;'>"
         f"{texto.strip()}"
         "</div>"
     )
