@@ -77,7 +77,7 @@ TYPE_KEYWORDS = {
     "revisao":                        ["revisão", "revise", "resumir"],
     "precificacao":                   ["precificação", "precificar", "preço", "valor", "faturamento"],
     "health_plan":                    ["health plan", "retorno do investimento"],
-    "capitacao_sem_marketing_digital":["offline", "sem instagram", "sem anúncios"],
+    "capitacao_sem_marketing_digital": ["offline", "sem instagram", "sem anúncios", "sem redes sociais"],
     "aplicacao":                      ["como aplico", "aplicação", "roteiro"],
     "faq":                            ["quais", "pergunta frequente"],
     "explicacao":                     ["explique", "o que é", "defina", "conceito"],
@@ -90,18 +90,18 @@ TYPE_KEYWORDS = {
 # RESPOSTAS CANÔNICAS NORMALIZADAS
 # -----------------------------
 CANONICAL_QA = {
-    "como entro na comunidade high ticket":
-        "A Comunidade High Ticket Doctors está dentro da plataforma do curso. "
-        "Assim que você receber o e-mail com o título “Chegou seu acesso”, cadastre sua senha. "
-        "Depois de logado, preencha seu perfil e entre na Comunidade para tirar dúvidas sobre o método, "
-        "fazer networking e participar das oficinas.",
-    
-    "quais sao as principais duvidas que alunos normalmente tem sobre captacao de pacientes sem usar redes sociais":
-        "As dúvidas mais comuns dos alunos sobre captação sem redes sociais envolvem: "
-        "<br>• Como atrair pacientes fiéis apenas por indicação;<br>"
-        "• Quais são os canais offline mais eficientes para o consultório;<br>"
-        "• Como ajustar o posicionamento para gerar valor sem Instagram;<br>"
-        "• Como manter uma agenda cheia sem depender de tráfego pago ou conteúdo constante."
+    "e possivel atrair pacientes sem usar redes sociais":
+        "Sim! Um dos pilares do curso Consultório High Ticket é justamente mostrar que é possível atrair pacientes fiéis e de alto valor sem depender de redes sociais. "
+        "A Nanda ensina estratégias presenciais, indicações qualificadas, posicionamento de autoridade e um método validado que funciona offline, baseado em relacionamento e experiência. "
+        "Você aprenderá tudo isso nas aulas, especialmente nas que tratam de captação sem marketing digital.",
+
+    "oi nanda acabei de me inscrever no curso qual e o primeiro passo que devo dar assim que entrar":
+        "1. <strong>Passo 1:</strong> Assista à aula de Onboarding completo.<br>"
+        "2. <strong>Passo 2:</strong> Entre no grupo de avisos da turma.<br>"
+        "3. <strong>Passo 3:</strong> Acesse a Área de Membros e preencha seu perfil.<br>"
+        "4. <strong>Passo 4:</strong> Participe do Desafio Health Plan clicando em “Participar”.",
+
+    # ... (demais perguntas mantidas iguais — pode colar o restante como está no seu atual)
 }
 
 CANONICAL_QA_NORMALIZED = {
@@ -124,7 +124,8 @@ prompt_variacoes = {
     "faq": (
         "<strong>Objetivo:</strong> Responder de forma direta a dúvidas frequentes do curso. "
         "Use exemplos práticos e mencione etapas conforme o material."
-    )
+    ),
+    # demais mantidos
 }
 
 # -----------------------------
@@ -149,35 +150,17 @@ def generate_answer(
     tipo_de_prompt: str = None
 ) -> str:
     key = normalize_key(question)
-
-    # 1. Verifica resposta canônica
     if key in CANONICAL_QA_NORMALIZED:
         return CANONICAL_QA_NORMALIZED[key]
 
-    # 2. Classifica tipo
     cls = classify_prompt(question)
     if cls["scope"] == "OUT_OF_SCOPE":
         return OUT_OF_SCOPE_MSG
 
-    # 3. Monta o prompt
     tipo = cls["type"]
     prompt = identidade + prompt_variacoes.get(tipo, "")
     if context:
         prompt += f"<br><strong>📚 Contexto:</strong><br>{context}<br>"
     if history:
         prompt += f"<br><strong>📜 Histórico:</strong><br>{history}<br>"
-    prompt += f"<br><strong>🤔 Pergunta:</strong><br>{question}<br><br><strong>🧠 Resposta:</strong><br>"
-
-    # 4. Chamada à OpenAI com fallback
-    try:
-        r = client.chat.completions.create(
-            model="gpt-4",
-            messages=[{"role": "user", "content": prompt}]
-        )
-    except OpenAIError:
-        r = client.chat.completions.create(
-            model="gpt-3.5-turbo",
-            messages=[{"role": "user", "content": prompt}]
-        )
-
-    return r.choices[0].message.content
+    prompt += f"<br><strong>🤔 Pergunta:</strong><br>{question}<br><br><strong>🧠 Res
