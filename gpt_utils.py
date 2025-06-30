@@ -51,7 +51,9 @@ _raw_pdf1 = read_pdf(os.path.join(BASE_DIR, "PlanodeAcaoConsultorioHighTicket-1S
 _raw_pdf2 = read_pdf(os.path.join(BASE_DIR, "GuiadoCursoConsultorioHighTicket.-CHT21[1].pdf"))
 _raw_pdf3 = read_pdf(os.path.join(BASE_DIR, "5.8 - Dossiê 007 - (3)[1].pdf"))
 
-# Combina para resumo (se necessário)
+# -----------------------------
+# RESUMO COMBINADO (opcional)
+# -----------------------------
 _combined = "\n\n".join([_raw_txt, _raw_pdf1, _raw_pdf2, _raw_pdf3])
 try:
     resp = client.chat.completions.create(
@@ -104,7 +106,7 @@ CANONICAL_QA = {
         "o e-mail com o título “Chegou seu acesso”, cadastre sua senha. Depois de logado, preencha seu perfil "
         "e entre na Comunidade para tirar dúvidas sobre o método, fazer networking e participar das oficinas.",
 
-    # Mantenha aqui todas as outras entradas canônicas originais
+    # ... (mantenha aqui todas as outras entradas canônicas originais)
 }
 
 # Pré-normaliza chaves
@@ -155,6 +157,10 @@ def generate_answer(
 ) -> str:
     key = normalize_key(question)
 
+    # 0) Perguntas sobre exercício não fazem parte do curso
+    if "exercicio" in key:
+        return OUT_OF_SCOPE_MSG
+
     # 1) Resposta canônica
     if key in CANONICAL_QA_NORMALIZED:
         return CANONICAL_QA_NORMALIZED[key]
@@ -176,7 +182,7 @@ def generate_answer(
         f"<strong>🧠 Resposta:</strong><br>"
     )
 
-    # 4) Chama OpenAI
+    # 4) Chama OpenAI com fallback
     try:
         r = client.chat.completions.create(
             model="gpt-4",
