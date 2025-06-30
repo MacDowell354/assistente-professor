@@ -3,9 +3,10 @@ import unicodedata
 import re
 
 OUT_OF_SCOPE_MSG = (
-    "Sua pergunta demonstra interesse e vontade de aprender! No entanto, esse tema ainda não faz parte do conteúdo oficial do curso Consultório High Ticket. "
-    "Recomendo focar nas estratégias, conceitos e práticas ensinadas nas aulas para transformar seu consultório. "
-    "Sua dúvida será encaminhada à equipe pedagógica para avaliarmos uma possível inclusão em futuras atualizações. "
+    "Sua pergunta demonstra interesse e vontade de aprender!<br>"
+    "No entanto, esse tema ainda não faz parte do conteúdo oficial do curso <b>Consultório High Ticket</b>.<br>"
+    "Recomendo focar nas estratégias, conceitos e práticas ensinadas nas aulas para transformar seu consultório.<br>"
+    "Sua dúvida será encaminhada à equipe pedagógica para avaliarmos uma possível inclusão em futuras atualizações.<br>"
     "Continue participando!"
 )
 
@@ -18,31 +19,79 @@ def normalize_key(text: str) -> str:
 
 CANONICAL_QA = {
     "explique em passos claros o conceito de posicionamento de alto valor ensinado no curso":
-        "No curso Consultório High Ticket, posicionamento de alto valor é um conjunto de ações e mentalidade que fazem você ser reconhecido como referência no mercado. Os passos são: 1) Adote a mentalidade protagonista, não se compare aos colegas e valorize sua história. 2) Comunique de forma clara, evitando termos técnicos e mostrando o impacto do seu trabalho na vida do paciente. 3) Proporcione uma experiência diferenciada ao paciente em cada etapa, desde o contato até o pós-atendimento. 4) Atue com autoridade e autoconfiança, orientando e liderando com ética. 5) Valorize o seu trabalho, explique suas condutas e mostre que investir em saúde é prioridade. O resultado é ser visto como referência, atrair pacientes que valorizam seu serviço e ter uma agenda cheia de qualidade.",
+        "<b>O conceito de posicionamento de alto valor no curso Consultório High Ticket envolve:</b><br><br>"
+        "1. <b>Mentalidade protagonista:</b> Valorize sua história e seu diferencial, sem se comparar.<br>"
+        "2. <b>Comunicação clara:</b> Fale com o paciente de forma simples, mostrando impacto real.<br>"
+        "3. <b>Experiência diferenciada:</b> Encante o paciente em cada etapa do atendimento.<br>"
+        "4. <b>Autoridade:</b> Oriente e lidere com confiança e ética.<br>"
+        "5. <b>Valorização:</b> Explique suas condutas e mostre que investir em saúde é prioridade.<br><br>"
+        "<b>Resultado:</b> Você é visto como referência, atrai pacientes de valor e constrói uma agenda cheia de qualidade.",
 
     "quais são as principais dúvidas que alunos normalmente têm sobre captação de pacientes sem usar redes sociais":
-        "As dúvidas mais comuns são: se é possível dobrar o faturamento sem Instagram ou anúncios, como criar indicações orgânicas, como transformar o atendimento em fonte de novas indicações, como lidar com concorrência em cidades pequenas, se é preciso investir em eventos ou brindes, como adaptar o método para cada especialidade, e como manter a agenda cheia sem depender só do boca a boca.",
+        "<b>Principais dúvidas dos alunos sobre captação sem redes sociais:</b><br><br>"
+        "• Se é possível dobrar o faturamento sem Instagram ou anúncios.<br>"
+        "• Como criar indicações orgânicas e conseguir pacientes high ticket offline.<br>"
+        "• Como transformar atendimento e experiência do paciente em fonte de novas indicações.<br>"
+        "• Como lidar com concorrência em cidades pequenas.<br>"
+        "• Se é preciso investir em brindes, eventos ou ações complexas.<br>"
+        "• Como adaptar o método para cada especialidade.<br>"
+        "• Como estruturar um processo para manter a agenda cheia sem depender só do boca a boca.",
 
     "faça uma revisão rápida dos pontos centrais do método de precificação estratégica":
-        "Os pontos centrais do método de precificação estratégica são: 1) Mude sua mentalidade e valorize o seu trabalho. 2) Baseie o valor no resultado e transformação gerada, não no preço do colega. 3) Apresente o valor de forma clara, ética e segura, mostrando benefícios e diferenciais. 4) Mantenha coerência de preços e saiba recusar pacientes que não valorizam seu método. 5) Use o script e timing correto: o valor é apresentado como parte natural do plano. Assim, você dobra seu faturamento sem desvalorizar seu trabalho.",
+        "<b>Revisão dos pontos centrais do método de precificação estratégica:</b><br><br>"
+        "1. <b>Mude sua mentalidade:</b> Valorize o seu trabalho.<br>"
+        "2. <b>Baseie-se no resultado:</b> O valor é o resultado que você gera, não o preço do colega.<br>"
+        "3. <b>Apresente com clareza:</b> Mostre benefícios e diferenciais do serviço.<br>"
+        "4. <b>Mantenha coerência e ética:</b> Saiba recusar pacientes fora do seu perfil.<br>"
+        "5. <b>Use o timing certo:</b> Apresente o valor de forma natural, como parte do plano.<br><br>"
+        "<b>Assim você dobra o faturamento com posicionamento e valorização profissional.</b>",
 
     "como aplico o roteiro de atendimento high ticket na primeira consulta com um paciente novo":
-        "Na primeira consulta, receba o paciente com acolhimento e atenção. Ouça atentamente suas necessidades, apresente seu diagnóstico e plano de ação de forma simples e humanizada, mostre sua autoridade ao indicar o melhor caminho, use gatilhos mentais do curso, explique o valor do acompanhamento com foco no resultado, e finalize com orientação clara sobre os próximos passos. Encante o paciente com pós-atendimento, reforçando o vínculo.",
+        "<b>Passo a passo do roteiro de atendimento High Ticket:</b><br><br>"
+        "1. <b>Recepção acolhedora:</b> Chame o paciente pelo nome, demonstre interesse genuíno.<br>"
+        "2. <b>Escuta ativa:</b> Ouça atentamente e valide as necessidades do paciente.<br>"
+        "3. <b>Apresente o plano:</b> Explique diagnóstico e ação de forma simples.<br>"
+        "4. <b>Mostre autoridade:</b> Oriente o melhor caminho com segurança.<br>"
+        "5. <b>Use gatilhos do método:</b> Conte histórias e foque na especificidade.<br>"
+        "6. <b>Apresente o valor:</b> Mostre o investimento como parte do sucesso.<br>"
+        "7. <b>Finalize com orientação clara e pós-atendimento.</b>",
 
     "eu só levantaria preço com o cliente na segunda sessão está certo isso":
-        "Não está certo. Pelo método Consultório High Ticket, o valor do seu trabalho é apresentado já na primeira consulta, com naturalidade e clareza. Adiar a conversa sobre valores pode passar insegurança ao paciente. Mostre que o investimento faz parte do plano de cuidado, atraindo pacientes que valorizam seu método e evitando perda de tempo com quem não é o perfil ideal.",
+        "<b>Correção importante:</b><br><br>"
+        "Não está certo!<br>"
+        "Pelo método Consultório High Ticket, o valor do seu trabalho deve ser apresentado já na <b>primeira consulta</b>, com naturalidade e clareza.<br>"
+        "Adiar a conversa sobre valores pode passar insegurança ao paciente. Mostre que o investimento faz parte do plano de cuidado e atraia pacientes que valorizam seu método, evitando perda de tempo com quem não é o perfil ideal.",
 
     "me mostre uma estratégia offline para atrair pacientes de alto valor sem usar instagram ou anúncios":
-        "Uma das principais estratégias offline é encantar o paciente desde o primeiro contato, criando uma experiência única e personalizada. Use o pós-atendimento para fortalecer o vínculo, invista em rede de indicações com outros profissionais, utilize o encantamento e surpreenda com atenção genuína. Esse conjunto de ações gera indicações espontâneas e lota sua agenda sem depender de redes sociais.",
+        "<b>Estratégias offline para atrair pacientes high ticket:</b><br><br>"
+        "• Encante o paciente desde o primeiro contato, criando uma experiência única.<br>"
+        "• Use o pós-atendimento para fortalecer o vínculo.<br>"
+        "• Construa uma rede de indicações com outros profissionais de saúde.<br>"
+        "• Utilize detalhes pessoais do paciente para surpreender positivamente.<br>"
+        "• Surpreenda com atenção genuína e acompanhamento.<br><br>"
+        "<b>Essas ações geram indicações espontâneas e lotam sua agenda sem redes sociais.</b>",
 
     "como estruturo a apresentação do valor do health plan para que o paciente veja o retorno do investimento":
-        "Explique que o Health Plan foi criado para facilitar a vida do paciente, oferecendo clareza e previsibilidade. Mostre os benefícios do acompanhamento, os resultados esperados e o impacto do plano na qualidade de vida do paciente. Associe o valor ao resultado, use exemplos do curso e apresente o investimento com segurança, sem justificativas. Mostre como investir na saúde é um ganho a longo prazo.",
+        "<b>Como apresentar o valor do Health Plan:</b><br><br>"
+        "1. Explique que o plano foi criado para facilitar a vida do paciente, trazendo clareza.<br>"
+        "2. Mostre benefícios: acompanhamento, resultados esperados e previsibilidade.<br>"
+        "3. Associe valor ao resultado: use exemplos e conquistas reais.<br>"
+        "4. Apresente etapas e vantagens do acompanhamento contínuo.<br>"
+        "5. Apresente o investimento como parte natural do cuidado, sem justificativas.<br>"
+        "6. Finalize mostrando como investir em saúde é um ganho a longo prazo.",
 
     "me ajude a montar um health plan para um paciente com enxaqueca crônica":
-        "Primeiro, faça uma anamnese detalhada para identificar gatilhos, hábitos e histórico do paciente. Explique de forma simples o diagnóstico, proponha ações personalizadas (tratamento clínico, orientações alimentares, rotinas de sono, técnicas para estresse), agende acompanhamentos periódicos e mostre que o Health Plan traz mais controle e previsibilidade. Apresente o investimento como parte do processo para reduzir crises e melhorar a vida do paciente.",
+        "<b>Health Plan para enxaqueca crônica:</b><br><br>"
+        "1. <b>Anamnese detalhada:</b> Identifique gatilhos, hábitos e histórico.<br>"
+        "2. <b>Educação:</b> Explique o diagnóstico de forma simples.<br>"
+        "3. <b>Plano de ação:</b> Inclua orientações clínicas, alimentares, rotina de sono e técnicas para estresse.<br>"
+        "4. <b>Acompanhamento:</b> Agende retornos e acompanhe o progresso.<br>"
+        "5. <b>Apresentação do investimento:</b> Mostre o valor como parte do processo para reduzir crises e melhorar a qualidade de vida do paciente.",
 
     "quais exercícios devo fazer para melhorar minhas costas em casa":
-        "Sua pergunta demonstra interesse, mas esse tema não faz parte do conteúdo do curso Consultório High Ticket. Nosso foco é ajudar você a dobrar o faturamento do consultório com estratégias de posicionamento, valorização e captação de pacientes high ticket. Para recomendações de exercícios físicos, oriento buscar um profissional da área de saúde física ou fisioterapia."
+        "Sua pergunta demonstra interesse, mas esse tema não faz parte do conteúdo do curso <b>Consultório High Ticket</b>.<br>"
+        "Nosso foco é ajudar você a dobrar o faturamento do consultório com estratégias de posicionamento, valorização e captação de pacientes high ticket.<br>"
+        "Para recomendações de exercícios físicos, oriento buscar um profissional da área de saúde física ou fisioterapia."
 }
 
 CANONICAL_QA_NORMALIZED = {normalize_key(k): v for k, v in CANONICAL_QA.items()}
