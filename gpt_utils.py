@@ -1,5 +1,4 @@
 import os
-import json
 import re
 import unicodedata
 from openai import OpenAI, OpenAIError
@@ -18,13 +17,10 @@ client = OpenAI(api_key=api_key)
 # -----------------------------
 OUT_OF_SCOPE_MSG = (
     "Essa pergunta é muito boa, mas no momento ela está "
-    "<strong>fora do conteúdo abordado nas aulas do curso "
-    "Consultório High Ticket</strong>. Isso pode indicar uma "
-    "oportunidade de melhoria do nosso material! 😊<br><br>"
-    "Vamos sinalizar esse tema para a equipe pedagógica avaliar "
-    "a inclusão em versões futuras do curso. Enquanto isso, "
-    "recomendamos focar nos ensinamentos já disponíveis para ter "
-    "os melhores resultados possíveis no consultório."
+    "<strong>fora do conteúdo abordado nas aulas do curso Consultório High Ticket</strong>. "
+    "Isso pode indicar uma oportunidade de melhoria do nosso material! 😊<br><br>"
+    "Vamos sinalizar esse tema para a equipe pedagógica avaliar a inclusão em versões futuras do curso. "
+    "Enquanto isso, recomendamos focar nos ensinamentos já disponíveis para ter os melhores resultados possíveis no consultório."
 )
 
 # -----------------------------
@@ -42,28 +38,34 @@ def normalize_key(text: str) -> str:
 # -----------------------------
 BASE_DIR = os.path.dirname(__file__)
 
-def read_pdf(path):
+def read_pdf(path: str) -> str:
     try:
         reader = PdfReader(path)
         return "\n\n".join(page.extract_text() or "" for page in reader.pages)
     except:
         return ""
 
+# Carrega transcrições e PDFs
 _raw_txt  = open(os.path.join(BASE_DIR, "transcricoes.txt"), encoding="utf-8").read()
 _raw_pdf1 = read_pdf(os.path.join(BASE_DIR, "PlanodeAcaoConsultorioHighTicket-1Semana (4)[1].pdf"))
 _raw_pdf2 = read_pdf(os.path.join(BASE_DIR, "GuiadoCursoConsultorioHighTicket.-CHT21[1].pdf"))
 _raw_pdf3 = read_pdf(os.path.join(BASE_DIR, "5.8 - Dossiê 007 - (3)[1].pdf"))
 
+# Combina para resumo (se necessário)
 _combined = "\n\n".join([_raw_txt, _raw_pdf1, _raw_pdf2, _raw_pdf3])
 try:
     resp = client.chat.completions.create(
         model="gpt-4",
         messages=[
-            {"role":"system","content":
-                "Você é um resumidor especialista em educação. Resuma em até 300 palavras todo o conteúdo "
-                "do curso Consultório High Ticket, incluindo Plano de Ação (1ª Semana), Guia do Curso e Dossiê 007."
+            {
+                "role": "system",
+                "content": (
+                    "Você é um resumidor especialista em educação. Resuma em até 300 palavras "
+                    "todo o conteúdo do curso Consultório High Ticket, incluindo Plano de Ação (1ª Semana), "
+                    "Guia do Curso e Dossiê 007."
+                )
             },
-            {"role":"user","content":_combined}
+            {"role": "user", "content": _combined}
         ]
     )
     COURSE_SUMMARY = resp.choices[0].message.content
@@ -87,23 +89,25 @@ TYPE_KEYWORDS = {
 }
 
 # -----------------------------
-# RESPOSTAS CANÔNICAS NORMALIZADAS
+# RESPOSTAS CANÔNICAS
 # -----------------------------
 CANONICAL_QA = {
     "e possivel atrair pacientes sem usar redes sociais":
-        "Sim! Um dos pilares do curso Consultório High Ticket é justamente mostrar que é possível atrair pacientes fiéis e de alto valor sem depender de redes sociais. "
-        "A Nanda ensina estratégias presenciais, indicações qualificadas, posicionamento de autoridade e um método validado que funciona offline, baseado em relacionamento e experiência. "
+        "Sim! Um dos pilares do curso Consultório High Ticket é justamente mostrar que "
+        "é possível atrair pacientes fiéis e de alto valor sem depender de redes sociais. "
+        "A Nanda ensina estratégias presenciais, indicações qualificadas, posicionamento de autoridade "
+        "e um método validado que funciona offline, baseado em relacionamento e experiência. "
         "Você aprenderá tudo isso nas aulas, especialmente nas que tratam de captação sem marketing digital.",
 
-    "oi nanda acabei de me inscrever no curso qual e o primeiro passo que devo dar assim que entrar":
-        "1. <strong>Passo 1:</strong> Assista à aula de Onboarding completo.<br>"
-        "2. <strong>Passo 2:</strong> Entre no grupo de avisos da turma.<br>"
-        "3. <strong>Passo 3:</strong> Acesse a Área de Membros e preencha seu perfil.<br>"
-        "4. <strong>Passo 4:</strong> Participe do Desafio Health Plan clicando em “Participar”.",
+    "como entro na comunidade high ticket":
+        "A Comunidade High Ticket Doctors está dentro da plataforma do curso. Assim que você receber "
+        "o e-mail com o título “Chegou seu acesso”, cadastre sua senha. Depois de logado, preencha seu perfil "
+        "e entre na Comunidade para tirar dúvidas sobre o método, fazer networking e participar das oficinas.",
 
-    # ... (demais perguntas mantidas iguais — pode colar o restante como está no seu atual)
+    # Mantenha aqui todas as outras entradas canônicas originais
 }
 
+# Pré-normaliza chaves
 CANONICAL_QA_NORMALIZED = {
     normalize_key(k): v for k, v in CANONICAL_QA.items()
 }
@@ -112,8 +116,9 @@ CANONICAL_QA_NORMALIZED = {
 # IDENTIDADE E TEMPLATES
 # -----------------------------
 identidade = (
-    "<strong>Você é Nanda Mac.ia</strong>, a IA oficial da Nanda Mac, treinada com o conteúdo do curso "
-    "<strong>Consultório High Ticket</strong>. Responda como uma professora experiente, ajudando o aluno a aplicar o método na prática.<br><br>"
+    "<strong>Você é Nanda Mac.ia</strong>, a IA oficial da Nanda Mac, treinada com o conteúdo "
+    "do curso <strong>Consultório High Ticket</strong>. Responda como uma professora experiente, "
+    "ajudando o aluno a aplicar o método na prática.<br><br>"
 )
 
 prompt_variacoes = {
@@ -124,12 +129,11 @@ prompt_variacoes = {
     "faq": (
         "<strong>Objetivo:</strong> Responder de forma direta a dúvidas frequentes do curso. "
         "Use exemplos práticos e mencione etapas conforme o material."
-    ),
-    # demais mantidos
+    )
 }
 
 # -----------------------------
-# CLASSIFICADOR DE ESCOPO + TIPO
+# CLASSIFICADOR
 # -----------------------------
 def classify_prompt(question: str) -> dict:
     lower = normalize_key(question)
@@ -141,7 +145,7 @@ def classify_prompt(question: str) -> dict:
     return {"scope": "OUT_OF_SCOPE", "type": "explicacao"}
 
 # -----------------------------
-# FUNÇÃO PRINCIPAL
+# GERADOR DE RESPOSTA
 # -----------------------------
 def generate_answer(
     question: str,
@@ -150,17 +154,37 @@ def generate_answer(
     tipo_de_prompt: str = None
 ) -> str:
     key = normalize_key(question)
+
+    # 1) Resposta canônica
     if key in CANONICAL_QA_NORMALIZED:
         return CANONICAL_QA_NORMALIZED[key]
 
+    # 2) Classifica escopo
     cls = classify_prompt(question)
     if cls["scope"] == "OUT_OF_SCOPE":
         return OUT_OF_SCOPE_MSG
 
+    # 3) Monta prompt
     tipo = cls["type"]
     prompt = identidade + prompt_variacoes.get(tipo, "")
     if context:
         prompt += f"<br><strong>📚 Contexto:</strong><br>{context}<br>"
     if history:
         prompt += f"<br><strong>📜 Histórico:</strong><br>{history}<br>"
-    prompt += f"<br><strong>🤔 Pergunta:</strong><br>{question}<br><br><strong>🧠 Res
+    prompt += (
+        f"<br><strong>🤔 Pergunta:</strong><br>{question}<br><br>"
+        f"<strong>🧠 Resposta:</strong><br>"
+    )
+
+    # 4) Chama OpenAI
+    try:
+        r = client.chat.completions.create(
+            model="gpt-4",
+            messages=[{"role": "user", "content": prompt}]
+        )
+    except OpenAIError:
+        r = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[{"role": "user", "content": prompt}]
+        )
+    return r.choices[0].message.content
