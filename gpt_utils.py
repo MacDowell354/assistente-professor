@@ -18,7 +18,7 @@ def normalize_key(text: str) -> str:
     return re.sub(r"\s+", " ", s).strip()
 
 CANONICAL_QA = {
-    # Coloque aqui perguntas operacionais ou fixas, se desejar.
+    # Perguntas operacionais, se houver
 }
 
 CANONICAL_QA_NORMALIZED = {normalize_key(k): v for k, v in CANONICAL_QA.items()}
@@ -33,31 +33,39 @@ def generate_answer(
     if key in CANONICAL_QA_NORMALIZED:
         return CANONICAL_QA_NORMALIZED[key]
     if context and len(context.strip()) > 20:
-        return format_as_teacher(context)
+        return format_as_teacher(context, question)
     return OUT_OF_SCOPE_MSG
 
-def format_as_teacher(context: str) -> str:
+def format_as_teacher(context: str, question: str = "") -> str:
     import re
+
+    # 1. Título: Se identificar título no início do contexto ou pela pergunta
+    titulo = ""
+    if question:
+        # Ex: Como estruturo a apresentação do valor do Health Plan para que o paciente veja o retorno do investimento?
+        titulo = "<b>" + question.strip().capitalize() + "</b><br><br>"
+    else:
+        # Busca por título natural no contexto
+        match = re.match(r"^(.*?)([:：])", context)
+        if match:
+            titulo = "<b>" + match.group(1).strip() + ":</b><br><br>"
+
+    # 2. Lista numerada: transforma passos (1., 2., etc.) em lista bonita
     texto = context.strip()
-
-    # Negrito no título/frase inicial se houver dois pontos
-    texto = re.sub(r"^(.*?)([:：])", r"<b>\1\2</b>", texto, 1)
-
-    # Transformar listas numeradas (1., 2., 3.) em tópicos com negrito
-    texto = re.sub(r"(\d+\.)(\s*)", r"<br><b>\1</b> ", texto)
-
-    # Transformar bullets ("-", "•") em lista não numerada
+    texto = re.sub(r"(\n)?(\d+\.)(\s+)", r"<br><b>\2</b> ", texto)
     texto = re.sub(r"[\n\r]\s*[\-\•]\s*", r"<br>&bull; ", texto)
 
-    # Quebra de linha para parágrafos
-    texto = texto.replace('\n', '<br>')
+    # 3. Destaque em negrito palavras-chave comuns do método
+    palavras_destaque = ["importante", "dica", "atenção", "exemplo", "finalize", "associe", "explique", "benefício", "passo", "resultado", "orientação", "plano", "etapa", "invista", "apresente"]
+    for palavra in palavras_destaque:
+        texto = re.sub(fr'\b({palavra})\b', r'<b>\1</b>', texto, flags=re.IGNORECASE)
 
-    # Evitar múltiplos <br>
+    # 4. Quebra de linha para parágrafos e ajuste visual
+    texto = texto.replace('\n', '<br>')
     texto = re.sub(r'(<br>\s*){2,}', '<br>', texto)
 
-    # Caixa um pouco maior e espaçamento agradável
     return (
-        "<div style='line-height:1.7em;font-size:1.07em; margin-bottom:12px;'>"
-        f"{texto.strip()}"
+        "<div style='line-height:1.7em;font-size:1.08em; margin-bottom:12px;'>"
+        f"{titulo}{texto.strip()}"
         "</div>"
     )
