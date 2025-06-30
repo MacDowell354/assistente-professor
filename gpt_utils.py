@@ -22,5 +22,5 @@ def generate_answer(
         if any(palavra in context.lower() for palavra in [
             "consultório", "high ticket", "paciente", "atendimento", "valorização", "captação", "secretária"
         ]):
-            return f"<strong>Explicação com base no curso:</strong><br>{context.strip()}"
+            return context.strip()
     return OUT_OF_SCOPE_MSG
