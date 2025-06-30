@@ -1099,6 +1099,21 @@ Palavras-chave: link do Health Plan, formulário Canva Health Plan, modelo edit�
 
 ==== FIM FAQ ====
 
+==== GUIA DO CURSO – CONSULTÓRIO HIGH TICKET ====
+
+Guia do Curso Consultório High Ticket  
+Passo 1 – Assista à aula de Onboarding  
+Absolutamente tudo começa por aqui! Clique no link do vídeo e assista ao Onboarding completo. :contentReference[oaicite:0]{index=0}  
+Passo 2 – Entre no grupo exclusivo de avisos da sua turma  
+Use o link para acessar o grupo silencioso de avisos (não envie dúvidas por lá). :contentReference[oaicite:1]{index=1}  
+Passo 3 – Entre na Área de Membros e Comunidade  
+Verifique na sua caixa de e-mail o e-mail “Chegou seu acesso”, cadastre sua senha, preencha seu perfil e acesse a Comunidade para tirar dúvidas, fazer networking e participar das oficinas. :contentReference[oaicite:2]{index=2}  
+Passo 4 – Participe do Desafio Health Plan  
+Após entrar na Área de Membros, clique em “Participar”, feche a janela e confirme em “Participar” novamente. Em seguida, clique em “Ver desafio”, depois em “Começar tarefa” em cada fase e, ao final, em “Concluir tarefa” para registrar sua participação. :contentReference[oaicite:3]{index=3}
+
+==== FIM GUIA DO CURSO ====
+
+
 ==== NOVAS PERGUNTAS FREQUENTES - GUIA DO CURSO ====
 
 Pergunta: Onde encontro o link para o grupo da minha turma?
@@ -1122,3 +1137,5 @@ Resposta: Todas as dúvidas sobre o conteúdo do curso devem ser postadas na <st
 Não utilize WhatsApp, direct ou outros canais. A Comunidade é o canal oficial para suporte sobre o método, e suas dúvidas também ajudam outros alunos!
 
 ==== FIM NOVAS FAQ ====
+
+
