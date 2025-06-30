@@ -1088,8 +1088,12 @@ Essa abordagem fortalece a autoridade do consultório, evita desgastes futuros e
 
 ==== PERGUNTAS FREQUENTES - FAQ OPERACIONAL ====
 
-Pergunta: Onde encontro o link do formulário para criar no Canva o Health Plan personalizado para o paciente?
 Resposta: Você pode acessar o formulário para criar seu Health Plan personalizado no Canva através deste link ativo:
+
+<a href="https://www.canva.com/design/DAEteeUPSUQ/0isBewvgUTJF0gZaRYZw2g/view?utm_content=DAEteeUPSUQ&utm_campaign=designshare&utm_medium=link&utm_source=publishsharelink&mode=preview" target="_blank">Clique aqui para acessar o formulário no Canva</a>
+
+Ele também está disponível diretamente na Aula 10.4 do curso e na Aula 6.8.
+
 
 <a href="https://www.canva.com/design/DAEteeUPSUQ/0isBewvgUTJF0gZaRYZw2g/view?utm_content=DAEteeUPSUQ&utm_campaign=designshare&utm_medium=link&utm_source=publishsharelink&mode=preview" target="_blank">Formulário Health Plan (Canva)</a>
 
