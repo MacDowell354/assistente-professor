@@ -51,9 +51,7 @@ _raw_pdf1 = read_pdf(os.path.join(BASE_DIR, "PlanodeAcaoConsultorioHighTicket-1S
 _raw_pdf2 = read_pdf(os.path.join(BASE_DIR, "GuiadoCursoConsultorioHighTicket.-CHT21[1].pdf"))
 _raw_pdf3 = read_pdf(os.path.join(BASE_DIR, "5.8 - Dossiê 007 - (3)[1].pdf"))
 
-# -----------------------------
-# RESUMO COMBINADO (opcional)
-# -----------------------------
+# Opcional: uso para gerar resumo via LLM
 _combined = "\n\n".join([_raw_txt, _raw_pdf1, _raw_pdf2, _raw_pdf3])
 try:
     resp = client.chat.completions.create(
@@ -107,10 +105,14 @@ CANONICAL_QA = {
         "e entre na Comunidade para tirar dúvidas sobre o método, fazer networking e participar das oficinas.",
 
     "se eu tiver um problema urgente durante o curso como solicito suporte rapidamente":
-        "Em caso de problema urgente durante o curso, envie um e-mail para "
-        "<strong>ajuda@nandamac.com</strong> com o assunto “S.O.S Crise” para receber suporte em até 24 h.",
+        "Em caso de urgência no curso, envie um e-mail para **ajuda@nandamac.com** com o assunto “S.O.S Crise” "
+        "para receber suporte em até 24 h úteis.",
 
-    # ... (mantenha aqui todas as outras entradas canônicas originais)
+    "onde devo postar minhas duvidas sobre o metodo do curso":
+        "Todas as dúvidas metodológicas devem ser postadas exclusivamente na Comunidade da Área de Membros. "
+        "Não use Direct, WhatsApp ou outros canais para questionar o método; assim sua pergunta fica visível "
+        "a todos e recebe resposta mais rápida."
+    # ... mantenha as demais entradas canônicas originais ...
 }
 
 # Pré-normaliza chaves
@@ -161,7 +163,7 @@ def generate_answer(
 ) -> str:
     key = normalize_key(question)
 
-    # 0) Perguntas sobre exercício não fazem parte do curso
+    # 0) Exercícios não fazem parte do curso
     if "exercicio" in key:
         return OUT_OF_SCOPE_MSG
 
@@ -169,7 +171,7 @@ def generate_answer(
     if key in CANONICAL_QA_NORMALIZED:
         return CANONICAL_QA_NORMALIZED[key]
 
-    # 2) Classifica escopo
+    # 2) Fora de escopo
     cls = classify_prompt(question)
     if cls["scope"] == "OUT_OF_SCOPE":
         return OUT_OF_SCOPE_MSG
@@ -186,7 +188,7 @@ def generate_answer(
         f"<strong>🧠 Resposta:</strong><br>"
     )
 
-    # 4) Chama OpenAI com fallback
+    # 4) Chama OpenAI (com fallback)
     try:
         r = client.chat.completions.create(
             model="gpt-4",
