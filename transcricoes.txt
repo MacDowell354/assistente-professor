@@ -1559,6 +1559,198 @@ Resposta:
 
 ==== FIM PERGUNTAS E RESPOSTAS SOBRE SCRIPTS DA SECRETÁRIA – CONSULTÓRIO HIGH TICKET ====```
 
+----
+==== 8.1 SCRIPTS DO PROFISSIONAL DA SAÚDE ====
+NANDA MAC · Carmen Miranda (carmen.miranda@nandamac.com) :contentReference[oaicite:0]{index=0}
+
+ÍNDICE
+1. Primeiro contato do paciente via mensagem
+2. Como entrar em contato com seu mercado base
+3. Como manter contato com o Paciente (Recomendando o Paciente)
+4. Como falar sobre atendimento on-line
+5. Marcação da consulta
+6. Valor da consulta
+7. Atualização de Valores – Como informar atualização de valor da consulta
+8. Não posso ser atendida antes?
+9. Quando acontecer um atraso
+10. Administração de Crise
+11. Quando paciente quer pagar menos do que estipulado
+12. Paciente quer ficar com a cara de um famoso
+13. Paciente quer alternativas e tratamento sem marcar nova consulta
+14. Como dar notícias difíceis?
+15. Você não atende mais convênio?
+16. Como ir conversando com o paciente em fase de transição (parar convênios)
+17. Como falar para avisar sobre atrasos e cancelamentos?
+18. Como entrar em contato com pacientes antigos
+19. Como informar novidades 
+20. Mas o convênio não reembolsa o valor total
+21. Como reativar pacientes que ficaram de retornar
+22. Como funciona o meu retorno ou que não deu retorno
+23. Quando o paciente atrasa
+24. Objeção: Vou falar com meu marido  
+25. Objeção: Orçar em outra clínica
+26. Objeção: Vou esperar para fazer ano que vem
+27. Objeção: Achei caro
+28. Objeção: Não tenho dinheiro
+29. Objeção: Vou pensar. Me manda esse orçamento por e-mail
+30. Objeção: Meu primo/amigo já faz isso
+31. Objeção: O meu convênio não reembolsa o valor total
+32. Objeção: Mas você não aceita mais o convênio?
+33. Pedir para meus pacientes me avaliarem de maneira High Ticket
+
+==== Script do Profissional da Saúde ====  
+
+1. QUANDO O PACIENTE ENTRA EM CONTATO POR DIRECT OU MENSAGEM COM VOCÊ (PRIMEIRO CONTATO)  
+(Onde encontrar: Módulo 3 – Aula 3.6)  
+Paciente: “Oie, sou amiga da Nanda, você é incrível! Você pode me atender já na semana que vem?”  
+Você: “Claro, vai ser um prazer te atender! Adoro a Nanda! Clica neste link para você marcar direto com a minha assistente, a Ana. Ela que cuida da minha agenda.  
+LINK WhatsApp -> https://api.whatsapp.com/send?phone=5521912345678  
+Faça os ajustes necessários no número (55=país, 21=código de área).  
+E como está a Nanda? Manda um beijão para ela!”
+
+2. COMO ENTRAR EM CONTATO COM SEU MERCADO BASE  
+(Onde encontrar: Módulo Secretária High Ticket Express – Aula 9)  
+– “Oi, tudo bem? Eu estava pensando em você hoje! Estou estudando sobre Y (por exemplo, mulheres maratonistas) e vi um estudo interessante.  
+Quero dedicar minha carreira a esse nicho. Você já fez algo assim? Suas amigas também? O que acharam?”  
+(Extrair o máximo de informações fazendo o paciente falar sobre suas experiências.)
+
+3. COMO MANTER CONTATO COM O PACIENTE (RECOMENDANDO O PACIENTE)  
+(Onde encontrar: Módulo Secretária High Ticket Express – Aula 9)  
+– “Fulana, vi no seu Instagram que você trabalha com roupas de ginástica. Tenho dificuldade em achar peças boas…  
+Vou passar na sua loja e levar uma amiga. Quando você estará lá?”
+
+4. COMO FALAR SOBRE ATENDIMENTO ON-LINE  
+(Onde encontrar: Módulo 0 – Aula 4)  
+“Estou atendendo online e em domicílio. As pessoas gostam por não gastar Uber e ter mais privacidade.  
+(Vender benefícios para o paciente, não para você.)”
+
+5. MARCAÇÃO DA CONSULTA  
+(Onde encontrar: Módulo 3 – Aula 5)  
+– “Oi! Quero marcar uma consulta com a Dra.”  
+– “Oi, Ruth! Qual horário você prefere: 15/dez às 13h ou 12/jan às 09h?”  
+– “15/dez está ótimo.”  
+– “Ótimo! Bloqueando esse horário na agenda. Se tiver imprevistos, avise com 48h de antecedência, por favor :)”  
+(Use gatilho de reciprocidade: diga que bloqueou o horário. Peça e-mail para envio de Google Calendar.)
+
+6. VALOR DA CONSULTA  
+(Onde encontrar: Módulo 3 – Aula 5)  
+Primeira vez?  
+– Sim: “A consulta é R$ XXX. Prefere pagar no cartão ou Pix?”  
+– Não: “A consulta é R$ XXX. Prefere pagar no cartão ou Pix, desta vez?”  
+(Extraia comprometimento; paciente já sabe que aceita várias formas de pagamento.)
+
+7. ATUALIZAÇÃO DE VALORES – COMO INFORMAR  
+(Instruções conforme Aula 5 e Secretária High Ticket Express – Aula 9)  
+– Repita o script de marcação, informando o novo valor da consulta no momento do agendamento.  
+– Use as mesmas perguntas de forma clara e objetiva.
+
+8. NÃO POSSO SER ATENDIDA ANTES?  
+(Onde encontrar: Módulo 3 – Aula 5)  
+Paciente nova?  
+– Não: “Vou verificar com a Dra. possibilidade de abrir horário extra e retorno em até 24h, tudo bem?”  
+– Sim: “A agenda da Dra. está LOTADA nesta época. Posso te colocar na lista de espera para esta semana, mas não posso garantir. Tudo bem?”
+
+9. QUANDO ACONTECER UM ATRASO  
+(Onde encontrar: Módulo 3 – Aula 6)  
+“Fulana, a Dra. vai atrasar 1h. Você prefere esperar ou reagendar?”  
+(Dê duas opções e respeite o tempo do cliente.)
+
+10. ADMINISTRAÇÃO DE CRISE  
+(Onde encontrar: Módulo 3 – Aula 11)  
+– Repetir todas as reclamações da paciente para gerar empatia.  
+– Exemplo de script de crise incluído na transcrição original.
+
+11. QUANDO PACIENTE QUER PAGAR MENOS  
+(Onde encontrar: Módulo 3 – Aula 11)  
+“Adoraria atender de graça, mas preciso cobrir custos do consultório e equipe.”
+
+12. PACIENTE QUER FICAR COM A CARA DE UM FAMOSO  
+(Onde encontrar: Módulo 3 – Aula 11)  
+“Entendi. O que você acha que precisa para ficar com a aparência do Ator Tal?”  
+(Leve o paciente a entender que não tudo é possível.)
+
+13. PACIENTE QUER ALTERNATIVAS E TRATAMENTO SEM MARCAR NOVA CONSULTA  
+(Onde encontrar: Módulo 3 – Aula 11)  
+“Não consigo avaliar por foto. Precisamos reavaliar pessoalmente. Vamos agendar uma consulta e eu apresento todas as opções.”
+
+14. COMO DAR NOTÍCIAS DIFÍCEIS?  
+(Onde encontrar: Módulo 3 – Aula 12)  
+– Pergunte expectativas e histórico de cuidados.  
+– Dê a notícia de forma simples e empática, fazendo perguntas de apoio.
+
+15. VOCÊ NÃO ATENDE MAIS CONVÊNIO?  
+(Onde encontrar: Módulo 3 – Aula 14)  
+– Explique mudança de regras e ofereça recomendação de outro profissional para convênios.
+
+16. COMO IR CONVERSANDO COM O PACIENTE EM FASE DE TRANSIÇÃO (PARAR CONVÊNIOS)  
+– Explique gradualmente redução de convênios, mantendo opções no particular.
+
+17. COMO AVISAR SOBRE ATRASOS E CANCELAMENTOS  
+– “Por gentileza, nos avise com 48h de antecedência em caso de emergência ou cancelamento.”
+
+18. COMO ENTRAR EM CONTATO COM PACIENTES ANTIGOS  
+(Onde encontrar: Módulo 3 – Aula 14.1)  
+– “Oi [Nome], faz X meses desde sua última consulta. Vamos agendar seu retorno? Opções: …”
+
+19. COMO INFORMAR NOVIDADES  
+(Onde encontrar: Módulo 3 – Aula 14.2)  
+– “Oi [Nome], temos novidade X e estamos dando prioridade a pacientes antigos. Gostaria de agendar?”
+
+20. MAS O CONVÊNIO NÃO REEMBOLSA O VALOR TOTAL  
+(Onde encontrar: Módulo 3 – Aula 14.3)  
+– Explique necessidade de falar com o plano de saúde para reembolso.
+
+21. COMO REATIVAR PACIENTES QUE FICARAM DE RETORNAR  
+(Onde encontrar: Módulo 3 – Aula 15)  
+– Use gatilho de desapego e o cuidado com a saúde para marcar nova avaliação.
+
+22. COMO FUNCIONA O MEU RETORNO OU QUE NÃO DEU RETORNO  
+– Explique modelo de 3 fases de atendimento e como o canal de dúvidas funciona.
+
+23. QUANDO O PACIENTE ATRASA  
+– Ofereça remarcar ou consulta reduzida, deixando a decisão para o paciente.
+
+24. OBJEÇÃO: VOU FALAR COM MEU MARIDO  
+(Onde encontrar: Módulo 4 – Aula 7)  
+– Reafirme as palavras da paciente e ajude a estruturar o argumento dela para o marido.
+
+25. OBJEÇÃO: ORÇAR EM OUTRA CLÍNICA  
+(Onde encontrar: Módulo 4 – Aula 8)  
+– Pergunte motivos e apresente valor do seu trabalho, evitando conflito.
+
+26. OBJEÇÃO: VOU ESPERAR PARA FAZER ANO QUE VEM  
+(Onde encontrar: Módulo 4 – Aula 9)  
+– Explique risco de postergar e descubra a objeção real.
+
+27. OBJEÇÃO: ACHEI CARO  
+(Onde encontrar: Módulo 4 – Aula 10)  
+– Explore expectativas e use perguntas que diferenciam preço de valor.
+
+28. OBJEÇÃO: NÃO TENHO DINHEIRO  
+(Onde encontrar: Módulo 4 – Aula 11)  
+– Compare gastos e proponha soluções intermediárias dentro do orçamento.
+
+29. OBJEÇÃO: VOU PENSAR. ME MANDA ESSE ORÇAMENTO POR E-MAIL  
+(Onde encontrar: Módulo 4 – Aula 12)  
+– Envie orçamento e questione o que falta para a decisão, resgatando objeções.
+
+30. OBJEÇÃO: MEU PRIMO/AMIGO JÁ FAZ ISSO  
+(Onde encontrar: Módulo 4 – Aula 13)  
+– Reconheça o profissional indicado e pergunte o que motivou a busca por outra opção.
+
+31. OBJEÇÃO: O MEU CONVÊNIO NÃO REEMBOLSA O VALOR TOTAL  
+(Onde encontrar: Módulo 4 – Aula 16)  
+– Explique mudanças nas regras de reembolso e ofereça apoio para falar com o plano.
+
+32. OBJEÇÃO: MAS VOCÊ NÃO ACEITA MAIS O CONVÊNIO?  
+(Onde encontrar: Módulo 4 – Aula 15)  
+– Reforce mudança de contrato e sugira profissionais alternativos.
+
+33. PEDIR PARA MEUS PACIENTES ME AVALIAREM DE MANEIRA HIGH TICKET  
+– “Boa tarde [Nome], tudo bem? Pode avaliar a Dra. no Google? É rápido e muito importante. Clique no link abaixo.”
+
+==== FIM 8.1 SCRIPTS DO PROFISSIONAL DA SAÚDE ====
+
 ==== SUPORTE TÉCNICO E COMUNIDADE ====
 
 **Suporte Técnico**  
