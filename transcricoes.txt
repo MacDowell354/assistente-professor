@@ -969,9 +969,8 @@ Resposta:
 Resposta: Sim, em proporção de 80% profissional e 10–20% pessoal, para humanizar seu perfil.  
 Nunca poste imagens íntimas ou sensuais. Se tiver dúvida, escolha outro conteúdo.
 
-==== FIM PERGUNTAS E RESPOSTAS GERAIS ====
+==== FIM PERGUNTAS E RESPOSTAS GERAIS – CONSULTÓRIO HIGH TICKET ====
 
- ----------------------------------------------------------------------
 ==== INSTRUÇÕES GERAIS PARA A IA NANDA MAC.IA ====
 
 1. Referência à Nanda Mac  
@@ -1020,8 +1019,7 @@ PERGUNTA FREQUENTE: “O que responder quando o paciente pede receita por WhatsA
 Resposta:  
 > “Entendo sua necessidade, mas por segurança clínica e regulatória precisamos agendar uma nova consulta. Podemos marcar um horário conveniente para você?”  
 
-==== FIM INSTRUÇÕES GERAIS ====  
-
+==== FIM INSTRUÇÕES GERAIS PARA A IA NANDA MAC.IA ====
 
 ==== MODELO DE RESPOSTA (Secretária ou Atendimento) ====
 
