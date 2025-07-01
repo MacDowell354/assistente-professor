@@ -1374,6 +1374,36 @@ Resposta:
 
 ==== FIM 5 Perguntas – Dossiê 007 ====
 
+==== FORMULÁRIO HEALTH PLAN – CANVA ====
+
+1. Aluno: Nanda, onde encontro o link do formulário para criar no Canva o Health Plan personalizado para o paciente?  
+Resposta:  
+Você pode acessar o formulário para criar seu Health Plan personalizado no Canva através deste link ativo:  
+<a href="https://www.canva.com/design/DAEteeUPSUQ/0isBewvgUTJF0gZaRYZw2g/view?utm_content=DAEteeUPSUQ&utm_campaign=designshare&utm_medium=link&utm_source=publishsharelink&mode=preview" target="_blank">Formulário Health Plan (Canva)</a>  
+Ele também está disponível diretamente na Aula 10.4 do curso.
+
+2. Aluno: Em qual aula foi apresentado esse link do formulário do Health Plan?  
+Resposta:  
+O link do formulário do Health Plan aparece na Aula 10.4 do curso Consultório High Ticket, logo após a seção de entrega do Health Plan.
+
+3. Aluno: Para que serve exatamente esse formulário no Canva?  
+Resposta:  
+Esse formulário é um modelo editável que guia você na elaboração de um Health Plan completo e personalizado para cada paciente. Nele você preenche objetivos, etapas de tratamento, investimentos e benefícios, deixando tudo pronto para apresentar de forma clara e profissional.
+
+4. Aluno: Como faço para editar o Health Plan no Canva usando esse formulário?  
+Resposta:  
+Ao abrir o link, clique em “Editar este modelo” (é necessário estar logado no Canva). Então:  
+- Substitua textos de exemplo pelos dados do paciente.  
+- Ajuste cores e fontes para a identidade do seu consultório.  
+- Inclua logo ou imagens específicas.  
+- Reorganize etapas e tabelas conforme necessário.
+
+5. Aluno: Posso compartilhar esse Health Plan finalizado com meus pacientes?  
+Resposta:  
+Sim! Depois de editar no Canva, clique em “Compartilhar” e copie o link de visualização. Envie esse link por e-mail ou WhatsApp, ou então baixe em PDF para entregar pessoalmente.
+
+==== FIM FORMULÁRIO HEALTH PLAN – CANVA ====  
+
 ==== SUPORTE TÉCNICO E COMUNIDADE ====
 
 **Suporte Técnico**  
