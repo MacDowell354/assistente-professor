@@ -243,6 +243,28 @@ CANONICAL_QA = {
         "5. Analise padrões: gere relatório mensal de faltas para identificar tendências.\n"
         "6. Ajuste lembretes: se faltar após SMS, inclua lembrete extra por WhatsApp horas antes.",
 
+
+    # — Correções de Perguntas Não Respondidas —
+    "como estruturar o primeiro contato do paciente via direct ou mensagem para garantir empatia e direcionarlo corretamente":
+        "Saudação personalizada: use o nome do paciente e mencione a conexão com a Nanda ("Oie, sou amiga da Nanda...").\n"
+        "Tom caloroso e de autoridade: demonstre entusiasmo ("vai ser um prazer te atender!").\n"
+        "Chamada à ação clara: envie o link para agendamento com a assistente ("clique neste link para marcar com a Ana").\n"
+        "Detalhes técnicos: oriente sobre o formato do link (55=país, 21=área) para evitar erros.\n"
+        "Toque de relacionamento: encerre com uma menção informal e simpática ("Manda um beijão para ela!").",
+
+    "o que dizer quando o paciente quer alternativas de tratamento sem marcar nova consulta":
+        "Reconhecimento da solicitação: “Entendo que você queira alternativas...”\n"
+        "Explicação técnica: informe que “por foto não dá para reavaliar a pele com segurança”.\n"
+        "Justificativa de valor: reforce a importância da avaliação presencial para qualidade do tratamento.\n"
+        "Próximo passo claro: “Vamos agendar uma consulta e eu apresento todas as opções.”\n"
+        "Gatilho de urgência suave: “Assim podemos iniciar o melhor protocolo para você o quanto antes.”",
+
+    "como responder a objecao achei caro seguindo o script high ticket":
+        "Espelhamento suave: “Você sentiu que o investimento está acima do esperado?”\n"
+        "Reforço de valor: aponte benefícios tangíveis (“Este protocolo inclui X procedimentos exclusivos…”).\n"
+        "Comparação de custo-benefício: “Em quanto tempo você espera ver o resultado? Nosso método costuma gerar retorno em Y meses.”\n"
+        "Pergunta exploratória: “O que achou mais relevante na proposta até agora?”\n"
+        "Oferta de opções: “Posso parcelar no Pix em até 3x, se ajudar no seu planejamento.”",
 }
 
 # Pré-normaliza chaves
