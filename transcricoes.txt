@@ -1426,10 +1426,10 @@ Resposta:
 
 ==== FIM 5 Perguntas – Dossiê 007 ====
 
-E) Suporte Técnico e Comunidade
+==== SUPORTE TÉCNICO E COMUNIDADE ====
 
 **Suporte Técnico**  
-Ficou com alguma dúvida técnica? Veja como receber ajuda do nosso time (respostas em até 48 h | seg–sex, 8h–18h):  
+Ficou com alguma dúvida técnica? Veja como receber ajuda do nosso time (respostas em até 48 h úteis | seg–sex, 8 h–18 h):  
 • Dúvidas sobre acesso, login ou mudança de e-mail  
 • Reclamações e sugestões de novas aulas  
 • Dúvidas sobre tempo de acesso  
@@ -1439,5 +1439,7 @@ Surgiu uma situação mais delicada e você precisa de ajuda?
 Informe **“S.O.S Crise”** no assunto do e-mail para receber suporte em até 24 h: **ajuda@nandamac.com**
 
 **Suporte ao Método**  
-Importância de usar a **Comunidade** como único canal de dúvidas sobre o método (gera inteligência coletiva e networking).  
+Use a **Comunidade** como único canal de dúvidas sobre o método (isso gera inteligência coletiva e networking).  
 **IMPORTANTE:** Não utilize Direct, WhatsApp (incluindo o da turma) ou outros canais para questionar o método – assim sua pergunta fica visível a todos e recebe resposta mais rápida.
+
+==== FIM SUPORTE TÉCNICO E COMUNIDADE ====  
