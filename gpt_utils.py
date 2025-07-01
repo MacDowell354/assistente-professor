@@ -58,7 +58,7 @@ _raw_pdf4 = read_pdf(os.path.join(BASE_DIR, "Papelaria e brindes  lista de links
 TYPE_KEYWORDS = {
     "revisao":                        ["revisão", "revise", "resumir"],
     "precificacao":                   ["precificação", "precificar", "preço", "valor", "faturamento"],
-    "health_plan":                    ["health plan", "retorno do investimento"],
+    "health_plan":                    ["health plan", "retorno do investimento", "canva"],
     "capitacao_sem_marketing_digital": ["offline", "sem instagram", "sem anúncios", "sem redes sociais"],
     "aplicacao":                      ["como aplico", "aplicação", "roteiro"],
     "faq":                            ["quais", "pergunta frequente"],
@@ -74,6 +74,14 @@ TYPE_KEYWORDS = {
 # RESPOSTAS CANÔNICAS
 # -----------------------------
 CANONICAL_QA = {
+    # — Health Plan (Canva) —
+    "onde encontro o link do formulario para criar no canva o health plan personalizado para o paciente":
+        "Você pode acessar o formulário para criar seu Health Plan personalizado no Canva através deste link ativo: "
+        "<a href=\"https://www.canva.com/design/DAEteeUPSUQ/0isBewvgUTJF0gZaRYZw2g/view?"
+        "utm_content=DAEteeUPSUQ&utm_campaign=designshare&utm_medium=link&utm_source=publishsharelink&mode=preview\" target=\"_blank\">"
+        "Formulário Health Plan (Canva)</a>. "
+        "Ele também está disponível diretamente na Aula 10.4 do curso Consultório High Ticket.",
+
     # — Captação sem redes sociais —
     "e possivel atrair pacientes sem usar redes sociais":
         "Sim! Um dos pilares do curso Consultório High Ticket é justamente mostrar que "
@@ -151,40 +159,35 @@ CANONICAL_QA = {
         "• Twinings Earl Grey Loose Tea Tins",
 
     # — Playlist Spotify —
-    "onde posso acessar a playlist do consultorio high ticket": (
+    "onde posso acessar a playlist do consultorio high ticket":
         "Você pode ouvir nossa playlist oficial diretamente no Spotify: "
-        "<a href=\"https://open.spotify.com/playlist/5Vop9zNsLcz0pkpD9aLQML?"
+        "<a href=\"https://open.spotify.com/playlist/5Vop9zNsLcz0pkpD9aLQML?"  
         "si=vJDC7OfcQXWpTernDbzwHA&nd=1&dlsi=964d4360d35e4b80\" target=\"_blank\">"
-        "Playlist Consultório High Ticket (Spotify)</a>"
-    ),
+        "Playlist Consultório High Ticket (Spotify)</a>",
 
-    "qual e o link da playlist recomendada na aula 4 17 do modulo 4": (
+    "qual e o link da playlist recomendada na aula 4 17 do modulo 4":
         "Na aula 4.17 do Módulo 4 – A Jornada do Paciente High Ticket, indicamos esta playlist: "
         "<a href=\"https://open.spotify.com/playlist/5Vop9zNsLcz0pkpD9aLQML?"
         "si=vJDC7OfcQXWpTernDbzwHA&nd=1&dlsi=964d4360d35e4b80\" target=\"_blank\">"
-        "Playlist Consultório High Ticket (Spotify)</a>"
-    ),
+        "Playlist Consultório High Ticket (Spotify)</a>",
 
-    "como eu ouco a playlist do curso consultorio high ticket": (
+    "como eu ouco a playlist do curso consultorio high ticket":
         "Basta abrir o link da playlist no app ou site do Spotify e clicar em “Play”. Está disponível em: "
         "<a href=\"https://open.spotify.com/playlist/5Vop9zNsLcz0pkpD9aLQML?"
         "si=vJDC7OfcQXWpTernDbzwHA&nd=1&dlsi=964d4360d35e4b80\" target=\"_blank\">"
-        "Playlist Consultório High Ticket (Spotify)</a>"
-    ),
+        "Playlist Consultório High Ticket (Spotify)</a>",
 
-    "em que aula e mencionada a playlist do consultorio high ticket": (
+    "em que aula e mencionada a playlist do consultorio high ticket":
         "Falamos da playlist na Aula 4.17 do Módulo 4 – A Jornada do Paciente High Ticket. "
         "<a href=\"https://open.spotify.com/playlist/5Vop9zNsLcz0pkpD9aLQML?"
         "si=vJDC7OfcQXWpTernDbzwHA&nd=1&dlsi=964d4360d35e4b80\" target=\"_blank\">"
-        "Playlist Consultório High Ticket (Spotify)</a>"
-    ),
+        "Playlist Consultório High Ticket (Spotify)</a>",
 
-    "como encontro a playlist do consultorio high ticket no spotify": (
+    "como encontro a playlist do consultorio high ticket no spotify":
         "Procure por “Consultório High Ticket” no Spotify ou acesse diretamente por este link: "
         "<a href=\"https://open.spotify.com/playlist/5Vop9zNsLcz0pkpD9aLQML?"
         "si=vJDC7OfcQXWpTernDbzwHA&nd=1&dlsi=964d4360d35e4b80\" target=\"_blank\">"
-        "Playlist Consultório High Ticket (Spotify)</a>"
-    ),
+        "Playlist Consultório High Ticket (Spotify)</a>",
 }
 
 # Pré-normaliza chaves
