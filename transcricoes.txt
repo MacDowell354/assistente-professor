@@ -1337,6 +1337,39 @@ https://open.spotify.com/playlist/5Vop9zNsLcz0pkpD9aLQML?si=vJDC7OfcQXWpTernDbzw
 
 ==== FIM 5 Perguntas – Playlist Spotify ====
 
+==== DOSSIÊ 007 – CONSULTÓRIO HIGH TICKET ====
+
+**Público-alvo:**  
+- Profissionais da saúde que estão começando do absoluto zero e não possuem, ainda, nenhum paciente.  
+- Profissionais da saúde que já atendem pacientes, mas querem parar de atender convênios.  
+- Profissionais da saúde que já têm pacientes particulares, mas desejam dobrar o faturamento do consultório atraindo e retendo Pacientes High Ticket. :contentReference[oaicite:0]{index=0}  
+
+**Ação 1 – Networking (Atração High Ticket):**  
+Durante a consulta, pergunte quem são os outros profissionais de saúde que atendem seu paciente. Anote nomes, especialidades e dados. Em seguida, entre em contato para discutir o caso e usar essa conexão para gerar novas indicações. :contentReference[oaicite:1]{index=1}  
+
+_Script:_  
+> “Oi |Nome do Profissional|, aqui é o Dr. |Seu Nome|. Estava com o paciente |X| e gostaria de conversar 10 min sobre ele. Pode ser às X h ou Y h? Qual você prefere?” :contentReference[oaicite:2]{index=2}  
+
+**Ação 2 – Retenção High Ticket:**  
+• **Script de Confirmação (2 dias antes):**  
+> “Oi [nome], confirmo sua consulta dia X às Y h. Digite 1 para confirmar, 2 para cancelar. Se não responder em 24 h, a consulta será cancelada.” :contentReference[oaicite:3]{index=3}  
+
+• **Script de Remarcação (1 h antes):**  
+> “Tem certeza que quer remarcar? A agenda está concorrida e o próximo horário disponível é em X meses. Não é melhor resolver logo?” :contentReference[oaicite:4]{index=4}  
+
+**Ação 3 – Reativação High Ticket:**  
+Liste pacientes sem consulta há ≥6 meses e faça contato pessoal:  
+> “Oi [nome], sou assistente da Dra X. Notei que faz X meses desde sua última avaliação. Vamos agendar sua próxima consulta?”  
+Se não responder em 48 h, envie:  
+> “Aconteceu algo? Se algo mudou, por favor me fale—seu feedback é importante.” :contentReference[oaicite:5]{index=5}  
+
+**Orientações Finais:**  
+1. Não esqueça de contar sua especialidade sempre que alguém perguntar “o que você faz?”; seja específico com seu nicho.  
+2. Regra de ouro: **TUDO É SOBRE O SEU PACIENTE E NÃO SOBRE VOCÊ**; ele é a prioridade e o centro das atenções.  
+3. Sempre ligue e agradeça pessoalmente aos profissionais de saúde que recomendaram seus pacientes. :contentReference[oaicite:6]{index=6}  
+
+==== FIM DOSSIÊ 007 ====
+
 E) Suporte Técnico e Comunidade
 
 **Suporte Técnico**  
