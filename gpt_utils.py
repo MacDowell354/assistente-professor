@@ -50,27 +50,7 @@ _raw_txt  = open(os.path.join(BASE_DIR, "transcricoes.txt"), encoding="utf-8").r
 _raw_pdf1 = read_pdf(os.path.join(BASE_DIR, "PlanodeAcaoConsultorioHighTicket-1Semana (4)[1].pdf"))
 _raw_pdf2 = read_pdf(os.path.join(BASE_DIR, "GuiadoCursoConsultorioHighTicket.-CHT21[1].pdf"))
 _raw_pdf3 = read_pdf(os.path.join(BASE_DIR, "5.8 - Dossiê 007 - (3)[1].pdf"))
-
-# Opcional: uso para gerar resumo via LLM
-_combined = "\n\n".join([_raw_txt, _raw_pdf1, _raw_pdf2, _raw_pdf3])
-try:
-    resp = client.chat.completions.create(
-        model="gpt-4",
-        messages=[
-            {
-                "role": "system",
-                "content": (
-                    "Você é um resumidor especialista em educação. Resuma em até 300 palavras "
-                    "todo o conteúdo do curso Consultório High Ticket, incluindo Plano de Ação (1ª Semana), "
-                    "Guia do Curso e Dossiê 007."
-                )
-            },
-            {"role": "user", "content": _combined}
-        ]
-    )
-    COURSE_SUMMARY = resp.choices[0].message.content
-except OpenAIError:
-    COURSE_SUMMARY = ""
+_raw_pdf4 = read_pdf(os.path.join(BASE_DIR, "Papelaria e brindes  lista de links e indicações.pdf"))
 
 # -----------------------------
 # PALAVRAS-CHAVE PARA CLASSIFICAÇÃO
@@ -86,7 +66,8 @@ TYPE_KEYWORDS = {
     "plano_de_acao":                  ["plano de ação", "primeira semana"],
     "guia":                           ["guia do curso", "passo a passo", "cht21"],
     "dossie":                         ["dossiê 007", "acao 1", "acao 2", "acao 3", "orientações finais"],
-    "papelaria":                      ["jo malone", "importadoras", "cafeteiras", "chocolates", "chás"]
+    "papelaria":                      ["jo malone", "importadoras", "cafeteiras", "chocolates", "chás"],
+    "playlist":                       ["playlist", "spotify"]
 }
 
 # -----------------------------
@@ -167,8 +148,27 @@ CANONICAL_QA = {
     "quais opcoes de chas foram indicadas no material":
         "Foram indicados dois tipos de chá:\n"
         "• New English Teas Vintage Victorian Round Tea Caddy\n"
-        "• Twinings Earl Grey Loose Tea Tins"
-    # ... mantenha as demais entradas canônicas originais ...
+        "• Twinings Earl Grey Loose Tea Tins",
+
+    # — Playlist Spotify —
+    "onde posso acessar a playlist do consultorio high ticket":
+        "Você pode ouvir nossa playlist oficial diretamente no Spotify, acessando:\n"
+        "https://open.spotify.com/playlist/5Vop9zNsLcz0pkpD9aLQML?si=vJDC7OfcQXWpTernDbzwHA&nd=1&dlsi=964d4360d35e4b80",
+
+    "qual e o link da playlist recomendada na aula 4 17 do modulo 4":
+        "Na aula 4.17 do Módulo 4 – A Jornada do Paciente High Ticket, indicamos esta playlist:\n"
+        "https://open.spotify.com/playlist/5Vop9zNsLcz0pkpD9aLQML?si=vJDC7OfcQXWpTernDbzwHA&nd=1&dlsi=964d4360d35e4b80",
+
+    "como eu ouco a playlist do curso consultorio high ticket":
+        "Basta abrir o link da playlist no app ou site do Spotify e clicar em “Play”. Está disponível em:\n"
+        "https://open.spotify.com/playlist/5Vop9zNsLcz0pkpD9aLQML?si=vJDC7OfcQXWpTernDbzwHA&nd=1&dlsi=964d4360d35e4b80",
+
+    "em que aula e mencionada a playlist do consultorio high ticket":
+        "Falamos da playlist na Aula 4.17 do Módulo 4 – A Jornada do Paciente High Ticket.",
+
+    "como encontro a playlist do consultorio high ticket no spotify":
+        "Procure por “Consultório High Ticket” no Spotify ou acesse diretamente por este link:\n"
+        "https://open.spotify.com/playlist/5Vop9zNsLcz0pkpD9aLQML?si=vJDC7OfcQXWpTernDbzwHA&nd=1&dlsi=964d4360d35e4b80"
 }
 
 # Pré-normaliza chaves
@@ -219,10 +219,6 @@ def generate_answer(
 ) -> str:
     key = normalize_key(question)
 
-    # 0) Exercícios não fazem parte, exceto as canônicas
-    if "exercicio" in key and key not in CANONICAL_QA_NORMALIZED:
-        return OUT_OF_SCOPE_MSG
-
     # 1) Resposta canônica
     if key in CANONICAL_QA_NORMALIZED:
         return CANONICAL_QA_NORMALIZED[key]
@@ -232,7 +228,7 @@ def generate_answer(
     if cls["scope"] == "OUT_OF_SCOPE":
         return OUT_OF_SCOPE_MSG
 
-    # 3) Monta prompt
+    # 3) Monta prompt dinâmico
     tipo = cls["type"]
     prompt = identidade + prompt_variacoes.get(tipo, "")
     if context:
@@ -244,7 +240,7 @@ def generate_answer(
         f"<strong>🧠 Resposta:</strong><br>"
     )
 
-    # 4) Chama OpenAI (com fallback)
+    # 4) Chama OpenAI com fallback
     try:
         r = client.chat.completions.create(
             model="gpt-4",
