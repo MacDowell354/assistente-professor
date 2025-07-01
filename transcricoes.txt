@@ -1502,6 +1502,63 @@ REATIVAÇÃO
 
 ==== FIM SCRIPTS DA SECRETÁRIA – CONSULTÓRIO HIGH TICKET ====  
 
+==== PERGUNTAS E RESPOSTAS SOBRE SCRIPTS DA SECRETÁRIA – CONSULTÓRIO HIGH TICKET ==== :contentReference[oaicite:0]{index=0}
+
+1. Como mensurar o impacto do desconto concedido a pacientes antigos na fidelização e no faturamento do consultório?  
+Resposta:  
+- Defina métricas-chave:  
+  - Retenção de pacientes: percentual de pacientes antigos que retornam após o desconto.  
+  - Ticket médio: valor médio faturado por paciente antes e depois da promoção.  
+  - Lifetime Value (LTV): projeção de receita trazida por esses pacientes ao longo de meses.  
+- Colete dados: registre em planilha ou em sistema de gestão cada desconto aplicado (quem recebeu, data, valor).  
+- Compare períodos: avalie as métricas nos 3–6 meses antes do desconto vs. 3–6 meses depois.  
+- Analise qualitativamente: aplique breve pesquisa de satisfação aos pacientes contemplados para entender percepção de valor.  
+- Ajuste a política: se o desconto aumentar retorno sem corroer a margem, mantenha; caso contrário, redefina critérios ou patamares de desconto.
+
+2. Quais critérios a secretária deve usar para decidir quando colocar um novo paciente na lista de espera versus sugerir outra data?  
+Resposta:  
+- Urgência clínica: casos com dor aguda ou necessidade imediata têm prioridade.  
+- Perfil do paciente:  
+  - Antigos: prioridade em lista de espera exclusiva (“retorno em até 24 h”).  
+  - Novos: avaliar flexibilidade de agenda e informar prazo realista.  
+- Janela de disponibilidade:  
+  - Se o paciente puder vir em até 48 h, ofereça lista de espera.  
+  - Caso contrário, sugira a próxima data fixa confirmada.  
+- Comunicação clara: informe sempre o prazo máximo de resposta (“aviso em até 24 h”) e confirme participação.  
+- Confirmação de compromisso: apenas adicione à lista se o paciente aceitar as condições.
+
+3. Na prática, como aplicar a técnica de espelhamento com pacientes difíceis sem parecer artificial ou forçado?  
+Resposta:  
+- Ouça ativamente: identifique palavras-chave que o paciente usa para descrever suas dores ou emoções.  
+- Repita trechos curtos:  
+  - Paciente: “Estou com muita ansiedade antes do tratamento.”  
+  - Você: “Ansiedade antes do tratamento?”  
+- Use tom empático: mantenha ritmo calmo e pausas para mostrar atenção.  
+- Combine com perguntas abertas: “E o que mais você sente em relação a isso?”  
+- Seja genuíno: espelhe apenas o que realmente captar, evitando frases decoradas.
+
+4. Quais são os cuidados para elaborar o lembrete de consulta dois dias antes de forma clara e profissional, sem ser invasivo?  
+Resposta:  
+- Personalize a mensagem: use o nome do paciente e da Dra. (“Olá [Nome], aqui é da Dra. XX”).  
+- Inclua dados essenciais: dia da semana, data e horário exatos.  
+- Mantenha tom breve e cordial:  
+  - “Tudo certo para nossa consulta na terça-feira, 12/05, às 14 h?”  
+- Ofereça reagendamento: “Se precisar alterar, responda esta mensagem.”  
+- Evite excesso de texto: apenas 2–3 frases.  
+- Canal apropriado: SMS ou WhatsApp, respeitando horários hábeis.
+
+5. Como registrar e acompanhar faltas sem aviso para minimizar no-shows e manter um bom relacionamento com o paciente?  
+Resposta:  
+- Protocolo de registro: ao identificar no-show, anote data e hora no sistema.  
+- Follow-up imediato: no mesmo dia, envie mensagem empática:  
+  > “Olá [Nome], sentimos sua falta hoje. Está tudo bem?”  
+- Classificação de risco: marque pacientes com faltas recorrentes para contato telefônico dedicado.  
+- Ofereça reagendamento: proponha duas opções de data no follow-up.  
+- Analise padrões: mensalmente, gere relatório de faltas para identificar tendências.  
+- Ajuste lembretes: se o paciente faltar após lembrete SMS, inclua avisos extras via WhatsApp algumas horas antes.
+
+==== FIM PERGUNTAS E RESPOSTAS SOBRE SCRIPTS DA SECRETÁRIA – CONSULTÓRIO HIGH TICKET ====```
+
 ==== SUPORTE TÉCNICO E COMUNIDADE ====
 
 **Suporte Técnico**  
