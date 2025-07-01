@@ -188,6 +188,61 @@ CANONICAL_QA = {
         "<a href=\"https://open.spotify.com/playlist/5Vop9zNsLcz0pkpD9aLQML?"
         "si=vJDC7OfcQXWpTernDbzwHA&nd=1&dlsi=964d4360d35e4b80\" target=\"_blank\">"
         "Playlist Consultório High Ticket (Spotify)</a>",
+
+    # — SCRIPTS DA SECRETÁRIA – CONSULTÓRIO HIGH TICKET —
+    "como mensurar o impacto do desconto concedido a pacientes antigos na fidelizacao e no faturamento do consultorio":
+        "Para mensurar o impacto do desconto concedido a pacientes antigos na fidelização e no faturamento do consultório, siga estas etapas:\n\n"
+        "1. Defina métricas-chave:\n"
+        "- Retenção de pacientes: percentual de pacientes antigos que retornam após o desconto.\n"
+        "- Ticket médio: valor médio faturado por paciente antes e depois da promoção.\n"
+        "- Lifetime Value (LTV): projeção de receita trazida por esses pacientes ao longo de meses.\n\n"
+        "2. Colete dados: registre em planilha ou sistema de gestão cada desconto aplicado (paciente, data, valor).\n\n"
+        "3. Compare períodos: avalie as métricas nos 3–6 meses antes do desconto vs. 3–6 meses depois.\n\n"
+        "4. Analise qualitativamente: aplique pesquisa de satisfação aos pacientes contemplados para entender percepção de valor.\n\n"
+        "5. Ajuste a política: se o desconto aumentar retorno sem corroer margem, mantenha; caso contrário, redefina critérios ou patamares de desconto.",
+
+    "quais criterios a secretaria deve usar para decidir quando colocar um novo paciente na lista de espera versus sugerir outra data":
+        "A secretária deve considerar os seguintes critérios:\n\n"
+        "1. Urgência clínica: priorize casos com dor aguda ou necessidade imediata.\n"
+        "2. Perfil do paciente:\n"
+        "- Pacientes antigos: lista de espera exclusiva com retorno em até 24 h.\n"
+        "- Pacientes novos: avalie flexibilidade de agenda e informe prazo realista.\n"
+        "3. Janela de disponibilidade:\n"
+        "- Se puder em até 48 h, ofereça lista de espera;\n"
+        "- Caso contrário, sugira próxima data fixa confirmada.\n"
+        "4. Comunicação clara: informe prazo máximo de resposta (até 24 h) e confirme presença.\n"
+        "5. Confirmação de compromisso: inclua na lista somente se o paciente aceitar as condições.",
+
+    "na pratica como aplicar a tecnica de espelhamento com pacientes dificieis sem parecer artificial ou forcado":
+        "Para aplicar espelhamento com naturalidade:\n\n"
+        "1. Ouça ativamente e identifique palavras-chave usadas pelo paciente.\n"
+        "2. Repita trechos curtos:\n"
+        "- Paciente: “Estou com muita ansiedade antes do tratamento.”\n"
+        "- Você: “Ansiedade antes do tratamento?”\n"
+        "3. Use tom calmo e pausado para demonstrar empatia.\n"
+        "4. Combine com perguntas abertas: “E o que mais você sente em relação a isso?”\n"
+        "5. Seja genuíno: espelhe apenas o que realmente captar, evitando frases decoradas.",
+
+    "quais sao os cuidados para elaborar o lembrete de consulta dois dias antes de forma clara e profissional sem ser invasivo":
+        "Cuidados para lembrete de consulta 2 dias antes:\n\n"
+        "1. Mensagem personalizada: inclua nome do paciente e do profissional.\n"
+        "2. Dados essenciais: dia da semana, data e horário exatos.\n"
+        "3. Tom cordial e breve:\n"
+        "   Ex: “Tudo certo para nossa consulta na terça-feira, 12/05, às 14 h?”\n"
+        "4. Ofereça opção de reagendar: “Se precisar alterar, responda esta mensagem.”\n"
+        "5. Evite excesso de texto: 2–3 frases.\n"
+        "6. Canal apropriado: SMS ou WhatsApp em horário hábil.",
+
+    "como registrar e acompanhar faltas sem aviso para minimizar o numero de noshows e manter um relacionamento positivo com o paciente":
+        "Para registrar e acompanhar faltas sem aviso:\n\n"
+        "1. Protocolo de registro: anote data e horário do no-show no sistema imediatamente.\n"
+        "2. Follow-up no mesmo dia com mensagem empática:\n"
+        "   “Olá [Nome], sentimos sua falta hoje. Está tudo bem?”\n"
+        "3. Classificação de risco: identifique pacientes com faltas recorrentes para contato telefônico.\n"
+        "4. Ofereça reagendamento: sugira duas opções de data no follow-up.\n"
+        "5. Analise padrões: gere relatório mensal de faltas para identificar tendências.\n"
+        "6. Ajuste lembretes: se faltar após SMS, inclua lembrete extra por WhatsApp horas antes.",
+
 }
 
 # Pré-normaliza chaves
