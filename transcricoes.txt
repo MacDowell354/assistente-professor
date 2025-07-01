@@ -1023,26 +1023,20 @@ Resposta:
 ==== FIM INSTRUÇÕES GERAIS ====  
 
 
-🟪 MODELO DE RESPOSTA (Secretária ou atendimento):
+==== MODELO DE RESPOSTA (Secretária ou Atendimento) ====
 
 Oi [nome], tudo bem?
 
-Conforme foi conversado na consulta com o Dr(a) [nome], ele(a) vai precisar te ver em uma nova consulta, onde possa te avaliar novamente.
+Conforme foi conversado na consulta com o Dr(a) [nome], ele(a) precisará lhe ver em uma nova consulta para avaliá-lo(a) novamente.  
+Só assim poderá prescrever uma nova receita com total segurança e responsabilidade.
 
-Só assim vai poder prescrever uma nova receita com total segurança e responsabilidade.
-
-Os próximos horários disponíveis na agenda do Dr(a) são [hora e data] ou [hora e data].
-
-Qual desses fica melhor para você?
-
-
-Conforme foi conversado na consulta com o Dr(a) [nome], ele(a) vai precisar te ver em uma nova consulta, onde possa te avaliar novamente.
-
-Só assim vai poder prescrever uma nova receita com total segurança e responsabilidade.
-
-Os próximos horários disponíveis na agenda do Dr(a) são [hora e data] ou [hora e data].
+Os próximos horários disponíveis na agenda do Dr(a) são:  
+- [hora e data]  
+- [hora e data]
 
 Qual desses fica melhor para você?
+
+==== FIM MODELO DE RESPOSTA ====  
 
 ==== ORIENTAÇÃO GERAL ====
 
