@@ -1404,6 +1404,118 @@ Sim! Depois de editar no Canva, clique em “Compartilhar” e copie o link de v
 
 ==== FIM FORMULÁRIO HEALTH PLAN – CANVA ====  
 
+==== SCRIPTS DA SECRETÁRIA – CONSULTÓRIO HIGH TICKET ====  
+
+Agendamento
+Agendamento (Desconto paciente antigo)
+Paciente quer consultar antes
+Qual o valor do tratamento?
+Como mandar o formulário
+Confirmando consulta/ Lembrete da consulta
+Quando o paciente quer desmarcar
+Quando o paciente falta sem avisar
+Marcando retorno do paciente
+Reativação
+Como lidar com pacientes difíceis
+Cobrança
+
+AGENDAMENTO
+
+Paciente Antigo Retornando (Roteiro - Script)  
+Paciente: “Oie, gostaria de saber o valor da consulta com a Dra. XX e também a disponibilidade de agenda, por favor?”  
+Assistente: “Bom dia Ruth, eu sou a Ana, assistente da Dra. XX. Você já é paciente?”  
+Paciente: “Já, mas faz 3 anos que não vou nela.”  
+Assistente: “Que bom que você está de volta! O valor da consulta é de R$ 600 reais. Qual horário você prefere: 15 de dezembro às 9 horas? 17 de dezembro às 14 horas?”
+
+AGENDAMENTO (DESCONTO PACIENTE ANTIGO)  
+Paciente: “15 dezembro está ótimo! Mas esse valor de consulta teria algum tipo de desconto já que já sou paciente antiga?”  
+Assistente: “SIM! Mas hoje como a Dra. reduziu em mais que a metade o atendimento à pacientes novos e está com a agenda completamente lotada... Dependendo da forma de pagamento, e dos tratamentos que você fizer, ela te dará um desconto sim. Mas o valor da consulta desse ano é este XXX.”  
+Paciente: “Okay, vou falar com ela!”  
+Assistente: “Ótimo! Estou bloqueando este horário na agenda agora. Se você tiver qualquer imprevisto nos avise com 48 horas de antecedência, okay?”
+
+Pontos importantes:  
+- Tem desconto? Sim  
+- É a Dra., que decide, SEMPRE  
+- Apresente o valor da consulta atual  
+
+PACIENTE QUER CONSULTAR ANTES  
+Opção 1 – Paciente antiga  
+Assistente: “Vou consultar a Dra. para ver a possibilidade de abrir um horário na agenda só para você e te retorno em 24 horas, tudo bem?”  
+
+Opção 2 – Paciente nova  
+Assistente: “A agenda da Dra. está lotada nesta época do ano, quando você queria vir?”  
+Paciente: “Ah, semana que vem seria perfeito...”  
+Assistente: “Posso te colocar para lista de espera, mas não posso garantir, tudo bem? Eu te aviso com 24 horas de antecedência, no máximo. Você conseguiria vir?”  
+Paciente: “Sim, perfeito!”
+
+QUAL O VALOR DO TRATAMENTO?  
+Paciente: “Gostaria de saber os valores de tratamentos agora – você poderia me ajudar? Quanto é XXX?”  
+Assistente: “Não há como saber o valor exato porque cada paciente possui suas próprias características. O tratamento é personalizado. Por isso a Dra. XX avalia cada paciente para definir o melhor tratamento para atingir o objetivo. Mas para você ter uma ideia, uma aplicação de XX pode variar entre R$ XXX e R$ YYY, por exemplo.”  
+Paciente: “ok”  
+Assistente: “Você tem mais alguma dúvida?”
+
+Pontos importantes:  
+- Preço não é segredo  
+
+COMO MANDAR O FORMULÁRIO  
+Assistente: “Para finalizarmos o agendamento, eu preciso te passar algumas informações sobre a consulta e também um formulário para você preencher. Logo abaixo eu vou passar um link para você responder algumas perguntas que a Dra. XX precisará conhecer para preparar a sua consulta. É muito importante você responder o quanto antes para que os dados estejam todos atualizados na hora do seu atendimento. Muito obrigada!”  
+AÇÃO: ENVIAR O LINK DO FORMULÁRIO TYPEFORM  
+Paciente: “OK”  
+Assistente: “Aguardamos você aqui. Tenha um ótimo dia!”
+
+CONFIRMANDO CONSULTA / LEMBRETE DA CONSULTA  
+LEMBRETE DA CONSULTA (2 DIAS ANTES):  
+Assistente: “Olá FULANA! Lembrando que você tem sua consulta com a Dra. XXX (dia da semana) dia YYY às 14 horas. Tudo certo?”  
+
+Pontos importantes:  
+- Primeiro contato por mensagem  
+- Enviar 2 dias antes  
+
+QUANDO O PACIENTE QUER DESMARCAR  
+Você tem certeza? Está super complicado conseguir horário com a Dra., a agenda está super cheia. Você não prefere resolver isso logo?  
+Recomendamos que não deixem exames e atendimentos para depois.
+
+QUANDO O PACIENTE FALTA SEM AVISAR  
+Aqui sua secretária vai entrar em contato com o paciente e dizer:  
+“Olá Maria, você já está chegando? Ela está pronta para lhe atender.  
+Nossa, estou preocupada. Aconteceu alguma coisa? Aqui no consultório é raro um paciente faltar, sempre ficamos preocupados quando isso acontece. Está tudo bem?”
+
+MARCANDO RETORNO DO PACIENTE  
+Antes do paciente ir embora marque o retorno (não importa que seja para 6 meses ou 1 ano).  
+Se quiser deixar para depois, fale isso:  
+- Tudo bem – mas é mais para garantir um horário na agenda, pois ela está ficando muito cheia em pouco tempo. Está difícil de encaixar até para pacientes antigos.
+
+COMO LIDAR COM PACIENTES DIFÍCEIS  
+Calma: nunca é tão ruim quanto parece  
+Mirroring: Gatilho da razoabilidade (técnica de espelhamento)  
+A pessoa que está com raiva só quer ser ouvida e percebida.  
+A pessoa fala que está com dor. Pergunte o que está sentindo. De 0 a 10 quanto é essa dor? Vou repassar para a Dra. para que a gente possa solucionar isso.  
+Comece a repetir as palavras que a pessoa usou. (Entendi, você está com dor na boca, tem mais alguma coisa doendo?) Comece a fazer perguntas e não conteste a paciente.  
+Você tem que estar do lado dela, não entre no combate.
+
+COBRANÇA  
+Assistente: “Oi FULANA, tudo bem? Não identificamos seu pagamento da (consulta, procedimento, cirurgia) com a Dra. XXX. Você pode verificar com seu banco se ocorreu algum problema e me avisa? Obrigada!”  
+Paciente: “OK.”
+
+REATIVAÇÃO  
+– Oi Fulano! Aqui é do consultório da Dra. XXX – verificamos que a sua última consulta (ou tratamento ou revisão) foi em YYY. Você pode voltar para o seu retorno dia (2 opções, 1 escolha)?  
+
+Carmen Miranda  
+carmen.miranda@nandamac.com
+
+Thank you!  
+@NandaMacVendas  
+Copyright © 2022 Nanda Mac Media Negócios Digitais.  
+NANDA MAC DOWELL  
+É proibida a reprodução total ou parcial, por quaisquer meios, sem autorização prévia da autora.  
+PROIBIDA A REPRODUÇÃO E COMERCIALIZAÇÃO  
+CONSULTÓRIO HIGH TICKET  
+NANDA MAC  
+Carmen Miranda  
+carmen.miranda@nandamac.com
+
+==== FIM SCRIPTS DA SECRETÁRIA – CONSULTÓRIO HIGH TICKET ====  
+
 ==== SUPORTE TÉCNICO E COMUNIDADE ====
 
 **Suporte Técnico**  
