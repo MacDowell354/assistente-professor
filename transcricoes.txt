@@ -1500,20 +1500,6 @@ Paciente: “OK.”
 REATIVAÇÃO  
 – Oi Fulano! Aqui é do consultório da Dra. XXX – verificamos que a sua última consulta (ou tratamento ou revisão) foi em YYY. Você pode voltar para o seu retorno dia (2 opções, 1 escolha)?  
 
-Carmen Miranda  
-carmen.miranda@nandamac.com
-
-Thank you!  
-@NandaMacVendas  
-Copyright © 2022 Nanda Mac Media Negócios Digitais.  
-NANDA MAC DOWELL  
-É proibida a reprodução total ou parcial, por quaisquer meios, sem autorização prévia da autora.  
-PROIBIDA A REPRODUÇÃO E COMERCIALIZAÇÃO  
-CONSULTÓRIO HIGH TICKET  
-NANDA MAC  
-Carmen Miranda  
-carmen.miranda@nandamac.com
-
 ==== FIM SCRIPTS DA SECRETÁRIA – CONSULTÓRIO HIGH TICKET ====  
 
 ==== SUPORTE TÉCNICO E COMUNIDADE ====
