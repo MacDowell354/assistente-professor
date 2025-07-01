@@ -1370,6 +1370,92 @@ Se não responder em 48 h, envie:
 
 ==== FIM DOSSIÊ 007 ====
 
+==== 5 Perguntas – Dossiê 007 ====
+
+Aluno:
+“Nanda, qual é o objetivo principal do Dossiê 007 e para quem ele é indicado?”
+Resposta:
+O Dossiê 007 tem como objetivo ensinar as estratégias iniciais do Método Consultório High Ticket para captar e reter Pacientes High Ticket.  
+Ele é indicado para:  
+- Profissionais que estão começando do zero e ainda não possuem pacientes  
+- Aquele­s que atendem convênios e desejam migrar para particulares  
+- Profissionais que já têm pacientes particulares, mas querem dobrar o faturamento do consultório :contentReference[oaicite:0]{index=0}  
+
+Aluno:
+“Como implementar a Ação 1 de Networking descrita no Dossiê 007?”
+Resposta:
+A Ação 1 de Networking consiste em identificar quais profissionais da saúde atendem seus pacientes, contatá-los e reforçar seu profissionalismo. Siga este script exato:  
+> “Oi |Nome do Profissional|, tudo bem? Aqui é o Dr. |Seu Nome|. Eu estava com o(a) |Nome do Paciente| e gostaria de trocar umas ideias por 10 minutos sobre o caso dele. Pode ser às X h ou Y h, qual horário você prefere?” :contentReference[oaicite:1]{index=1}  
+
+Aluno:
+“Quais scripts devo usar para confirmar e remarcar consultas na Ação 2?”
+Resposta:
+• **Script de Confirmação (2 dias antes):**  
+> “Oi [nome do paciente], confirmando sua consulta dia X às Y hs. Digite 1 para confirmar ou 2 para cancelar. Caso não responda em 24 h, sua consulta será cancelada automaticamente.” :contentReference[oaicite:2]{index=2}  
+
+• **Script de Remarcação (1 h antes):**  
+> “Tem certeza que quer remarcar? O próximo horário disponível é em X meses. Não é melhor resolver logo?” :contentReference[oaicite:3]{index=3}  
+
+Aluno:
+“Como funciona a Ação 3 de Reativação High Ticket e qual o script para pacientes antigos?”
+Resposta:
+Após 6 meses sem visita, a assistente envia:  
+> “Oi [nome do paciente], sou assistente da Dra. X. Notei que faz X meses desde sua última consulta. Vamos agendar sua próxima avaliação? (2 Options/1 choice)”  
+Se não responder em 48 h, continue com:  
+> “Aconteceu algo? Não sei se viu minha mensagem. Se mudou algo ou teve algum incômodo, por favor me fale—seu feedback é importante.” :contentReference[oaicite:4]{index=4}  
+
+Aluno:
+“Quais são as Orientações Finais do Dossiê 007 e como aplicá-las no consultório?”
+Resposta:
+1. Conte sempre sua especialidade de forma específica (não basta “nutricionista”).  
+2. Regra de ouro: **tudo é sobre o paciente, não sobre você**.  
+3. Agradeça pessoalmente por telefone aos profissionais que recomendaram seus pacientes. :contentReference[oaicite:5]{index=5}  
+
+==== FIM 5 Perguntas – Dossiê 007 ====
+
+==== 5 Perguntas – Dossiê 007 ====
+
+Aluno:
+“Nanda, qual é o objetivo principal do Dossiê 007 e para quem ele é indicado?”
+Resposta:
+O Dossiê 007 tem como objetivo ensinar as estratégias iniciais do Método Consultório High Ticket para captar e reter Pacientes High Ticket.  
+Ele é indicado para:  
+- Profissionais que estão começando do zero e ainda não possuem pacientes  
+- Aquele­s que atendem convênios e desejam migrar para particulares  
+- Profissionais que já têm pacientes particulares, mas querem dobrar o faturamento do consultório :contentReference[oaicite:0]{index=0}  
+
+Aluno:
+“Como implementar a Ação 1 de Networking descrita no Dossiê 007?”
+Resposta:
+A Ação 1 de Networking consiste em identificar quais profissionais da saúde atendem seus pacientes, contatá-los e reforçar seu profissionalismo. Siga este script exato:  
+> “Oi |Nome do Profissional|, tudo bem? Aqui é o Dr. |Seu Nome|. Eu estava com o(a) |Nome do Paciente| e gostaria de trocar umas ideias por 10 minutos sobre o caso dele. Pode ser às X h ou Y h, qual horário você prefere?” :contentReference[oaicite:1]{index=1}  
+
+Aluno:
+“Quais scripts devo usar para confirmar e remarcar consultas na Ação 2?”
+Resposta:
+• **Script de Confirmação (2 dias antes):**  
+> “Oi [nome do paciente], confirmando sua consulta dia X às Y hs. Digite 1 para confirmar ou 2 para cancelar. Caso não responda em 24 h, sua consulta será cancelada automaticamente.” :contentReference[oaicite:2]{index=2}  
+
+• **Script de Remarcação (1 h antes):**  
+> “Tem certeza que quer remarcar? O próximo horário disponível é em X meses. Não é melhor resolver logo?” :contentReference[oaicite:3]{index=3}  
+
+Aluno:
+“Como funciona a Ação 3 de Reativação High Ticket e qual o script para pacientes antigos?”
+Resposta:
+Após 6 meses sem visita, a assistente envia:  
+> “Oi [nome do paciente], sou assistente da Dra. X. Notei que faz X meses desde sua última consulta. Vamos agendar sua próxima avaliação? (2 Options/1 choice)”  
+Se não responder em 48 h, continue com:  
+> “Aconteceu algo? Não sei se viu minha mensagem. Se mudou algo ou teve algum incômodo, por favor me fale—seu feedback é importante.” :contentReference[oaicite:4]{index=4}  
+
+Aluno:
+“Quais são as Orientações Finais do Dossiê 007 e como aplicá-las no consultório?”
+Resposta:
+1. Conte sempre sua especialidade de forma específica (não basta “nutricionista”).  
+2. Regra de ouro: **tudo é sobre o paciente, não sobre você**.  
+3. Agradeça pessoalmente por telefone aos profissionais que recomendaram seus pacientes. :contentReference[oaicite:5]{index=5}  
+
+==== FIM 5 Perguntas – Dossiê 007 ====
+
 E) Suporte Técnico e Comunidade
 
 **Suporte Técnico**  
