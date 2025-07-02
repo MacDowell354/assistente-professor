@@ -59,7 +59,7 @@ TYPE_KEYWORDS = {
     "revisao":                        ["revisão", "revise", "resumir"],
     "precificacao":                   ["precificação", "precificar", "preço", "valor", "faturamento"],
     "health_plan":                    ["health plan", "retorno do investimento", "canva"],
-    "capitacao_sem_marketing_digital": ["offline", "sem instagram", "sem anúncios", "sem redes sociais"],
+    "capitacao_sem_marketing_digital":[ "offline", "sem instagram", "sem anúncios", "sem redes sociais"],
     "aplicacao":                      ["como aplico", "aplicação", "roteiro"],
     "faq":                            ["quais", "pergunta frequente"],
     "explicacao":                     ["explique", "o que é", "defina", "conceito"],
@@ -77,11 +77,13 @@ CANONICAL_QA = {
     # — Health Plan (Canva) —
     "onde encontro o link do formulario para criar no canva o health plan personalizado para o paciente":
         "Você pode acessar o formulário para criar seu Health Plan personalizado no Canva através deste link ativo: "
-        "<a href=\"https://www.canva.com/design/DAEteeUPSUQ/0isBewvgUTJF0gZaRYZw2g/view?utm_content=DAEteeUPSUQ&utm_campaign=designshare&utm_medium=link&utm_source=publishsharelink&mode=preview\" target=\"_blank\">Formulário Health Plan (Canva)</a>. "
+        "<a href=\"https://www.canva.com/design/DAEteeUPSUQ/0isBewvgUTJF0gZaRYZw2g/view?"
+        "utm_content=DAEteeUPSUQ&utm_campaign=designshare&utm_medium=link&utm_source=publishsharelink&mode=preview\" target=\"_blank\">"
+        "Formulário Health Plan (Canva)</a>. "
         "Ele também está disponível diretamente na Aula 10.4 do curso Consultório High Ticket.",
 
     # — Patient Letter —
-    "faz sentido mandar a patient letter para outros profissionais referente a pacientes antigos somente para pacientes novos devo mandar a patient letter em cada consulta do paciente por exemplo a cada retorno de 6 meses":
+    "faz sentido mandar a patient letter para outros profissionais referente a pacientes antigos":
         "Olá, excelente pergunta!<br><br>"
         "Sim, faz sentido mandar um Patient Letter para outros profissionais referente a pacientes antigos, principalmente em caso de mudanças significativas no tratamento ou homenagens ao paciente. "
         "O intuito deste tipo de cartão é atualizar informações e marcar o cuidado e reconhecimento do seu trabalho com o paciente.<br><br>"
@@ -91,7 +93,6 @@ CANONICAL_QA = {
         "Lembre-se que o mais importante é manter a comunicação aberta e frequente com outros profissionais, garantindo um atendimento integrado e de excelência ao paciente.<br><br>"
         "Espero que isso te ajude, qualquer outra dúvida, estou à disposição! 💜",
 
-    # — Respostas específicas de Patient Letter —
     "quando devo enviar uma patient letter para um colega especialista apos a primeira consulta de um paciente":
         "Envie a Patient Letter logo após a primeira consulta sempre que encaminhar o paciente a outro especialista. "
         "Isso garante que o colega receba histórico clínico, resultados de exames e plano de cuidado completo para continuidade do tratamento.",
@@ -114,8 +115,7 @@ CANONICAL_QA = {
 
     "faz sentido mandar patient letter para pacientes que retornam ao consultorio depois de 6 meses":
         "Não é necessário enviar um Patient Letter em cada retorno de rotina sem novidades clínicas. "
-        "Reserve o envio para quando houver mudanças significativas no tratamento ou nos resultados, mantendo a comunicação relevante.",
-    
+        "Reserve o envio para quando houver mudanças significativas no tratamento ou nos resultados, mantendo a comunicação relevante."
     # ... mantenha demais entradas canônicas existentes ...
 }
 
@@ -147,18 +147,19 @@ prompt_variacoes = {
 # -----------------------------
 def classify_prompt(question: str) -> dict:
     lower = normalize_key(question)
-    if lower in CANONICAL_QA_NORMALIZED:
+    if any(canon_key in lower for canon_key in CANONICAL_QA_NORMALIZED):
         return {"scope": "IN_SCOPE", "type": "faq"}
     for t, kws in TYPE_KEYWORDS.items():
         if any(normalize_key(k) in lower for k in kws):
             return {"scope": "IN_SCOPE", "type": t}
     return {"scope": "OUT_OF_SCOPE", "type": "explicacao"}
 
-
 def generate_answer(question: str, context: str = "", history: str = None, tipo_de_prompt: str = None) -> str:
     key = normalize_key(question)
-    if key in CANONICAL_QA_NORMALIZED:
-        return CANONICAL_QA_NORMALIZED[key]
+    # lookup canônico por substring
+    for canon_key, answer in CANONICAL_QA_NORMALIZED.items():
+        if canon_key in key:
+            return answer
     cls = classify_prompt(question)
     if cls["scope"] == "OUT_OF_SCOPE":
         return OUT_OF_SCOPE_MSG
@@ -170,7 +171,7 @@ def generate_answer(question: str, context: str = "", history: str = None, tipo_
         prompt += f"<br><strong>📜 Histórico:</strong><br>{history}<br>"
     prompt += f"<br><strong>🤔 Pergunta:</strong><br>{question}<br><br><strong>🧠 Resposta:</strong><br>"
     try:
-        r = client.chat.completions.create(model="gpt-4", messages=[{"role":"user","content":prompt}])
+        r = client.chat.completions.create(model="gpt-4", messages=[{"role": "user", "content": prompt}])
     except OpenAIError:
-        r = client.chat.completions.create(model="gpt-3.5-turbo", messages=[{"role":"user","content":prompt}])
+        r = client.chat.completions.create(model="gpt-3.5-turbo", messages=[{"role": "user", "content": prompt}])
     return r.choices[0].message.content
