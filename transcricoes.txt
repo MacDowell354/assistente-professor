@@ -1560,7 +1560,7 @@ Resposta:
 ==== FIM PERGUNTAS E RESPOSTAS SOBRE SCRIPTS DA SECRETÁRIA – CONSULTÓRIO HIGH TICKET ====```
 
 ----
-==== 8.1 SCRIPTS DO PROFISSIONAL DA SAÚDE ====
+==== SCRIPTS DO PROFISSIONAL DA SAÚDE ====
 NANDA MAC · Carmen Miranda (carmen.miranda@nandamac.com) :contentReference[oaicite:0]{index=0}
 
 ÍNDICE
@@ -1749,7 +1749,34 @@ Paciente nova?
 33. PEDIR PARA MEUS PACIENTES ME AVALIAREM DE MANEIRA HIGH TICKET  
 – “Boa tarde [Nome], tudo bem? Pode avaliar a Dra. no Google? É rápido e muito importante. Clique no link abaixo.”
 
-==== FIM 8.1 SCRIPTS DO PROFISSIONAL DA SAÚDE ====
+==== FIM SCRIPTS DO PROFISSIONAL DA SAÚDE ====
+
+==== PERGUNTAS E RESPOSTAS SCRIPTS DO PROFISSIONAL DA SAÚDE ====
+
+**Aluno:** Faz sentido mandar um Patient Letter para outros profissionais referente a pacientes antigos, ou somente para pacientes novos? Outra dúvida: devo enviar o Patient Letter a cada consulta do paciente (por exemplo, em cada retorno de 6 meses)? Obrigada.
+
+**Nanda Mac.ia (IA):**
+Olá, excelente pergunta!
+
+1. **Pacientes antigos:**
+   Sim, faz sentido enviar um Patient Letter para pacientes antigos sempre que houver mudanças significativas no tratamento ou em reconhecimento a etapas importantes do processo. Esse cartão serve para atualizar outros profissionais sobre evolução de protocolos, ajustes de medicação ou qualquer nova informação relevante.
+
+2. **Pacientes novos:**
+   Também é indicado enviar o Patient Letter para pacientes recém-iniciados, pois demonstra cuidado personalizado e reforça que você acompanha de perto o desenvolvimento do caso, valorizando a relação desde o primeiro atendimento.
+
+3. **Frequência de envio:**
+   Não é necessário enviar um Patient Letter ao final de **toda** consulta. Use-o de forma estratégica:
+
+   * **Quando houver informação nova** que precisa ser compartilhada (ex.: alteração de diagnóstico, mudança de protocolo).
+   * **Em homenagens** ou marcos importantes (ex.: alta hospitalar, conclusão de um ciclo de tratamento).
+   * **Por ocasião de datas especiais** se desejar fortalecer o vínculo (ex.: aniversário de início de tratamento).
+
+4. **Retornos periódicos:**
+   Em retornos de rotina (como revisões sem novidades clínicas), você pode optar por não enviar. Caso decida estruturar envios semestrais, faça-o apenas se houver **conteúdo significativo** a ser comunicado.
+
+Lembre-se: o mais importante é manter a comunicação aberta e frequente de forma **relevante**, garantindo atendimento integrado e de excelência. Espero que isso ajude! Qualquer outra dúvida, estou à disposição!
+
+==== FIM PERGUNTAS E RESPOSTAS SCRIPTS DO PROFISSIONAL DA SAÚDE ====
 
 === PATIENT LETTER ===
 
