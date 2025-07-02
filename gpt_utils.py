@@ -74,6 +74,36 @@ TYPE_KEYWORDS = {
 # RESPOSTAS CANÔNICAS
 # -----------------------------
 CANONICAL_QA = {
+    # — Saudações como professora —
+    "oi": (
+        "Olá! 😊 Seja muito bem-vindo ao seu espaço de aprendizado!<br><br>"
+        "Eu sou a Nanda Mac.ia, sua professora virtual aqui no curso Consultório High Ticket. "
+        "Estou aqui para caminhar com você e esclarecer todas as suas dúvidas com base nas aulas do curso, "
+        "como uma professora dedicada e experiente.<br><br>"
+        "Meu objetivo é te ajudar a aplicar o método da Nanda com clareza, segurança e foco nos resultados."
+        "<br><br>Pode perguntar o que quiser, que eu te explico como se estivéssemos em uma aula particular. 🥰"
+    ),
+    "ola":  # corresponde a 'olá'
+        "Olá! 😊 Seja muito bem-vindo ao seu espaço de aprendizado!<br><br>"
+        "Eu sou a Nanda Mac.ia, sua professora virtual aqui no curso Consultório High Ticket. "
+        "Estou aqui para caminhar com você e esclarecer todas as suas dúvidas com base nas aulas do curso, "
+        "como uma professora dedicada e experiente.<br><br>"
+        "Meu objetivo é te ajudar a aplicar o método da Nanda com clareza, segurança e foco nos resultados."
+        "<br><br>Pode perguntar o que quiser, que eu te explico como se estivéssemos em uma aula particular. 🥰",
+    "bom dia":
+        "Bom dia! 😊 Seja muito bem-vindo ao seu espaço de aprendizado!<br><br>"
+        "Eu sou a Nanda Mac.ia, sua professora virtual aqui no curso Consultório High Ticket. "
+        "Pronta para ajudar você a aplicar o método da Nanda com clareza e foco nos resultados. "
+        "Pergunte o que quiser, como se estivéssemos em uma aula particular! 🥰",
+    "boa tarde":
+        "Boa tarde! 😊 Seja muito bem-vindo ao seu espaço de aprendizado!<br><br>"
+        "Eu sou a Nanda Mac.ia, sua professora virtual aqui no curso Consultório High Ticket. "
+        "Estou pronta para caminhar com você e esclarecer suas dúvidas de forma didática e prática. 🥰",
+    "boa noite":
+        "Boa noite! 😊 Seja muito bem-vindo ao seu espaço de aprendizado!<br><br>"
+        "Eu sou a Nanda Mac.ia, sua professora virtual aqui no curso Consultório High Ticket. "
+        "Aqui para ajudar você a aplicar o método da Nanda com segurança e foco nos resultados. 🥰",
+
     # — Health Plan (Canva) —
     "onde encontro o link do formulario para criar no canva o health plan personalizado para o paciente":
         "Você pode acessar o formulário para criar seu Health Plan personalizado no Canva através deste link ativo: "
@@ -93,30 +123,7 @@ CANONICAL_QA = {
         "Lembre-se que o mais importante é manter a comunicação aberta e frequente com outros profissionais, garantindo um atendimento integrado e de excelência ao paciente.<br><br>"
         "Espero que isso te ajude, qualquer outra dúvida, estou à disposição! 💜",
 
-    "quando devo enviar uma patient letter para um colega especialista apos a primeira consulta de um paciente":
-        "Envie a Patient Letter logo após a primeira consulta sempre que encaminhar o paciente a outro especialista. "
-        "Isso garante que o colega receba histórico clínico, resultados de exames e plano de cuidado completo para continuidade do tratamento.",
-
-    "o que fazer quando recebo uma patient letter de volta de um colega":
-        "Para responder um Patient Letter recebido, adote a “mensagem de 20 segundos”:<br>"
-        "<em>“Oi Dr(a). X, aqui é o Dr(a). Y. Recebi seu retorno sobre o paciente Z. Que tal conversarmos em 5 minutos às 14h ou às 15h?”</em><br>"
-        "Essa abordagem fortalece o relacionamento e facilita futuras colaborações.",
-
-    "posso entregar a patient letter em formato digital ou ela precisa ser manuscrita":
-        "Você pode optar tanto por manuscrita quanto digital. Se manuscrita, use papel de qualidade e capriche na legibilidade; "
-        "se digital, envie um PDF por e-mail ou WhatsApp, garantindo que constem nome, contato e informações essenciais. "
-        "O importante é a clareza e a personalização da mensagem.",
-
-    "como personalizo a patient letter para que ela seja bem recebida por outro profissional":
-        "Personalize incluindo o nome completo do colega e do paciente no cabeçalho, seja objetiva com informações técnicas essenciais (exames, plano de tratamento), "
-        "e finalize com convite para breve conversa:<br>"
-        "<em>“Oi Dr(a). X, sou o Dr(a). Y. Atendi o paciente Z e gostaria de dar um retorno. Que tal falarmos 5 minutos às 15h ou 16h?”</em>."
-        "Isso demonstra profissionalismo e cuidado.",
-
-    "faz sentido mandar patient letter para pacientes que retornam ao consultorio depois de 6 meses":
-        "Não é necessário enviar um Patient Letter em cada retorno de rotina sem novidades clínicas. "
-        "Reserve o envio para quando houver mudanças significativas no tratamento ou nos resultados, mantendo a comunicação relevante."
-    # ... mantenha demais entradas canônicas existentes ...
+    # ... demais entradas canônicas existentes ...
 }
 
 # Pré-normaliza chaves
