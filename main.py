@@ -1,3 +1,5 @@
+# main.py
+
 import os
 import json
 from datetime import datetime, timedelta
@@ -17,22 +19,23 @@ from auth_utils import get_current_user
 from prompt_router import inferir_tipo_de_prompt
 from healthplan_log import registrar_healthplan
 
-# Cria a aplicação FastAPI
 app = FastAPI()
-
-# Registra as rotas de visualização de logs (requer autenticação)
-app.include_router(logs_router)
-
-# Configura templates
 templates = Jinja2Templates(directory="templates")
 
-# Configura autenticação
+# ⬇️ Inclui o logs_router sem prefixo; cada rota dele já exige get_current_user()
+app.include_router(logs_router)
+
+# 🔐 Autenticação
 SECRET_KEY = os.getenv("SECRET_KEY", "secret")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+fake_users = {"aluno1": pwd_context.hash("N4nd@M4c#2025")}
 
-# Cria token de acesso
+def authenticate_user(username: str, password: str):
+    if username not in fake_users:
+        return False
+    return pwd_context.verify(password, fake_users[username])
 
 def create_access_token(data: dict):
     to_encode = data.copy()
@@ -40,7 +43,6 @@ def create_access_token(data: dict):
     to_encode.update({"exp": expire})
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
-# Rotas de login e chat
 @app.get("/")
 def root():
     return RedirectResponse(url="/login")
@@ -75,20 +77,20 @@ async def ask(
     history_str = form_data.get("history", "[]")
     try:
         history = json.loads(history_str)
-    except Exception:
+    except:
         history = []
 
-    # Determina o tipo de prompt
-    tipo_de_prompt = inferir_tipo_de_prompt(question)
-
-    # Recupera contexto relevante
+    # 🔍 Contexto relevante
     context = retrieve_relevant_context(question)
 
-    # Se for health_plan, registra log específico
+    # 🧠 Tipo de prompt
+    tipo_de_prompt = inferir_tipo_de_prompt(question)
+
+    # 📝 Log específico para health_plan
     if tipo_de_prompt == "health_plan":
         registrar_healthplan(pergunta=question, usuario=user)
 
-    # Gera resposta
+    # 🧠 Resposta da IA
     answer_markdown = generate_answer(
         question=question,
         context=context,
@@ -96,10 +98,10 @@ async def ask(
         tipo_de_prompt=tipo_de_prompt
     )
 
-    # Converte Markdown para HTML
+    # 🖥️ Markdown → HTML
     answer_html = markdown2.markdown(answer_markdown)
 
-    # Salva log da conversa
+    # 🧾 Grava no log
     registrar_log(
         username=user,
         pergunta=question,
@@ -108,7 +110,6 @@ async def ask(
         tipo_prompt=tipo_de_prompt
     )
 
-    # Atualiza histórico e renderiza chat
     new_history = history + [{"user": question, "ai": answer_html}]
     return templates.TemplateResponse("chat.html", {
         "request": request,
