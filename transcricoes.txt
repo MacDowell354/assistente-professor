@@ -1751,7 +1751,6 @@ Paciente nova?
 
 ==== FIM 8.1 SCRIPTS DO PROFISSIONAL DA SAÚDE ====
 
-
 === PATIENT LETTER ===
 
 PATIENT LETTER
@@ -1841,7 +1840,7 @@ F) Perguntas e Respostas sobre Patient Letter
    Lembre-se que o mais importante é manter a comunicação aberta e frequente com outros profissionais, garantindo um atendimento integrado e de excelência ao paciente.
    Espero que isso te ajude! Qualquer outra dúvida, estou à disposição.
 
-==== PERGUNTAS E RESPOSTAS SOBRE PATIENT LETTER ====
+==== FIM PERGUNTAS E RESPOSTAS SOBRE PATIENT LETTER ====
 
 ==== SUPORTE TÉCNICO E COMUNIDADE ====
 
