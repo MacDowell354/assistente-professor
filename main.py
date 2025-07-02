@@ -1,5 +1,3 @@
-# main.py
-
 import os
 import json
 from datetime import datetime, timedelta
@@ -21,12 +19,10 @@ from healthplan_log import registrar_healthplan
 
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
-
-# ⬇️ Inclui o logs_router sem prefixo; cada rota dele já exige get_current_user()
 app.include_router(logs_router)
 
 # 🔐 Autenticação
-SECRET_KEY = os.getenv("SECRET_KEY", "secret")
+SECRET_KEY = "segredo-teste"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -77,20 +73,20 @@ async def ask(
     history_str = form_data.get("history", "[]")
     try:
         history = json.loads(history_str)
-    except:
+    except Exception:
         history = []
 
-    # 🔍 Contexto relevante
+    # 🔍 Recupera o contexto com base na transcrição
     context = retrieve_relevant_context(question)
 
-    # 🧠 Tipo de prompt
+    # 🧠 Inferência automática do tipo de prompt
     tipo_de_prompt = inferir_tipo_de_prompt(question)
 
-    # 📝 Log específico para health_plan
+    # 📝 Registra se for relacionado a Health Plan
     if tipo_de_prompt == "health_plan":
         registrar_healthplan(pergunta=question, usuario=user)
 
-    # 🧠 Resposta da IA
+    # 🧠 Gera resposta
     answer_markdown = generate_answer(
         question=question,
         context=context,
@@ -98,10 +94,10 @@ async def ask(
         tipo_de_prompt=tipo_de_prompt
     )
 
-    # 🖥️ Markdown → HTML
+    # 🖥️ Renderiza markdown como HTML
     answer_html = markdown2.markdown(answer_markdown)
 
-    # 🧾 Grava no log
+    # 🧾 Salva log da conversa
     registrar_log(
         username=user,
         pergunta=question,
