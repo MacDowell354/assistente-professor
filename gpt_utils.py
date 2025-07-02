@@ -77,178 +77,50 @@ CANONICAL_QA = {
     # — Health Plan (Canva) —
     "onde encontro o link do formulario para criar no canva o health plan personalizado para o paciente":
         "Você pode acessar o formulário para criar seu Health Plan personalizado no Canva através deste link ativo: "
-        "<a href=\"https://www.canva.com/design/DAEteeUPSUQ/0isBewvgUTJF0gZaRYZw2g/view?"
-        "utm_content=DAEteeUPSUQ&utm_campaign=designshare&utm_medium=link&utm_source=publishsharelink&mode=preview\" target=\"_blank\">"
-        "Formulário Health Plan (Canva)</a>. "
+        "<a href=\"https://www.canva.com/design/DAEteeUPSUQ/0isBewvgUTJF0gZaRYZw2g/view?utm_content=DAEteeUPSUQ&utm_campaign=designshare&utm_medium=link&utm_source=publishsharelink&mode=preview\" target=\"_blank\">Formulário Health Plan (Canva)</a>. "
         "Ele também está disponível diretamente na Aula 10.4 do curso Consultório High Ticket.",
 
-    # — Captação sem redes sociais —
-    "e possivel atrair pacientes sem usar redes sociais":
-        "Sim! Um dos pilares do curso Consultório High Ticket é justamente mostrar que "
-        "é possível atrair pacientes fiéis e de alto valor sem depender de redes sociais. "
-        "A Nanda ensina estratégias presenciais, indicações qualificadas, posicionamento de autoridade "
-        "e um método validado que funciona offline, baseado em relacionamento e experiência. "
-        "Você aprenderá tudo isso nas aulas, especialmente nas que tratam de captação sem marketing digital.",
+    # — Patient Letter —
+    "faz sentido mandar a patient letter para outros profissionais referente a pacientes antigos somente para pacientes novos devo mandar a patient letter em cada consulta do paciente por exemplo a cada retorno de 6 meses":
+        "Olá, excelente pergunta!<br><br>"
+        "Sim, faz sentido mandar um Patient Letter para outros profissionais referente a pacientes antigos, principalmente em caso de mudanças significativas no tratamento ou homenagens ao paciente. "
+        "O intuito deste tipo de cartão é atualizar informações e marcar o cuidado e reconhecimento do seu trabalho com o paciente.<br><br>"
+        "O mesmo vale para pacientes novos, como uma forma de demonstrar que você está acompanhando de perto o desenvolvimento do caso e se esforça para criá-los de forma personalizada, valorizando a relação construída.<br><br>"
+        "No entanto, não é necessário enviar o Patient Letter ao final de todas as consultas, a não ser que haja alguma informação específica que necessita ser compartilhada. "
+        "Você pode optar por enviá-lo quando ocorrer uma mudança expressiva no prontuário do paciente ou quando achar pertinente.<br><br>"
+        "Lembre-se que o mais importante é manter a comunicação aberta e frequente com outros profissionais, garantindo um atendimento integrado e de excelência ao paciente.<br><br>"
+        "Espero que isso te ajude, qualquer outra dúvida, estou à disposição! 💜",
 
-    # — Comunidade —
-    "como entro na comunidade high ticket":
-        "A Comunidade High Ticket Doctors está dentro da plataforma do curso. Assim que você receber "
-        "o e-mail com o título “Chegou seu acesso”, cadastre sua senha. Depois de logado, preencha seu perfil "
-        "e entre na Comunidade para tirar dúvidas sobre o método, fazer networking e participar das oficinas.",
+    # — Respostas específicas de Patient Letter —
+    "quando devo enviar uma patient letter para um colega especialista apos a primeira consulta de um paciente":
+        "Envie a Patient Letter logo após a primeira consulta sempre que encaminhar o paciente a outro especialista. "
+        "Isso garante que o colega receba histórico clínico, resultados de exames e plano de cuidado completo para continuidade do tratamento.",
 
-    # — Suporte urgente —
-    "se eu tiver um problema urgente durante o curso como solicito suporte rapidamente":
-        "Em caso de urgência no curso, envie um e-mail para **ajuda@nandamac.com** com o assunto “S.O.S Crise” "
-        "para receber suporte em até 24 h úteis.",
+    "o que fazer quando recebo uma patient letter de volta de um colega":
+        "Para responder um Patient Letter recebido, adote a “mensagem de 20 segundos”:<br>"
+        "<em>“Oi Dr(a). X, aqui é o Dr(a). Y. Recebi seu retorno sobre o paciente Z. Que tal conversarmos em 5 minutos às 14h ou às 15h?”</em><br>"
+        "Essa abordagem fortalece o relacionamento e facilita futuras colaborações.",
 
-    # — Dúvidas metodológicas —
-    "onde devo postar minhas duvidas sobre o metodo do curso":
-        "Todas as dúvidas metodológicas devem ser postadas exclusivamente na Comunidade da Área de Membros. "
-        "Não use Direct, WhatsApp ou outros canais para questionar o método; assim sua pergunta fica visível "
-        "a todos e recebe resposta mais rápida.",
+    "posso entregar a patient letter em formato digital ou ela precisa ser manuscrita":
+        "Você pode optar tanto por manuscrita quanto digital. Se manuscrita, use papel de qualidade e capriche na legibilidade; "
+        "se digital, envie um PDF por e-mail ou WhatsApp, garantindo que constem nome, contato e informações essenciais. "
+        "O importante é a clareza e a personalização da mensagem.",
 
-    # — Plano de Ação (1ª Semana) —
-    "no exercicio de bloqueios com dinheiro como escolho qual bloqueio priorizar e defino minha atitude dia do chega":
-        "Identifique qual sentimento de culpa ao cobrar mais te afeta (a “Síndrome do Sacerdote”) e coloque-o como bloqueio prioritário. "
-        "Em ‘Onde quero chegar’, escreva uma ação concreta, por exemplo: “A partir de hoje, afirmarei meu valor em cada consulta.”",
+    "como personalizo a patient letter para que ela seja bem recebida por outro profissional":
+        "Personalize incluindo o nome completo do colega e do paciente no cabeçalho, seja objetiva com informações técnicas essenciais (exames, plano de tratamento), "
+        "e finalize com convite para breve conversa:<br>"
+        "<em>“Oi Dr(a). X, sou o Dr(a). Y. Atendi o paciente Z e gostaria de dar um retorno. Que tal falarmos 5 minutos às 15h ou 16h?”</em>."
+        "Isso demonstra profissionalismo e cuidado.",
 
-    "na parte de autoconfianca profissional o que devo escrever como atitude para nao deixar certas situacoes me abalar":
-        "Liste duas experiências que minaram sua confiança. "
-        "Em ‘Onde quero chegar’, defina uma ação transformadora, por exemplo: “Sempre que receber uma crítica, realizarei uma sessão de feedback construtivo com um colega.”",
-
-    "como uso a atividade de nicho de atuacao para definir meu foco e listar as acoes necessarias":
-        "Posicionamento Atual: descreva seus pontos fortes e lacunas. "
-        "Nicho Ideal: defina quem são seus “pacientes-sonho”. "
-        "Ações: liste etapas específicas com prazo, por exemplo: “Especializar em [X] em 3 meses.”, “Criar pacote online de avaliação inicial até o próximo mês.”, “Revisar site e materiais de comunicação em 2 semanas.”",
-
-    "no valor da consulta e procedimentos como encontro referencias de mercado e defino meus valores atuais e ideais":
-        "Anote seus preços atuais e pesquise médias de associações ou colegas. "
-        "Defina seus valores ideais justificando seu diferencial, por exemplo: “R$ 300 por sessão de fisioterapia clínica, pois ofereço acompanhamento personalizado e relatório de progresso.”",
-
-    "ainda nao tenho pacientes particulares qual estrategia de atracao high ticket devo priorizar e como executar na agenda":
-        "Reserve um bloco fixo na agenda (ex.: toda segunda, das 8h–10h) para:\n"
-        "1. Enviar 5 mensagens personalizadas a potenciais pacientes do seu nicho, usando o script do curso.\n"
-        "2. Após iniciar atendimentos, implemente a Patient Letter: envie um convite impresso com seu nome, valor e benefícios, para reforçar o contato.",
-
-    # — Papelaria & Brindes —
-    "onde encontro produtos jo malone no brasil":
-        "Você pode encontrar os aromas de ambiente Jo Malone no Brasil diretamente no site oficial:\n"
-        "https://www.jomalone.com.br\n"
-        "Lá estão disponíveis colônias como Blackberry & Bay, Wood Sage & Sea Salt, Lime Basil & Mandarin e Nectarine Blossom & Honey, além de velas e sabonetes.",
-
-    "quais importadoras posso usar para comprar produtos que nao encontro no brasil":
-        "Para produtos que não são facilmente encontrados aqui, você pode recorrer a importadoras como:\n"
-        "• Easy to go Orlando: https://easytogoorlando.com/\n"
-        "Ou fazer pedidos em grandes marketplaces internacionais, como a Amazon.",
-
-    "quais marcas de cafeteiras foram mencionadas na aula":
-        "As marcas de cafeteiras recomendadas durante o módulo são:\n"
-        "• Delonghi\n"
-        "• Nespresso\n"
-        "• Breville",
-
-    "onde posso comprar os chocolates indicados no curso":
-        "Os chocolates mencionados foram:\n"
-        "• Läderach\n"
-        "• Daim\n"
-        "Você os encontra em chocolaterias especializadas ou através de lojas online/importadoras.",
-
-    "quais opcoes de chas foram indicadas no material":
-        "Foram indicados dois tipos de chá:\n"
-        "• New English Teas Vintage Victorian Round Tea Caddy\n"
-        "• Twinings Earl Grey Loose Tea Tins",
-
-    # — Playlist Spotify —
-    "onde posso acessar a playlist do consultorio high ticket":
-        "Você pode ouvir nossa playlist oficial diretamente no Spotify: "
-        "<a href=\"https://open.spotify.com/playlist/5Vop9zNsLcz0pkpD9aLQML?"  
-        "si=vJDC7OfcQXWpTernDbzwHA&nd=1&dlsi=964d4360d35e4b80\" target=\"_blank\">"
-        "Playlist Consultório High Ticket (Spotify)</a>",
-
-    "qual e o link da playlist recomendada na aula 4 17 do modulo 4":
-        "Na aula 4.17 do Módulo 4 – A Jornada do Paciente High Ticket, indicamos esta playlist: "
-        "<a href=\"https://open.spotify.com/playlist/5Vop9zNsLcz0pkpD9aLQML?"
-        "si=vJDC7OfcQXWpTernDbzwHA&nd=1&dlsi=964d4360d35e4b80\" target=\"_blank\">"
-        "Playlist Consultório High Ticket (Spotify)</a>",
-
-    "como eu ouco a playlist do curso consultorio high ticket":
-        "Basta abrir o link da playlist no app ou site do Spotify e clicar em “Play”. Está disponível em: "
-        "<a href=\"https://open.spotify.com/playlist/5Vop9zNsLcz0pkpD9aLQML?"
-        "si=vJDC7OfcQXWpTernDbzwHA&nd=1&dlsi=964d4360d35e4b80\" target=\"_blank\">"
-        "Playlist Consultório High Ticket (Spotify)</a>",
-
-    "em que aula e mencionada a playlist do consultorio high ticket":
-        "Falamos da playlist na Aula 4.17 do Módulo 4 – A Jornada do Paciente High Ticket. "
-        "<a href=\"https://open.spotify.com/playlist/5Vop9zNsLcz0pkpD9aLQML?"
-        "si=vJDC7OfcQXWpTernDbzwHA&nd=1&dlsi=964d4360d35e4b80\" target=\"_blank\">"
-        "Playlist Consultório High Ticket (Spotify)</a>",
-
-    "como encontro a playlist do consultorio high ticket no spotify":
-        "Procure por “Consultório High Ticket” no Spotify ou acesse diretamente por este link: "
-        "<a href=\"https://open.spotify.com/playlist/5Vop9zNsLcz0pkpD9aLQML?"
-        "si=vJDC7OfcQXWpTernDbzwHA&nd=1&dlsi=964d4360d35e4b80\" target=\"_blank\">"
-        "Playlist Consultório High Ticket (Spotify)</a>",
-
-    # — SCRIPTS DA SECRETÁRIA – CONSULTÓRIO HIGH TICKET —
-    "como mensurar o impacto do desconto concedido a pacientes antigos na fidelizacao e no faturamento do consultorio":
-        "Para mensurar o impacto do desconto concedido a pacientes antigos na fidelização e no faturamento do consultório, siga estas etapas:\n\n"
-        "1. Defina métricas-chave:\n"
-        "- Retenção de pacientes: percentual de pacientes antigos que retornam após o desconto.\n"
-        "- Ticket médio: valor médio faturado por paciente antes e depois da promoção.\n"
-        "- Lifetime Value (LTV): projeção de receita trazida por esses pacientes ao longo de meses.\n\n"
-        "2. Colete dados: registre em planilha ou sistema de gestão cada desconto aplicado (paciente, data, valor).\n\n"
-        "3. Compare períodos: avalie as métricas nos 3–6 meses antes do desconto vs. 3–6 meses depois.\n\n"
-        "4. Analise qualitativamente: aplique pesquisa de satisfação aos pacientes contemplados para entender percepção de valor.\n\n"
-        "5. Ajuste a política: se o desconto aumentar retorno sem corroer margem, mantenha; caso contrário, redefina critérios ou patamares de desconto.",
-
-    "quais criterios a secretaria deve usar para decidir quando colocar um novo paciente na lista de espera versus sugerir outra data":
-        "A secretária deve considerar os seguintes critérios:\n\n"
-        "1. Urgência clínica: priorize casos com dor aguda ou necessidade imediata.\n"
-        "2. Perfil do paciente:\n"
-        "- Pacientes antigos: lista de espera exclusiva com retorno em até 24 h.\n"
-        "- Pacientes novos: avalie flexibilidade de agenda e informe prazo realista.\n"
-        "3. Janela de disponibilidade:\n"
-        "- Se puder em até 48 h, ofereça lista de espera;\n"
-        "- Caso contrário, sugira próxima data fixa confirmada.\n"
-        "4. Comunicação clara: informe prazo máximo de resposta (até 24 h) e confirme presença.\n"
-        "5. Confirmação de compromisso: inclua na lista somente se o paciente aceitar as condições.",
-
-    "na pratica como aplicar a tecnica de espelhamento com pacientes dificieis sem parecer artificial ou forcado":
-        "Para aplicar espelhamento com naturalidade:\n\n"
-        "1. Ouça ativamente e identifique palavras-chave usadas pelo paciente.\n"
-        "2. Repita trechos curtos:\n"
-        "- Paciente: “Estou com muita ansiedade antes do tratamento.”\n"
-        "- Você: “Ansiedade antes do tratamento?”\n"
-        "3. Use tom calmo e pausado para demonstrar empatia.\n"
-        "4. Combine com perguntas abertas: “E o que mais você sente em relação a isso?”\n"
-        "5. Seja genuíno: espelhe apenas o que realmente captar, evitando frases decoradas.",
-
-    "quais sao os cuidados para elaborar o lembrete de consulta dois dias antes de forma clara e profissional sem ser invasivo":
-        "Cuidados para lembrete de consulta 2 dias antes:\n\n"
-        "1. Mensagem personalizada: inclua nome do paciente e do profissional.\n"
-        "2. Dados essenciais: dia da semana, data e horário exatos.\n"
-        "3. Tom cordial e breve:\n"
-        "   Ex: “Tudo certo para nossa consulta na terça-feira, 12/05, às 14 h?”\n"
-        "4. Ofereça opção de reagendar: “Se precisar alterar, responda esta mensagem.”\n"
-        "5. Evite excesso de texto: 2–3 frases.\n"
-        "6. Canal apropriado: SMS ou WhatsApp em horário hábil.",
-
-    "como registrar e acompanhar faltas sem aviso para minimizar o numero de noshows e manter um relacionamento positivo com o paciente":
-        "Para registrar e acompanhar faltas sem aviso:\n\n"
-        "1. Protocolo de registro: anote data e horário do no-show no sistema imediatamente.\n"
-        "2. Follow-up no mesmo dia com mensagem empática:\n"
-        "   “Olá [Nome], sentimos sua falta hoje. Está tudo bem?”\n"
-        "3. Classificação de risco: identifique pacientes com faltas recorrentes para contato telefônico.\n"
-        "4. Ofereça reagendamento: sugira duas opções de data no follow-up.\n"
-        "5. Analise padrões: gere relatório mensal de faltas para identificar tendências.\n"
-        "6. Ajuste lembretes: se faltar após SMS, inclua lembrete extra por WhatsApp horas antes.",
-
+    "faz sentido mandar patient letter para pacientes que retornam ao consultorio depois de 6 meses":
+        "Não é necessário enviar um Patient Letter em cada retorno de rotina sem novidades clínicas. "
+        "Reserve o envio para quando houver mudanças significativas no tratamento ou nos resultados, mantendo a comunicação relevante.",
+    
+    # ... mantenha demais entradas canônicas existentes ...
 }
 
 # Pré-normaliza chaves
-CANONICAL_QA_NORMALIZED = {
-    normalize_key(k): v for k, v in CANONICAL_QA.items()
-}
+CANONICAL_QA_NORMALIZED = { normalize_key(k): v for k, v in CANONICAL_QA.items() }
 
 # -----------------------------
 # IDENTIDADE E TEMPLATES
@@ -271,7 +143,7 @@ prompt_variacoes = {
 }
 
 # -----------------------------
-# CLASSIFICADOR
+# CLASSIFICADOR E GERADOR DE RESPOSTA
 # -----------------------------
 def classify_prompt(question: str) -> dict:
     lower = normalize_key(question)
@@ -282,47 +154,23 @@ def classify_prompt(question: str) -> dict:
             return {"scope": "IN_SCOPE", "type": t}
     return {"scope": "OUT_OF_SCOPE", "type": "explicacao"}
 
-# -----------------------------
-# GERADOR DE RESPOSTA
-# -----------------------------
-def generate_answer(
-    question: str,
-    context: str = "",
-    history: str = None,
-    tipo_de_prompt: str = None
-) -> str:
-    key = normalize_key(question)
 
-    # 1) Resposta canônica
+def generate_answer(question: str, context: str = "", history: str = None, tipo_de_prompt: str = None) -> str:
+    key = normalize_key(question)
     if key in CANONICAL_QA_NORMALIZED:
         return CANONICAL_QA_NORMALIZED[key]
-
-    # 2) Classifica escopo
     cls = classify_prompt(question)
     if cls["scope"] == "OUT_OF_SCOPE":
         return OUT_OF_SCOPE_MSG
-
-    # 3) Monta prompt dinâmico
     tipo = cls["type"]
     prompt = identidade + prompt_variacoes.get(tipo, "")
     if context:
         prompt += f"<br><strong>📚 Contexto:</strong><br>{context}<br>"
     if history:
         prompt += f"<br><strong>📜 Histórico:</strong><br>{history}<br>"
-    prompt += (
-        f"<br><strong>🤔 Pergunta:</strong><br>{question}<br><br>"
-        f"<strong>🧠 Resposta:</strong><br>"
-    )
-
-    # 4) Chama OpenAI com fallback
+    prompt += f"<br><strong>🤔 Pergunta:</strong><br>{question}<br><br><strong>🧠 Resposta:</strong><br>"
     try:
-        r = client.chat.completions.create(
-            model="gpt-4",
-            messages=[{"role": "user", "content": prompt}]
-        )
+        r = client.chat.completions.create(model="gpt-4", messages=[{"role":"user","content":prompt}])
     except OpenAIError:
-        r = client.chat.completions.create(
-            model="gpt-3.5-turbo",
-            messages=[{"role": "user", "content": prompt}]
-        )
+        r = client.chat.completions.create(model="gpt-3.5-turbo", messages=[{"role":"user","content":prompt}])
     return r.choices[0].message.content
