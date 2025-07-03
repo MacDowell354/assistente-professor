@@ -13,14 +13,14 @@ if not api_key:
 client = OpenAI(api_key=api_key)
 
 # -----------------------------
-# MENSAGEM PADRÃO PARA FORA DE ESCOPO
+# MENSAGEM PADRÃO PARA FORA DE ESCOPO (APrimorado)
 # -----------------------------
 OUT_OF_SCOPE_MSG = (
-    "Essa pergunta é muito boa, mas no momento ela está "
-    "<strong>fora do conteúdo abordado nas aulas do curso Consultório High Ticket</strong>. "
-    "Isso pode indicar uma oportunidade de melhoria do nosso material! 😊<br><br>"
-    "Vamos sinalizar esse tema para a equipe pedagógica avaliar a inclusão em versões futuras do curso. "
-    "Enquanto isso, recomendamos focar nos ensinamentos já disponíveis para ter os melhores resultados possíveis no consultório."
+    "Parece que sua pergunta ainda não está contemplada nas aulas do curso Consultório High Ticket. "
+    "Mas não se preocupe: nosso conteúdo está sempre em expansão! 😊<br><br>"
+    "Que tal explorar tópicos relacionados, como 'Health Plan', 'Patient Letter' ou 'Plano de Ação'? "
+    "Você pode reformular sua dúvida com base nesses temas ou perguntar sobre qualquer módulo ou atividade, "
+    "e eu ficarei feliz em ajudar com o que estiver ao meu alcance."
 )
 
 # -----------------------------
@@ -153,7 +153,6 @@ prompt_variacoes = {
 # -----------------------------
 # CLASSIFICADOR E GERADOR DE RESPOSTA
 # -----------------------------
-
 def classify_prompt(question: str) -> dict:
     lower = normalize_key(question)
     if any(canon_key in lower for canon_key in CANONICAL_QA_NORMALIZED):
@@ -176,10 +175,9 @@ def generate_answer(question: str, context: str = "", history: str = None, tipo_
     if cls["scope"] == "OUT_OF_SCOPE":
         if context:
             return (
-                "Parece que ainda não temos uma resposta direta para sua pergunta, "
-                "mas encontrei um trecho nos materiais que pode ajudar:<br><br>"
+                "Parece que ainda não temos uma resposta direta para sua pergunta, mas encontrei um trecho nos materiais que pode ajudar:<br><br>"
                 f"{context}<br><br>"
-                "Você pode reformular sua dúvida com base nesse conteúdo ou explorar tópicos relacionados como 'explicação de health plan' ou 'como aplicar o método'."
+                "Você pode reformular sua dúvida com base nesse conteúdo ou explorar tópicos relacionados como 'explanação de health plan' ou 'como aplicar o método'."
             )
         return OUT_OF_SCOPE_MSG
     # monta prompt e chama API
