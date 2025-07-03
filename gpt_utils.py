@@ -59,7 +59,7 @@ TYPE_KEYWORDS = {
     "revisao":                        ["revisão", "revise", "resumir"],
     "precificacao":                   ["precificação", "precificar", "preço", "valor", "faturamento"],
     "health_plan":                    ["health plan", "retorno do investimento", "canva"],
-    "capitacao_sem_marketing_digital":[ "offline", "sem instagram", "sem anúncios", "sem redes sociais"],
+    "capitacao_sem_marketing_digital": ["offline", "sem instagram", "sem anúncios", "sem redes sociais"],
     "aplicacao":                      ["como aplico", "aplicação", "roteiro"],
     "faq":                            ["quais", "pergunta frequente"],
     "explicacao":                     ["explique", "o que é", "defina", "conceito"],
@@ -83,32 +83,35 @@ CANONICAL_QA = {
         "Meu objetivo é te ajudar a aplicar o método da Nanda com clareza, segurança e foco nos resultados."
         "<br><br>Pode perguntar o que quiser, que eu te explico como se estivéssemos em uma aula particular. 🥰"
     ),
-    "ola":  # corresponde a 'olá'
+    "ola": (
         "Olá! 😊 Seja muito bem-vindo ao seu espaço de aprendizado!<br><br>"
         "Eu sou a Nanda Mac.ia, sua professora virtual aqui no curso Consultório High Ticket. "
         "Estou aqui para caminhar com você e esclarecer todas as suas dúvidas com base nas aulas do curso, "
         "como uma professora dedicada e experiente.<br><br>"
         "Meu objetivo é te ajudar a aplicar o método da Nanda com clareza, segurança e foco nos resultados."
-        "<br><br>Pode perguntar o que quiser, que eu te explico como se estivéssemos em uma aula particular. 🥰",
-    "bom dia":
+        "<br><br>Pode perguntar o que quiser, que eu te explico como se estivéssemos em uma aula particular. 🥰"
+    ),
+    "bom dia": (
         "Bom dia! 😊 Seja muito bem-vindo ao seu espaço de aprendizado!<br><br>"
         "Eu sou a Nanda Mac.ia, sua professora virtual aqui no curso Consultório High Ticket. "
         "Pronta para ajudar você a aplicar o método da Nanda com clareza e foco nos resultados. "
-        "Pergunte o que quiser, como se estivéssemos em uma aula particular! 🥰",
-    "boa tarde":
+        "Pergunte o que quiser, como se estivéssemos em uma aula particular! 🥰"
+    ),
+    "boa tarde": (
         "Boa tarde! 😊 Seja muito bem-vindo ao seu espaço de aprendizado!<br><br>"
         "Eu sou a Nanda Mac.ia, sua professora virtual aqui no curso Consultório High Ticket. "
-        "Estou pronta para caminhar com você e esclarecer suas dúvidas de forma didática e prática. 🥰",
-    "boa noite":
+        "Estou pronta para caminhar com você e esclarecer suas dúvidas de forma didática e prática. 🥰"
+    ),
+    "boa noite": (
         "Boa noite! 😊 Seja muito bem-vindo ao seu espaço de aprendizado!<br><br>"
         "Eu sou a Nanda Mac.ia, sua professora virtual aqui no curso Consultório High Ticket. "
-        "Aqui para ajudar você a aplicar o método da Nanda com segurança e foco nos resultados. 🥰",
+        "Aqui para ajudar você a aplicar o método da Nanda com segurança e foco nos resultados. 🥰"
+    ),
 
     # — Health Plan (Canva) —
     "onde encontro o link do formulario para criar no canva o health plan personalizado para o paciente":
         "Você pode acessar o formulário para criar seu Health Plan personalizado no Canva através deste link ativo: "
-        "<a href=\"https://www.canva.com/design/DAEteeUPSUQ/0isBewvgUTJF0gZaRYZw2g/view?"
-        "utm_content=DAEteeUPSUQ&utm_campaign=designshare&utm_medium=link&utm_source=publishsharelink&mode=preview\" target=\"_blank\">"
+        "<a href=\"https://www.canva.com/design/DAEteeUPSUQ/0isBewvgUTJF0gZaRYZw2g/view?utm_content=DAEteeUPSUQ&utm_campaign=designshare&utm_medium=link&utm_source=publishsharelink&mode=preview\" target=\"_blank\">"
         "Formulário Health Plan (Canva)</a>. "
         "Ele também está disponível diretamente na Aula 10.4 do curso Consultório High Ticket.",
 
@@ -122,8 +125,6 @@ CANONICAL_QA = {
         "Você pode optar por enviá-lo quando ocorrer uma mudança expressiva no prontuário do paciente ou quando achar pertinente.<br><br>"
         "Lembre-se que o mais importante é manter a comunicação aberta e frequente com outros profissionais, garantindo um atendimento integrado e de excelência ao paciente.<br><br>"
         "Espero que isso te ajude, qualquer outra dúvida, estou à disposição! 💜",
-
-    # ... demais entradas canônicas existentes ...
 }
 
 # Pré-normaliza chaves
@@ -152,6 +153,7 @@ prompt_variacoes = {
 # -----------------------------
 # CLASSIFICADOR E GERADOR DE RESPOSTA
 # -----------------------------
+
 def classify_prompt(question: str) -> dict:
     lower = normalize_key(question)
     if any(canon_key in lower for canon_key in CANONICAL_QA_NORMALIZED):
@@ -161,15 +163,26 @@ def classify_prompt(question: str) -> dict:
             return {"scope": "IN_SCOPE", "type": t}
     return {"scope": "OUT_OF_SCOPE", "type": "explicacao"}
 
+
 def generate_answer(question: str, context: str = "", history: str = None, tipo_de_prompt: str = None) -> str:
     key = normalize_key(question)
     # lookup canônico por substring
     for canon_key, answer in CANONICAL_QA_NORMALIZED.items():
         if canon_key in key:
             return answer
+    # classifica escopo
     cls = classify_prompt(question)
+    # fallback pedagógico aprimorado
     if cls["scope"] == "OUT_OF_SCOPE":
+        if context:
+            return (
+                "Parece que ainda não temos uma resposta direta para sua pergunta, "
+                "mas encontrei um trecho nos materiais que pode ajudar:<br><br>"
+                f"{context}<br><br>"
+                "Você pode reformular sua dúvida com base nesse conteúdo ou explorar tópicos relacionados como 'explicação de health plan' ou 'como aplicar o método'."
+            )
         return OUT_OF_SCOPE_MSG
+    # monta prompt e chama API
     tipo = cls["type"]
     prompt = identidade + prompt_variacoes.get(tipo, "")
     if context:
@@ -178,7 +191,13 @@ def generate_answer(question: str, context: str = "", history: str = None, tipo_
         prompt += f"<br><strong>📜 Histórico:</strong><br>{history}<br>"
     prompt += f"<br><strong>🤔 Pergunta:</strong><br>{question}<br><br><strong>🧠 Resposta:</strong><br>"
     try:
-        r = client.chat.completions.create(model="gpt-4", messages=[{"role": "user", "content": prompt}])
+        r = client.chat.completions.create(
+            model="gpt-4",
+            messages=[{"role": "user", "content": prompt}]
+        )
     except OpenAIError:
-        r = client.chat.completions.create(model="gpt-3.5-turbo", messages=[{"role": "user", "content": prompt}])
+        r = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[{"role": "user", "content": prompt}]
+        )
     return r.choices[0].message.content
