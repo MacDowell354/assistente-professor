@@ -124,7 +124,7 @@ CANONICAL_QA = {
         "No entanto, não é necessário enviar o Patient Letter ao final de todas as consultas, a não ser que haja alguma informação específica que necessita ser compartilhada. "
         "Você pode optar por enviá-lo quando ocorrer uma mudança expressiva no prontuário do paciente ou quando achar pertinente.<br><br>"
         "Lembre-se que o mais importante é manter a comunicação aberta e frequente com outros profissionais, garantindo um atendimento integrado e de excelência ao paciente.<br><br>"
-        "Espero que isso te ajude, qualquer outra dúvida, estou à disposição! 💜",
+        "Espero que isso te ajude, qualquer outra dúvida, estou à disposição! 💜"
 }
 
 # Pré-normaliza chaves
@@ -153,6 +153,7 @@ prompt_variacoes = {
 # -----------------------------
 # CLASSIFICADOR E GERADOR DE RESPOSTA
 # -----------------------------
+
 def classify_prompt(question: str) -> dict:
     lower = normalize_key(question)
     if any(canon_key in lower for canon_key in CANONICAL_QA_NORMALIZED):
@@ -175,9 +176,11 @@ def generate_answer(question: str, context: str = "", history: str = None, tipo_
     if cls["scope"] == "OUT_OF_SCOPE":
         if context:
             return (
-                "Parece que ainda não temos uma resposta direta para sua pergunta, mas encontrei um trecho nos materiais que pode ajudar:<br><br>"
+                "Parece que ainda não abordamos diretamente sua pergunta nas aulas do Consultório High Ticket, "
+                "mas achei um trecho nos materiais que pode ajudar:<br><br>"
                 f"{context}<br><br>"
-                "Você pode reformular sua dúvida com base nesse conteúdo ou explorar tópicos relacionados como 'explanação de health plan' ou 'como aplicar o método'."
+                "Você pode reformular sua dúvida com base nesse conteúdo ou explorar tópicos relacionados, "
+                "como 'Health Plan', 'Patient Letter' ou 'Plano de Ação'."
             )
         return OUT_OF_SCOPE_MSG
     # monta prompt e chama API
