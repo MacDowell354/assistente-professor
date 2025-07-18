@@ -81,14 +81,19 @@ except FileNotFoundError:
 # Função de pesquisa simples como fallback
 
 def search_transcripts(question: str, max_sentences: int = 3) -> str:
+    """
+    Busca trechos relevantes nas transcrições, com critério relaxado (qualquer palavra-chave).
+    """
     if not _raw_txt:
         return ""
     key = normalize_key(question)
+    keywords = [w for w in key.split() if len(w) > 3]
     sentences = re.split(r'(?<=[\.\!\?])\s+', _raw_txt)
     matches = []
     for sent in sentences:
         norm = normalize_key(sent)
-        if all(word in norm for word in key.split() if len(word) > 3):
+        # considera correspondência se qualquer palavra-chave da pergunta aparecer
+        if any(word in norm for word in keywords):
             matches.append(sent.strip())
         if len(matches) >= max_sentences:
             break
@@ -112,6 +117,15 @@ TYPE_KEYWORDS = {
 }
 
 CANONICAL_QA = {
+    # Senso Estético High Ticket (Módulo 2)
+    "como devo decorar meu consultorio e me vestir para nao afastar o paciente high ticket":
+        "Decoração: espaços clean, móveis de linhas retas, cores neutras (branco, bege, cinza). Sem poluição visual de logos, quadriculados ou ostentação de marcas.<br><br>"
+        "Perfume: fragrâncias leves e universais (ex.: Jo Malone “Lime Basil & Mandarin” ou Giovanna Baby), nada muito doce ou intenso que possa causar enjoo.<br><br>"
+        "Uniforme e roupa pessoal:<br>"
+        "• Se usar jaleco, que seja branco clássico, sem rendas, mangas bufantes ou logos.<br>"
+        "• Para homem: camisa social clara + calça de corte tradicional + sapato social ou mocassim discreto.<br>"
+        "• Para mulher: camisa social branca ou tons pastel + calça ou saia de corte clássico + sapato fechado ou scarpin neutro.",
+    
     # Health Plan
     "onde encontro o link do formulario para criar no canva o health plan personalizado para o paciente":
         "Você pode acessar o formulário para criar seu Health Plan personalizado no Canva através deste link ativo: "
