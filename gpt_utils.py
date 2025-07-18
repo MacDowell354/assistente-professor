@@ -82,8 +82,14 @@ def search_transcripts(question: str, max_sentences: int = 4) -> str:
 # -----------------------------
 # GERADOR DE RESPOSTAS DIDÁTICAS
 # -----------------------------
-def generate_answer(question: str, context: str = "", history: list = None, tipo_de_prompt: str = None) -> str:
-    saudacao = random.choice(GREETINGS)
+def generate_answer(
+    question: str,
+    context: str = "",
+    history: list = None,
+    tipo_de_prompt: str = None,
+    is_first_question: bool = True
+) -> str:
+    saudacao = random.choice(GREETINGS) if is_first_question else ""
     fechamento = random.choice(CLOSINGS)
 
     # 1) Busca o trecho relevante
@@ -122,7 +128,14 @@ def generate_answer(question: str, context: str = "", history: list = None, tipo
                 max_tokens=500
             )
         explicacao = r.choices[0].message.content.strip()
-        return f"{saudacao}<br><br>{explicacao}<br><br>{fechamento}"
+        # Só adiciona saudação se for a primeira pergunta da sessão
+        if saudacao:
+            return f"{saudacao}<br><br>{explicacao}<br><br>{fechamento}"
+        else:
+            return f"{explicacao}<br><br>{fechamento}"
 
     # 3) Fora de escopo
-    return f"{saudacao}<br><br>{OUT_OF_SCOPE_MSG}<br><br>{fechamento}"
+    if saudacao:
+        return f"{saudacao}<br><br>{OUT_OF_SCOPE_MSG}<br><br>{fechamento}"
+    else:
+        return f"{OUT_OF_SCOPE_MSG}<br><br>{fechamento}"
