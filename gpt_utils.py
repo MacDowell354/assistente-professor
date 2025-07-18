@@ -3,6 +3,7 @@ import re
 import unicodedata
 import random
 from openai import OpenAI, OpenAIError
+from pypdf import PdfReader
 
 # -----------------------------
 # CONFIGURAÇÃO DE AMBIENTE
@@ -92,15 +93,13 @@ def generate_answer(question: str, context: str = "", history: list = None, tipo
     # 2) Se encontrar trecho, interpreta como professora, de forma objetiva e prática
     if snippet:
         prompt = (
-            "Você é Nanda Mac.ia, professora do curso Consultório High Ticket. "
-            "Responda a dúvida do aluno de forma direta, didática e acolhedora, focando apenas no conceito exato perguntado. "
-            "Use linguagem clara, exemplos práticos e mostre sempre como aplicar no consultório médico. "
-            "Não traga introduções genéricas, não explique o que são gatilhos mentais em geral, apenas foque e ensine sobre o termo que o aluno perguntou (exemplo: reciprocidade). "
-            "Dê pelo menos um exemplo objetivo de como aplicar isso na prática da medicina ou do consultório. "
-            "Comece com uma saudação curta, siga para a explicação direta do trecho relacionado ao termo da dúvida, e termine com uma frase de incentivo e oferta para novas perguntas. "
-            "Jamais cite ou cole o trecho puro; sempre traduza e ensine para o contexto prático. "
+            "Você é Nanda Mac.ia, professora experiente do curso Consultório High Ticket. "
+            "Responda de forma direta, clara e didática, focando sempre na dúvida do aluno e usando exemplos práticos para médicos. "
+            "Não faça introduções longas nem explique conceitos genéricos: vá direto ao ponto, trazendo dicas que o aluno pode aplicar na rotina. "
+            "Comece com uma saudação curta, depois explique passo a passo o que o trecho ensina para a dúvida, e termine com uma frase de incentivo. "
+            "NUNCA cite o texto literalmente, sempre ensine e traduza o conteúdo para uma orientação prática. "
             "\n\nTrecho do curso:\n" + snippet + "\n\n"
-            "[IMPORTANTE] Foque apenas no termo da dúvida e responda em no máximo 3 parágrafos curtos."
+            "[IMPORTANTE] Responda apenas com base no trecho. Seja objetiva, prática e acolhedora, como uma professora que foca em resultado para médicos."
         )
         try:
             r = client.chat.completions.create(
