@@ -1879,6 +1879,19 @@ Lembre-se: essas pequenas atitudes, ensinadas no método Consultório High Ticke
 
 ==== FIM PERGUNTAS E RESPOSTAS SOBRE O GATILHO DA RECIPROCIDADE  ====
 
+==== PERGUNTAS E RESPOSTAS REATIVAR PACIENTES QUE NÃO RETORNAM  ====
+
+1. Como reativar pacientes que não retornaram há mais de 6 meses?
+Resposta:
+Use o Gatilho da Escassez combinado com o Gatilho do Cuidado:
+Envie mensagem personalizada: “Oi, [Nome], notei que faz 6 meses sem avaliação…”
+Ofereça apenas duas vagas de retorno com valor especial nas próximas duas semanas.
+Destaque o risco de descontinuidade (“Sem acompanhamento, ajustes podem ficar defasados”).
+Exemplo:
+“Tenho apenas 2 horários para retorno com 10% de desconto … Gostaria de garantir o seu?”
+
+==== FIM PERGUNTAS E RESPOSTAS SOBRE REATIVAR PACIENTES QUE NÃO RETORNAM  ====
+
 ==== SUPORTE TÉCNICO E COMUNIDADE ====
 
 **Suporte Técnico**  
