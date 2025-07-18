@@ -17,27 +17,27 @@ client = OpenAI(api_key=api_key)
 # VARIAÇÕES DE SAUDAÇÃO E ENCERRAMENTO
 # -----------------------------
 GREETINGS = [
-    "Olá, doutor! Que bom te ver por aqui! 😊",
-    "Oi, que ótima dúvida! Vamos aprender juntos! ✨",
-    "Bem-vindo(a) de volta ao seu espaço de crescimento!",
-    "Adorei sua pergunta, é bem relevante para sua prática! 🤗",
-    "Que bom que você veio perguntar, isso mostra comprometimento! 💬"
+    "Olá, doutor!",
+    "Oi, doutor!",
+    "Olá, tudo bem?",
+    "Oi, que bom te ver aqui!",
+    "Olá, seja bem-vindo!"
 ]
 
 CLOSINGS = [
-    "Qualquer outra dúvida, estou sempre por aqui para te apoiar! 💜",
-    "Pode contar comigo para esclarecer o que precisar! Sucesso! 🌷",
-    "Estou aqui para ajudar — não hesite em perguntar sempre! ✨",
-    "Espero ter esclarecido, até nossa próxima aula! 🤍",
-    "Continue perguntando, é assim que você cresce na profissão! 🤗"
+    "Se tiver mais dúvidas, estou à disposição para te ajudar.",
+    "Conte comigo sempre que precisar esclarecer algo.",
+    "Fique à vontade para perguntar sempre que quiser evoluir.",
+    "Sucesso na sua jornada, até breve!",
+    "Continue avançando e conte comigo no que precisar."
 ]
 
 # -----------------------------
 # MENSAGEM DE FORA DE ESCOPO
 # -----------------------------
 OUT_OF_SCOPE_MSG = (
-    "Ainda não temos esse tema nas aulas do curso Consultório High Ticket. Mas vou sinalizar para nossa equipe incluir em breve! "
-    "Enquanto isso, recomendo focar no que já temos no curso para conquistar resultados concretos no consultório."
+    "Ainda não temos esse tema nas aulas do curso Consultório High Ticket. "
+    "Vou sinalizar para a equipe incluir em breve! Enquanto isso, foque no que já está disponível para conquistar resultados concretos no consultório."
 )
 
 # -----------------------------
@@ -86,19 +86,20 @@ def search_transcripts(question: str, max_sentences: int = 4) -> str:
 def generate_answer(question: str, context: str = "", history: list = None, tipo_de_prompt: str = None) -> str:
     saudacao = random.choice(GREETINGS)
     fechamento = random.choice(CLOSINGS)
-    key = normalize_key(question)
 
     # 1) Busca o trecho relevante
     snippet = search_transcripts(question)
 
-    # 2) Se encontrar trecho, interpreta como professora
+    # 2) Se encontrar trecho, interpreta como professora, de forma objetiva e prática
     if snippet:
         prompt = (
-            f"Você é Nanda Mac.ia, professora experiente do curso Consultório High Ticket. "
-            f"Explique o trecho abaixo de maneira clara, passo a passo, com exemplos práticos para médicos, "
-            f"usando tom acolhedor e encorajando o aluno a perguntar mais. Comece com saudação calorosa e termine com incentivo.\n\n"
-            f"Trecho do curso:\n{snippet}\n\n"
-            f"[IMPORTANTE] Não invente nada, só use conteúdo do trecho. Não cite texto literal: ensine, explique e traduza em aula prática."
+            "Você é Nanda Mac.ia, professora experiente do curso Consultório High Ticket. "
+            "Responda de forma direta, clara e didática, focando sempre na dúvida do aluno e usando exemplos práticos para médicos. "
+            "Não faça introduções longas nem explique conceitos genéricos: vá direto ao ponto, trazendo dicas que o aluno pode aplicar na rotina. "
+            "Comece com uma saudação curta, depois explique passo a passo o que o trecho ensina para a dúvida, e termine com uma frase de incentivo. "
+            "NUNCA cite o texto literalmente, sempre ensine e traduza o conteúdo para uma orientação prática. "
+            "\n\nTrecho do curso:\n" + snippet + "\n\n"
+            "[IMPORTANTE] Responda apenas com base no trecho. Seja objetiva, prática e acolhedora, como uma professora que foca em resultado para médicos."
         )
         try:
             r = client.chat.completions.create(
@@ -107,7 +108,7 @@ def generate_answer(question: str, context: str = "", history: list = None, tipo
                     {"role": "system", "content": "Responda SEMPRE em português do Brasil."},
                     {"role": "user", "content": prompt}
                 ],
-                temperature=0.5,
+                temperature=0.4,
                 max_tokens=500
             )
         except OpenAIError:
@@ -117,7 +118,7 @@ def generate_answer(question: str, context: str = "", history: list = None, tipo
                     {"role": "system", "content": "Responda SEMPRE em português do Brasil."},
                     {"role": "user", "content": prompt}
                 ],
-                temperature=0.5,
+                temperature=0.4,
                 max_tokens=500
             )
         explicacao = r.choices[0].message.content.strip()
