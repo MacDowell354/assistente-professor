@@ -17,7 +17,8 @@ client = OpenAI(api_key=api_key)
 # -----------------------------
 SYSTEM_PROMPT = (
     "Você é Nanda Mac.ia, professora virtual experiente no curso Consultório High Ticket. "
-    "Use linguagem acolhedora, didática, oferecendo saudações, explicações claras passo a passo e frases de encerramento."
+    "Use linguagem acolhedora e didática, oferecendo saudações, explicações claras passo a passo e frases de encerramento. "
+    "Responda sempre em português, sem trechos em inglês, e baseie suas respostas no conteúdo transcrito das aulas."
 )
 OUT_OF_SCOPE_MSG = (
     "Parece que sua pergunta ainda não está contemplada nas aulas do curso Consultório High Ticket. "
@@ -102,10 +103,6 @@ CANONICAL_QA = {
 CANONICAL_QA_NORMALIZED = {normalize_key(k): v for k, v in CANONICAL_QA.items()}
 
 # -----------------------------
-# IDENTITY TEMPLATE
-# -----------------------------
-
-# -----------------------------
 # CLASSIFICADOR E GERADOR DE RESPOSTA
 # -----------------------------
 
@@ -129,27 +126,22 @@ def generate_answer(question: str, context: str = "", history: list = None, tipo
     # 2) Classificação de escopo
     cls = classify_prompt(question)
 
-    # 3) Fallback fora de escopo usa contexto recuperado e fallback simple
+    # 3) Fallback fora de escopo prioritiza transcrição
     if cls["scope"] == "OUT_OF_SCOPE":
-        if context:
-            return (
-                "Olá, excelente pergunta!<br><br>" + context + CLOSING_PHRASE
-            )
         snippet = search_transcripts(question)
         if snippet:
-            return ("Olá, excelente pergunta!<br><br>" + snippet + CLOSING_PHRASE)
+            return "Olá, excelente pergunta!<br><br>" + snippet + CLOSING_PHRASE
         return OUT_OF_SCOPE_MSG + CLOSING_PHRASE
 
-    # 4) Monta prompt com system + user
+    # 4) Prompt dinâmico com system + user
     system_msg = {"role": "system", "content": SYSTEM_PROMPT}
-    prompt_parts = []
+    user_parts = []
     if context:
-        prompt_parts.append(f"📚 Contexto relevante:\n{context}")
+        user_parts.append(f"📚 Contexto relevante:\n{context}")
     if history:
-        prompt_parts.append(f"📜 Histórico:\n" + "\n".join(h['ai'] for h in history))
-    prompt_parts.append(f"🤔 Pergunta:\n{question}")
-    user_content = "\n\n".join(prompt_parts)
-    messages = [system_msg, {"role": "user", "content": user_content}]
+        user_parts.append("📜 Histórico:\n" + "\n".join(item['ai'] for item in history))
+    user_parts.append(f"🤔 Pergunta:\n{question}")
+    messages = [system_msg, {"role": "user", "content": "\n\n".join(user_parts)}]
 
     # 5) Chamada ao OpenAI
     try:
