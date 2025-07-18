@@ -13,27 +13,23 @@ if not api_key:
 client = OpenAI(api_key=api_key)
 
 # -----------------------------
-# VARIAÇÕES DE SAUDAÇÃO E ENCERRAMENTO
+# SAUDAÇÕES NEUTRAS
 # -----------------------------
 GREETINGS = [
-    "Olá, doutor!",
-    "Oi, doutor!",
     "Olá, tudo bem?",
-    "Oi, que bom te ver aqui!",
-    "Olá, seja bem-vindo!"
+    "Que bom te ver por aqui!",
+    "Bem-vindo(a) de volta!",
+    "Olá, seja bem-vindo(a)!"
 ]
 
 CLOSINGS = [
-    "Se tiver mais dúvidas, estou à disposição para te ajudar.",
-    "Conte comigo sempre que precisar esclarecer algo.",
+    "Se tiver mais dúvidas, estou à disposição para ajudar.",
+    "Conte comigo sempre que quiser esclarecer algo.",
     "Fique à vontade para perguntar sempre que quiser evoluir.",
     "Sucesso na sua jornada, até breve!",
     "Continue avançando e conte comigo no que precisar."
 ]
 
-# -----------------------------
-# MENSAGEM DE FORA DE ESCOPO
-# -----------------------------
 OUT_OF_SCOPE_MSG = (
     "Ainda não temos esse tema nas aulas do curso Consultório High Ticket. "
     "Vou sinalizar para a equipe incluir em breve! Enquanto isso, foque no que já está disponível para conquistar resultados concretos no consultório."
@@ -80,6 +76,16 @@ def search_transcripts(question: str, max_sentences: int = 4) -> str:
     return " ".join(top)
 
 # -----------------------------
+# DETECÇÃO DE PERGUNTA COMPLEMENTAR
+# -----------------------------
+COMPLEMENTAR_TERMS = [
+    "exemplo", "exemplos", "me mostre", "pode detalhar", "me explica melhor", "na prática", "como aplicar", "mostre na prática"
+]
+def is_complementary_question(question: str) -> bool:
+    q = normalize_key(question)
+    return any(term in q for term in COMPLEMENTAR_TERMS) or len(q.split()) < 5
+
+# -----------------------------
 # GERADOR DE RESPOSTAS DIDÁTICAS
 # -----------------------------
 def generate_answer(
@@ -87,26 +93,41 @@ def generate_answer(
     context: str = "",
     history: list = None,
     tipo_de_prompt: str = None,
-    is_first_question: bool = True
+    is_first_question: bool = True,
+    last_question: str = ""
 ) -> str:
-    saudacao = random.choice(GREETINGS) if is_first_question else ""
+    # Detecta se a pergunta é complementar, baseada no texto
+    complementary = is_complementary_question(question)
+    saudacao = random.choice(GREETINGS) if (is_first_question and not complementary) else ""
     fechamento = random.choice(CLOSINGS)
 
-    # 1) Busca o trecho relevante
     snippet = search_transcripts(question)
 
-    # 2) Se encontrar trecho, interpreta como professora, de forma objetiva e prática
+    # Prompt para resposta NORMAL (com explicação e exemplos)
+    base_prompt = (
+        "Você é Nanda Mac.ia, professora do curso Consultório High Ticket. "
+        "Responda de forma clara, direta e didática, explicando apenas sobre o termo perguntado (exemplo: reciprocidade). "
+        "Dê exemplos reais e simples de como o profissional pode aplicar no consultório físico, como pós-consulta, contato humanizado, bilhete de agradecimento, entrega de material ou dica personalizada. "
+        "Evite exemplos digitais (blog, YouTube) e foque em atitudes presenciais e no relacionamento real com o paciente. "
+        "Deixe claro que esse tipo de atitude faz parte do método Consultório High Ticket. "
+        "Comece com uma saudação curta, explique o conceito, traga exemplos práticos do dia a dia do consultório e incentive o aluno a perguntar mais."
+        "\n\nTrecho do curso:\n" + snippet + "\n\n"
+        "[IMPORTANTE] Foque apenas no termo da dúvida, seja objetivo e prático, e não repita introduções institucionais."
+    )
+
+    # Prompt para resposta COMPLEMENTAR (só exemplos ou detalhamento)
+    complementary_prompt = (
+        "Você é Nanda Mac.ia, professora do curso Consultório High Ticket. "
+        "O aluno acabou de receber uma explicação sobre o termo acima. Agora ele pediu exemplos práticos, detalhamento ou aplicação. "
+        "Responda apenas trazendo exemplos práticos e simples de como aplicar esse conceito no consultório físico, sem repetir definição, saudação ou introdução. "
+        "Foque apenas em exemplos reais, sugestões rápidas, frases prontas ou ideias para o dia a dia do consultório."
+        "\n\nTrecho do curso:\n" + snippet + "\n\n"
+        "[IMPORTANTE] Não repita o conceito. Traga só exemplos, dicas ou frases aplicáveis."
+    )
+
+    prompt = complementary_prompt if complementary else base_prompt
+
     if snippet:
-        prompt = (
-            "Você é Nanda Mac.ia, professora do curso Consultório High Ticket. "
-            "Responda de forma clara, direta e didática, explicando apenas sobre o termo perguntado (exemplo: reciprocidade). "
-            "Dê exemplos reais e simples de como o médico pode aplicar no consultório físico, como pós-consulta, contato humanizado, bilhete de agradecimento, entrega de material ou dica personalizada. "
-            "Evite exemplos digitais (blog, YouTube) e foque em atitudes presenciais e no relacionamento real com o paciente. "
-            "Deixe claro que esse tipo de atitude faz parte do método Consultório High Ticket. "
-            "Comece com saudação curta, explique o conceito, traga exemplos práticos do dia a dia do consultório e incentive o aluno a perguntar mais."
-            "\n\nTrecho do curso:\n" + snippet + "\n\n"
-            "[IMPORTANTE] Foque apenas no termo da dúvida, seja objetivo e prático, e não repita introduções institucionais."
-        )
         try:
             r = client.chat.completions.create(
                 model="gpt-4",
@@ -128,13 +149,11 @@ def generate_answer(
                 max_tokens=500
             )
         explicacao = r.choices[0].message.content.strip()
-        # Só adiciona saudação se for a primeira pergunta da sessão
         if saudacao:
             return f"{saudacao}<br><br>{explicacao}<br><br>{fechamento}"
         else:
             return f"{explicacao}<br><br>{fechamento}"
 
-    # 3) Fora de escopo
     if saudacao:
         return f"{saudacao}<br><br>{OUT_OF_SCOPE_MSG}<br><br>{fechamento}"
     else:
