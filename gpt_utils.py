@@ -96,17 +96,27 @@ CANONICAL_QA = {
         "Você pode acessar o formulário para criar seu Health Plan personalizado no Canva através deste link ativo: "
         "<a href=\"https://www.canva.com/design/DAEteeUPSUQ/0isBewvgUTJF0gZaRYZw2g/view?utm_content=DAEteeUPSUQ&utm_campaign=designshare&utm_medium=link&utm_source=publishsharelink&mode=preview\" target=\"_blank\">"
         "Formulário Health Plan (Canva)</a>. Ele também está disponível na Aula 10.4." + CLOSING_PHRASE,
+
     # Medo de cobrar mais
     "supero o medo de cobrar mais pelos meus atendimentos sem parecer mercenario":
         "Entender que dinheiro resolve muitos problemas — desde investir em atualizações profissionais até permitir que você dedicar mais tempo ao descanso — é o primeiro passo para quebrar esse bloqueio. "
         "Lembre-se: quanto mais você ganha, mais pessoas você pode ajudar, seja doando horas de atendimento social ou empregando colaboradores em seu consultório. "
         "Portanto, ao apresentar seus novos valores, explique ao paciente que esse ajuste permite oferecer atendimentos mais seguros, atualizados e personalizados — e que isso, na prática, é um ganho direto para o cuidado dele." + CLOSING_PHRASE,
-    # Reclamação de paciente
+
+    # Reclamação de tratamento
     "recebi reclamacao de um paciente que nao entendeu minhas opcoes de tratamento como apresentar uma unica solucao sem parecer autoritaria":
         "Isso se resolve usando o Gatilho da Razão em conjunto com o método “duas opções, uma escolha”:<br>"
         "1. Reconheça que existem várias alternativas (por exemplo: “Há três protocolos possíveis…”).<br>"
         "2. Apresente claramente a recomendação ideal: “O protocolo X é o mais indicado, pois gera 80% de adesão em menos tempo.”<br>"
-        "3. Explique os benefícios concretos ao paciente (redução de tempo de tratamento, menor risco, melhores resultados)." + CLOSING_PHRASE
+        "3. Explique os benefícios concretos ao paciente (redução de tempo de tratamento, menor risco, melhores resultados)." + CLOSING_PHRASE,
+
+    # Gatilho da Escassez
+    "como garantir que meus pacientes nao faltem ou adiem sem aviso":
+        "Evite plataformas de agendamento que deixem “buracos” visíveis em sua agenda: isso passa a impressão de disponibilidade total e incentiva o paciente a adiar. "
+        "Use o gatilho da escassez:<br><br>"
+        "“Tenho apenas dois horários abertos para novas consultas nas próximas duas semanas. "
+        "Se quiser garantir seu atendimento, posso encaixá-lo na terça ou na quinta-feira.”<br><br>"
+        "Assim, você demonstra que seu tempo é valioso, aumenta a percepção de prioridade e reduz faltas." + CLOSING_PHRASE
 }
 CANONICAL_QA_NORMALIZED = {normalize_key(k): v for k, v in CANONICAL_QA.items()}
 
