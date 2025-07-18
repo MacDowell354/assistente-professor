@@ -52,7 +52,6 @@ OUT_OF_SCOPE_MSG = (
 # -----------------------------
 # NORMALIZAÇÃO DE CHAVE
 # -----------------------------
-
 def normalize_key(text: str) -> str:
     nfkd = unicodedata.normalize("NFD", text)
     ascii_only = "".join(ch for ch in nfkd if unicodedata.category(ch) != "Mn")
@@ -89,6 +88,32 @@ def search_transcripts(question: str, max_sentences: int = 5) -> str:
     return "<br>".join(matches) if matches else ""
 
 # -----------------------------
+# DICIONÁRIO CANÔNICO
+# -----------------------------
+CANONICAL_QA = {
+    # Situações com resposta fixa
+    "como informar uma atualizacao de valor de consulta sem perder credibilidade":
+        "No momento de reagendar, siga estes passos:<br>"
+        "1. Reforce o histórico de resultados: “Desde que começamos, você já melhorou X%…”<br>"
+        "2. Explique o aumento como investimento em atualizações e tecnologia.<br>"
+        "3. Ofereça opções de pagamento: parcelamento ou condições especiais por tempo limitado.<br><br>"
+        "Exemplo: “Nossa consulta agora é R$ 350, pois incluí novas técnicas de avaliação… Prefere Pix, cartão ou parcelamento em até 3x?”",
+    "como devo decorar meu consultorio e me vestir para nao afastar o paciente high ticket":
+        "Decoração: espaços clean, móveis de linhas retas, cores neutras (branco, bege, cinza).<br>"
+        "Perfume: fragrâncias leves e universais (ex.: Jo Malone “Lime Basil & Mandarin” ou Giovanna Baby).<br>"
+        "Uniforme: jaleco branco clássico sem detalhes, camisa social clara e calça de corte tradicional (sapato social ou scarpin neutro).",
+    "qual a melhor forma de usar o gatilho da reciprocidade para fidelizar meus pacientes":
+        "Encontre formas de oferecer valor antecipado: envie materiais educativos grátis (e-book, checklist) após a primeira consulta; ofereça avaliação de cortesia (ex.: avaliação postural rápida); dê amostras de protocolos complementares (mini-exercícios). Assim, o paciente se sente inclinado a retribuir contratando o plano principal.",
+    "pode me dar um exemplo pratico":
+        "Por exemplo, após a consulta, envie um checklist personalizado de exercícios ou dicas nutricionais por e-mail. Ou ofereça uma avaliação rápida de cortesia (avaliação postural). Esses gestos simples demonstram cuidado e incentivam o paciente a retribuir contratando o plano completo.",
+    "posso enviar a patient letter em formato digital ou preciso ser manuscrita":
+        "– Digital: prático, rápido para colegas e pacientes; perfeito para integrar sistemas.<br>"
+        "– Manuscrita: transmite cuidado extra, mas leva mais tempo e pode ficar ilegível.<br>"
+        "No High Ticket, você pode misturar: envie digitalmente logo após a consulta e, em ocasiões especiais (homenagem, mudança de protocolo), entregue uma versão manuscrita.",
+}
+CANONICAL_QA_NORMALIZED = {normalize_key(k): v for k, v in CANONICAL_QA.items()}
+
+# -----------------------------
 # GERAÇÃO DE RESPOSTA INTELIGENTE
 # -----------------------------
 
@@ -97,13 +122,15 @@ def generate_answer(question: str, context: str = "", history: list = None, tipo
     fechamento = random.choice(CLOSINGS)
     key = normalize_key(question)
 
-    # 1) Tentar chaves canônicas fixas (links, fórmulas, etc.)
-    # (Você pode manter seu dicionário CANONICAL_QA aqui se houver)
+    # 1) Resposta canônica
+    for canon, resp in CANONICAL_QA_NORMALIZED.items():
+        if canon in key:
+            return f"{saudacao}<br><br>{resp}<br><br>{fechamento}"
 
-    # 2) Recuperar e reescrever a partir das transcrições
+    # 2) Busca e interpretação via transcrições
     snippet = search_transcripts(question)
     if snippet:
-        # Pedir ao GPT que interprete e ensine
+        # Pedir ao GPT que reescreva e ensine
         prompt = (
             f"Você é Nanda Mac.ia, professora didática. Reescreva o seguinte trecho do curso em suas próprias palavras, "
             f"como se estivesse explicando em aula, resumindo os pontos principais, adicionando exemplos práticos "
