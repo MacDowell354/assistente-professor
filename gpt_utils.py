@@ -55,35 +55,28 @@ except FileNotFoundError:
     _raw_txt = ""
 
 # -----------------------------
-# BUSCA DIDÁTICA POR TRECHOS
+# BUSCA POR BLOCO TEMÁTICO
 # -----------------------------
-def search_transcripts(question: str, max_sentences: int = 4) -> str:
+def search_transcripts_by_theme(question: str, max_blocks: int = 2) -> str:
     if not _raw_txt:
         return ""
     key = normalize_key(question)
     keywords = [w for w in key.split() if len(w) > 3]
-    if not keywords:
-        return ""
-    sentences = re.split(r'(?<=[\.\!\?])\s+', _raw_txt)
-    scored = []
-    for sent in sentences:
-        norm = normalize_key(sent)
-        score = sum(1 for w in keywords if w in norm)
-        if score > 0:
-            scored.append((score, sent.strip()))
-    scored.sort(key=lambda x: x[0], reverse=True)
-    top = [s for _, s in scored[:max_sentences]]
-    return " ".join(top)
 
-# -----------------------------
-# DETECÇÃO DE PERGUNTA COMPLEMENTAR
-# -----------------------------
-COMPLEMENTAR_TERMS = [
-    "exemplo", "exemplos", "me mostre", "pode detalhar", "me explica melhor", "na prática", "como aplicar", "mostre na prática"
-]
-def is_complementary_question(question: str) -> bool:
-    q = normalize_key(question)
-    return any(term in q for term in COMPLEMENTAR_TERMS) or len(q.split()) < 5
+    pattern = re.compile(r'\[TEMA:([^\]]+)\](.*?)(?=\[TEMA:|\Z)', re.DOTALL | re.IGNORECASE)
+    blocks = pattern.findall(_raw_txt)
+
+    scored = []
+    for tagstr, content in blocks:
+        tags = [normalize_key(t) for t in tagstr.split(',')]
+        tag_score = sum(1 for w in keywords for t in tags if w in t)
+        content_score = sum(1 for w in keywords if w in normalize_key(content))
+        total_score = tag_score * 3 + content_score  # Tags valem mais!
+        if total_score > 0:
+            scored.append((total_score, content.strip()))
+    scored.sort(key=lambda x: x[0], reverse=True)
+    top = [s for _, s in scored[:max_blocks]]
+    return "\n\n".join(top)
 
 # -----------------------------
 # GERADOR DE RESPOSTAS DIDÁTICAS
@@ -93,41 +86,23 @@ def generate_answer(
     context: str = "",
     history: list = None,
     tipo_de_prompt: str = None,
-    is_first_question: bool = True,
-    last_question: str = ""
+    is_first_question: bool = True
 ) -> str:
-    # Detecta se a pergunta é complementar, baseada no texto
-    complementary = is_complementary_question(question)
-    saudacao = random.choice(GREETINGS) if (is_first_question and not complementary) else ""
+    saudacao = random.choice(GREETINGS) if is_first_question else ""
     fechamento = random.choice(CLOSINGS)
 
-    snippet = search_transcripts(question)
-
-    # Prompt para resposta NORMAL (com explicação e exemplos)
-    base_prompt = (
-        "Você é Nanda Mac.ia, professora do curso Consultório High Ticket. "
-        "Responda de forma clara, direta e didática, explicando apenas sobre o termo perguntado (exemplo: reciprocidade). "
-        "Dê exemplos reais e simples de como o profissional pode aplicar no consultório físico, como pós-consulta, contato humanizado, bilhete de agradecimento, entrega de material ou dica personalizada. "
-        "Evite exemplos digitais (blog, YouTube) e foque em atitudes presenciais e no relacionamento real com o paciente. "
-        "Deixe claro que esse tipo de atitude faz parte do método Consultório High Ticket. "
-        "Comece com uma saudação curta, explique o conceito, traga exemplos práticos do dia a dia do consultório e incentive o aluno a perguntar mais."
-        "\n\nTrecho do curso:\n" + snippet + "\n\n"
-        "[IMPORTANTE] Foque apenas no termo da dúvida, seja objetivo e prático, e não repita introduções institucionais."
-    )
-
-    # Prompt para resposta COMPLEMENTAR (só exemplos ou detalhamento)
-    complementary_prompt = (
-        "Você é Nanda Mac.ia, professora do curso Consultório High Ticket. "
-        "O aluno acabou de receber uma explicação sobre o termo acima. Agora ele pediu exemplos práticos, detalhamento ou aplicação. "
-        "Responda apenas trazendo exemplos práticos e simples de como aplicar esse conceito no consultório físico, sem repetir definição, saudação ou introdução. "
-        "Foque apenas em exemplos reais, sugestões rápidas, frases prontas ou ideias para o dia a dia do consultório."
-        "\n\nTrecho do curso:\n" + snippet + "\n\n"
-        "[IMPORTANTE] Não repita o conceito. Traga só exemplos, dicas ou frases aplicáveis."
-    )
-
-    prompt = complementary_prompt if complementary else base_prompt
+    snippet = search_transcripts_by_theme(question)
 
     if snippet:
+        prompt = (
+            "Você é Nanda Mac.ia, professora do curso Consultório High Ticket. "
+            "Responda de forma clara, direta e didática, explicando apenas sobre o tema do trecho abaixo, que foi marcado como importante para a dúvida do aluno. "
+            "Dê exemplos reais e simples de como o profissional pode aplicar no consultório físico, usando o método do curso. "
+            "Evite repetir definições genéricas e foque na aplicação prática do tema detectado. "
+            "Comece com uma saudação curta, explique o conceito, traga exemplos práticos do dia a dia do consultório e incentive o aluno a perguntar mais."
+            "\n\nTrecho do curso:\n" + snippet + "\n\n"
+            "[IMPORTANTE] Foque só no tema detectado na tag e seja objetivo e prático."
+        )
         try:
             r = client.chat.completions.create(
                 model="gpt-4",
