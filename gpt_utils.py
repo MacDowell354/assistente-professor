@@ -1,6 +1,7 @@
 import os
 import re
 import unicodedata
+import random
 from openai import OpenAI, OpenAIError
 from pypdf import PdfReader
 
@@ -13,11 +14,31 @@ if not api_key:
 client = OpenAI(api_key=api_key)
 
 # -----------------------------
+# VARIAÇÕES DE SAUDAÇÃO E ENCERRAMENTO
+# -----------------------------
+GREETINGS = [
+    "Que ótima dúvida!",
+    "Olá, excelente pergunta!",
+    "Oi, que bom que trouxe isso!",
+    "Adorei sua pergunta!",
+    "Ótima colocação!"
+]
+
+CLOSINGS = [
+    "Espero que isso ajude! Qualquer outra dúvida, estou à disposição! 💜",
+    "Conte comigo para o que precisar. Abraços! 🤗",
+    "Fico feliz em ajudar — me diga como foi! 😊",
+    "Qualquer coisa, só chamar. Sucesso! 🌟",
+    "Estou aqui sempre que precisar. Até mais! 💖"
+]
+
+# -----------------------------
 # CONSTANTES DE MENSAGENS
 # -----------------------------
 SYSTEM_PROMPT = (
     "Você é Nanda Mac.ia, professora virtual experiente no curso Consultório High Ticket. "
-    "Use linguagem acolhedora e didática, oferecendo saudações, explicações claras passo a passo e frases de encerramento."
+    "Em cada resposta, inicie com uma saudação de GREETINGS e finalize com um encerramento de CLOSINGS. "
+    "Use linguagem acolhedora e didática, explicando passo a passo e sempre em português."
 )
 OUT_OF_SCOPE_MSG = (
     "Parece que sua pergunta ainda não está contemplada nas aulas do curso Consultório High Ticket. "
@@ -26,7 +47,7 @@ OUT_OF_SCOPE_MSG = (
     "Você pode reformular sua dúvida com base nesses temas ou perguntar sobre qualquer módulo ou atividade, "
     "e eu ficarei feliz em ajudar com o que estiver ao meu alcance."
 )
-CLOSING_PHRASE = "<br><br>Espero que isso ajude! Qualquer outra dúvida, estou à disposição! 💜"
+CLOSING_PHRASE = ""  # CLOSINGS será selecionado dinamicamente
 
 # -----------------------------
 # NORMALIZAÇÃO DE CHAVE
@@ -95,20 +116,20 @@ CANONICAL_QA = {
     "onde encontro o link do formulario para criar no canva o health plan personalizado para o paciente":
         "Você pode acessar o formulário para criar seu Health Plan personalizado no Canva através deste link ativo: "
         "<a href=\"https://www.canva.com/design/DAEteeUPSUQ/0isBewvgUTJF0gZaRYZw2g/view?utm_content=DAEteeUPSUQ&utm_campaign=designshare&utm_medium=link&utm_source=publishsharelink&mode=preview\" target=\"_blank\">"
-        "Formulário Health Plan (Canva)</a>. Ele também está disponível na Aula 10.4." + CLOSING_PHRASE,
+        "Formulário Health Plan (Canva)</a>. Ele também está disponível na Aula 10.4.",
 
     # Medo de cobrar mais
     "supero o medo de cobrar mais pelos meus atendimentos sem parecer mercenario":
         "Entender que dinheiro resolve muitos problemas — desde investir em atualizações profissionais até permitir que você dedicar mais tempo ao descanso — é o primeiro passo para quebrar esse bloqueio. "
         "Lembre-se: quanto mais você ganha, mais pessoas você pode ajudar, seja doando horas de atendimento social ou empregando colaboradores em seu consultório. "
-        "Portanto, ao apresentar seus novos valores, explique ao paciente que esse ajuste permite oferecer atendimentos mais seguros, atualizados e personalizados — e que isso, na prática, é um ganho direto para o cuidado dele." + CLOSING_PHRASE,
+        "Portanto, ao apresentar seus novos valores, explique ao paciente que esse ajuste permite oferecer atendimentos mais seguros, atualizados e personalizados — e que isso, na prática, é um ganho direto para o cuidado dele.",
 
     # Reclamação de tratamento
     "recebi reclamacao de um paciente que nao entendeu minhas opcoes de tratamento como apresentar uma unica solucao sem parecer autoritaria":
         "Isso se resolve usando o Gatilho da Razão em conjunto com o método “duas opções, uma escolha”:<br>"
         "1. Reconheça que existem várias alternativas (por exemplo: “Há três protocolos possíveis…”).<br>"
         "2. Apresente claramente a recomendação ideal: “O protocolo X é o mais indicado, pois gera 80% de adesão em menos tempo.”<br>"
-        "3. Explique os benefícios concretos ao paciente (redução de tempo de tratamento, menor risco, melhores resultados)." + CLOSING_PHRASE,
+        "3. Explique os benefícios concretos ao paciente (redução de tempo de tratamento, menor risco, melhores resultados).",
 
     # Gatilho da Escassez
     "como garantir que meus pacientes nao faltem ou adiem sem aviso":
@@ -116,14 +137,13 @@ CANONICAL_QA = {
         "Use o gatilho da escassez:<br><br>"
         "“Tenho apenas dois horários abertos para novas consultas nas próximas duas semanas. "
         "Se quiser garantir seu atendimento, posso encaixá-lo na terça ou na quinta-feira.”<br><br>"
-        "Assim, você demonstra que seu tempo é valioso, aumenta a percepção de prioridade e reduz faltas." + CLOSING_PHRASE
+        "Assim, você demonstra que seu tempo é valioso, aumenta a percepção de prioridade e reduz faltas."
 }
 CANONICAL_QA_NORMALIZED = {normalize_key(k): v for k, v in CANONICAL_QA.items()}
 
 # -----------------------------
 # CLASSIFICADOR E GERADOR DE RESPOSTA
 # -----------------------------
-
 def classify_prompt(question: str) -> dict:
     lower = normalize_key(question)
     if any(canon in lower for canon in CANONICAL_QA_NORMALIZED):
@@ -136,18 +156,21 @@ def classify_prompt(question: str) -> dict:
 
 def generate_answer(question: str, context: str = "", history: list = None, tipo_de_prompt: str = None) -> str:
     key = normalize_key(question)
+    # Saudação e encerramento dinâmicos
+    saudacao = random.choice(GREETINGS)
+    fechamento = random.choice(CLOSINGS)
     # 1) Resposta canônica
     for canon, resp in CANONICAL_QA_NORMALIZED.items():
         if canon in key:
-            return resp
+            return f"{saudacao}<br><br>{resp}<br><br>{fechamento}"
     # 2) Classificação de escopo
     cls = classify_prompt(question)
-    # 3) Fallback fora de escopo prioritiza transcrição
+    # 3) Fallback fora de escopo
     if cls["scope"] == "OUT_OF_SCOPE":
         snippet = search_transcripts(question)
         if snippet:
-            return "Olá, excelente pergunta!<br><br>" + snippet + CLOSING_PHRASE
-        return OUT_OF_SCOPE_MSG + CLOSING_PHRASE
+            return f"{saudacao}<br><br>{snippet}<br><br>{fechamento}"
+        return f"{saudacao}<br><br>{OUT_OF_SCOPE_MSG}<br><br>{fechamento}"
     # 4) Prompt dinâmico
     system_msg = {"role": "system", "content": SYSTEM_PROMPT}
     parts = []
@@ -156,20 +179,21 @@ def generate_answer(question: str, context: str = "", history: list = None, tipo
     if history:
         parts.append("📜 Histórico:\n" + "\n".join(item['ai'] for item in history))
     parts.append(f"🤔 Pergunta:\n{question}")
-    messages = [system_msg, {"role": "user", "content": "\n\n".join(parts)}]
+    user_msg = {"role": "user", "content": "\n\n".join(parts)}
     # 5) Chamada ao OpenAI
     try:
         r = client.chat.completions.create(
             model="gpt-4",
-            messages=messages,
+            messages=[system_msg, user_msg],
             temperature=0.7,
             max_tokens=500
         )
     except OpenAIError:
         r = client.chat.completions.create(
             model="gpt-3.5-turbo",
-            messages=messages,
+            messages=[system_msg, user_msg],
             temperature=0.7,
             max_tokens=500
         )
-    return r.choices[0].message.content.strip() + CLOSING_PHRASE
+    answer = r.choices[0].message.content.strip()
+    return f"{saudacao}<br><br>{answer}<br><br>{fechamento}"
