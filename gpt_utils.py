@@ -52,6 +52,7 @@ OUT_OF_SCOPE_MSG = (
 # -----------------------------
 # NORMALIZAÇÃO DE CHAVE
 # -----------------------------
+
 def normalize_key(text: str) -> str:
     nfkd = unicodedata.normalize("NFD", text)
     ascii_only = "".join(ch for ch in nfkd if unicodedata.category(ch) != "Mn")
@@ -88,48 +89,49 @@ def search_transcripts(question: str, max_sentences: int = 5) -> str:
     return "<br>".join(matches) if matches else ""
 
 # -----------------------------
-# RESPOSTAS CANÔNICAS
+# GERAÇÃO DE RESPOSTA INTELIGENTE
 # -----------------------------
-CANONICAL_QA = {
-    # Atualização de Valor (Módulo 3.5)
-    "como informar uma atualizacao de valor de consulta sem perder credibilidade":
-        "No momento de reagendar, siga estes passos:<br>"
-        "1. Reforce o histórico de resultados: “Desde que começamos, você já melhorou X%…”<br>"
-        "2. Explique o aumento como investimento em atualizações e tecnologia.<br>"
-        "3. Ofereça opções de pagamento: parcelamento ou condições especiais por tempo limitado.<br><br>"
-        "Exemplo: “Nossa consulta agora é R$ 350, pois incluí novas técnicas de avaliação… Prefere Pix, cartão ou parcelamento em até 3x?”",
-    # Senso Estético
-    "como devo decorar meu consultorio e me vestir para nao afastar o paciente high ticket":
-        "Decoração: espaços clean, móveis de linhas retas, cores neutras (branco, bege, cinza).<br>"
-        "Fragrância: fragrâncias leves e universais (Jo Malone “Lime Basil & Mandarin” ou Giovanna Baby).<br>"
-        "Uniforme: jaleco branco clássico sem detalhes, camisa social clara e calça de corte tradicional (sapato social ou scarpin neutro).",
-    # Gatilho da Reciprocidade
-    "qual a melhor forma de usar o gatilho da reciprocidade para fidelizar meus pacientes":
-        "O gatilho da reciprocidade funciona assim: sempre que você oferece algo de valor antes mesmo do paciente pagar, "
-        "ele se sente motivado a retribuir. No Consultório High Ticket, você pode:<br>"
-        "• Enviar materiais educativos grátis (e-book, checklist) após a primeira consulta.<br>"
-        "• Oferecer uma avaliação de cortesia de um item extra (ex.: avaliação postural rápida).<br>"
-        "• Dar uma amostra de um protocolo complementar (ex.: um mini-exercício ou orientação nutricional).",
-}
-CANONICAL_QA_NORMALIZED = {normalize_key(k): v for k, v in CANONICAL_QA.items()}
 
-# -----------------------------
-# GERAÇÃO DE RESPOSTA
-# -----------------------------
 def generate_answer(question: str, context: str = "", history: list = None, tipo_de_prompt: str = None) -> str:
     saudacao = random.choice(GREETINGS)
     fechamento = random.choice(CLOSINGS)
     key = normalize_key(question)
 
-    # 1) Resposta canônica
-    for canon, resp in CANONICAL_QA_NORMALIZED.items():
-        if canon in key:
-            return f"{saudacao}<br><br>{resp}<br><br>{fechamento}"
+    # 1) Tentar chaves canônicas fixas (links, fórmulas, etc.)
+    # (Você pode manter seu dicionário CANONICAL_QA aqui se houver)
 
-    # 2) Fallback via transcrições
+    # 2) Recuperar e reescrever a partir das transcrições
     snippet = search_transcripts(question)
     if snippet:
-        return f"{saudacao}<br><br>{snippet}<br><br>{fechamento}"
+        # Pedir ao GPT que interprete e ensine
+        prompt = (
+            f"Você é Nanda Mac.ia, professora didática. Reescreva o seguinte trecho do curso em suas próprias palavras, "
+            f"como se estivesse explicando em aula, resumindo os pontos principais, adicionando exemplos práticos "
+            f"e fazendo uma pergunta de acompanhamento ao aluno.\n\n"  
+            f"Trecho:\n{snippet}"
+        )
+        try:
+            r = client.chat.completions.create(
+                model="gpt-4",
+                messages=[
+                    {"role": "system", "content": SYSTEM_PROMPT},
+                    {"role": "user", "content": prompt}
+                ],
+                temperature=0.7,
+                max_tokens=500
+            )
+        except OpenAIError:
+            r = client.chat.completions.create(
+                model="gpt-3.5-turbo",
+                messages=[
+                    {"role": "system", "content": SYSTEM_PROMPT},
+                    {"role": "user", "content": prompt}
+                ],
+                temperature=0.7,
+                max_tokens=500
+            )
+        content = r.choices[0].message.content.strip()
+        return f"{saudacao}<br><br>{content}<br><br>{fechamento}"
 
     # 3) Fora de escopo
     return f"{saudacao}<br><br>{OUT_OF_SCOPE_MSG}<br><br>{fechamento}"
