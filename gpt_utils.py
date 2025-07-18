@@ -17,19 +17,19 @@ client = OpenAI(api_key=api_key)
 # VARIAÇÕES DE SAUDAÇÃO E ENCERRAMENTO
 # -----------------------------
 GREETINGS = [
-    "Que ótima dúvida!",
-    "Olá, excelente pergunta!",
-    "Oi, que bom que trouxe isso!",
-    "Adorei sua pergunta!",
-    "Ótima colocação!"
+    "Olá, que bom ver você por aqui! 😊",
+    "Oi! Espero que seu dia esteja ótimo! 🌟",
+    "Bem-vindo de volta! Como posso ajudar hoje? 🩺",
+    "Oi, tudo bem? Vamos lá, qual a sua dúvida? 💬",
+    "Olá! Conte comigo para o que precisar! 🤗"
 ]
 
 CLOSINGS = [
-    "Espero que isso ajude! Qualquer outra dúvida, estou à disposição! 💜",
-    "Conte comigo para o que precisar. Abraços! 🤗",
-    "Fico feliz em ajudar — me diga como foi! 😊",
-    "Qualquer coisa, só chamar. Sucesso! 🌟",
-    "Estou aqui sempre que precisar. Até mais! 💖"
+    "Qualquer outra dúvida, estou por aqui! 💜",
+    "Fico à disposição para ajudar no que precisar! 🌷",
+    "Conte sempre comigo — sucesso nos seus atendimentos! ✨",
+    "Espero ter ajudado. Até a próxima! 🤍",
+    "Estou aqui para o que você precisar. Um abraço! 🤗"
 ]
 
 # -----------------------------
@@ -37,9 +37,10 @@ CLOSINGS = [
 # -----------------------------
 SYSTEM_PROMPT = (
     "Você é Nanda Mac.ia, professora virtual experiente no curso Consultório High Ticket. "
-    "Use linguagem acolhedora e didática: ofereça saudações variadas, explique passo a passo e finalize com uma frase de encerramento acolhedora. "
-    "Todas as respostas devem ser em português."  
+    "Use linguagem acolhedora e didática: ofereça saudações variadas, explique passo a passo "
+    "e finalize com uma frase de encerramento acolhedora. Todas as respostas devem ser em português."
 )
+
 OUT_OF_SCOPE_MSG = (
     "Parece que sua pergunta ainda não está contemplada nas aulas do curso Consultório High Ticket. "
     "Mas não se preocupe: nosso conteúdo está sempre em expansão! 😊<br><br>"
@@ -47,12 +48,10 @@ OUT_OF_SCOPE_MSG = (
     "Você pode reformular sua dúvida com base nesses temas ou perguntar sobre qualquer módulo ou atividade, "
     "e eu ficarei feliz em ajudar com o que estiver ao meu alcance."
 )
-CLOSING_PHRASE = ""  # CLOSINGS será selecionado dinamicamente
 
 # -----------------------------
 # NORMALIZAÇÃO DE CHAVE
 # -----------------------------
-
 def normalize_key(text: str) -> str:
     nfkd = unicodedata.normalize("NFD", text)
     ascii_only = "".join(ch for ch in nfkd if unicodedata.category(ch) != "Mn")
@@ -79,11 +78,7 @@ except FileNotFoundError:
     _raw_txt = ""
 
 # Função de pesquisa simples como fallback
-
 def search_transcripts(question: str, max_sentences: int = 3) -> str:
-    """
-    Busca trechos relevantes nas transcrições, com critério relaxado (qualquer palavra-chave).
-    """
     if not _raw_txt:
         return ""
     key = normalize_key(question)
@@ -92,7 +87,6 @@ def search_transcripts(question: str, max_sentences: int = 3) -> str:
     matches = []
     for sent in sentences:
         norm = normalize_key(sent)
-        # considera correspondência se qualquer palavra-chave da pergunta aparecer
         if any(word in norm for word in keywords):
             matches.append(sent.strip())
         if len(matches) >= max_sentences:
@@ -119,40 +113,44 @@ TYPE_KEYWORDS = {
 CANONICAL_QA = {
     # Senso Estético High Ticket (Módulo 2)
     "como devo decorar meu consultorio e me vestir para nao afastar o paciente high ticket":
-        "Decoração: espaços clean, móveis de linhas retas, cores neutras (branco, bege, cinza). Sem poluição visual de logos, quadriculados ou ostentação de marcas.<br><br>"
-        "Perfume: fragrâncias leves e universais (ex.: Jo Malone “Lime Basil & Mandarin” ou Giovanna Baby), nada muito doce ou intenso que possa causar enjoo.<br><br>"
-        "Uniforme e roupa pessoal:<br>"
+        "Decoração: espaços clean, móveis de linhas retas, cores neutras (branco, bege, cinza). "
+        "Sem poluição visual de logos, quadriculados ou ostentação de marcas.<br><br>"
+        "Fragrância: fragrâncias leves e universais (ex.: Jo Malone “Lime Basil & Mandarin” ou Giovanna Baby), "
+        "nada muito doce ou intenso que possa causar enjoo.<br><br>"
+        "Uniforme e traje pessoal:<br>"
         "• Se usar jaleco, que seja branco clássico, sem rendas, mangas bufantes ou logos.<br>"
         "• Para homem: camisa social clara + calça de corte tradicional + sapato social ou mocassim discreto.<br>"
         "• Para mulher: camisa social branca ou tons pastel + calça ou saia de corte clássico + sapato fechado ou scarpin neutro.",
-    
-    # Health Plan
-    "onde encontro o link do formulario para criar no canva o health plan personalizado para o paciente":
-        "Você pode acessar o formulário para criar seu Health Plan personalizado no Canva através deste link ativo: "
-        "<a href=\"https://www.canva.com/design/DAEteeUPSUQ/0isBewvgUTJF0gZaRYZw2g/view?utm_content=DAEteeUPSUQ&utm_campaign=designshare&utm_medium=link&utm_source=publishsharelink&mode=preview\" target=\"_blank\">"
-        "Formulário Health Plan (Canva)</a>. Ele também está disponível na Aula 10.4.",
-
+    # Gatilho da Reciprocidade (Módulo 3.6)
+    "qual a melhor forma de usar o gatilho da reciprocidade para fidelizar meus pacientes":
+        "O gatilho da reciprocidade consiste em oferecer algo de valor antes mesmo do paciente pagar, "
+        "para que ele sinta vontade de retribuir seu cuidado. Por exemplo: enviar um e-book ou checklist educativo "
+        "após a consulta, oferecer uma avaliação rápida de cortesia (como avaliação postural) ou disponibilizar um "
+        "mini-protocolo gratuito. Assim, quando você apresentar seu plano principal, o paciente já estará predisposto "
+        "a aceitar essa retribuição.",
     # Medo de cobrar mais
     "supero o medo de cobrar mais pelos meus atendimentos sem parecer mercenario":
-        "Entender que dinheiro resolve muitos problemas — desde investir em atualizações profissionais até permitir que você dedicar mais tempo ao descanso — é o primeiro passo para quebrar esse bloqueio. "
-        "Lembre-se: quanto mais você ganha, mais pessoas você pode ajudar, seja doando horas de atendimento social ou empregando colaboradores em seu consultório. "
-        "Portanto, ao apresentar seus novos valores, explique ao paciente que esse ajuste permite oferecer atendimentos mais seguros, atualizados e personalizados — e que isso, na prática, é um ganho direto para o cuidado dele.",
-
-    # Reclamação de tratamento
+        "Entender que dinheiro resolve muitos problemas — desde investir em atualizações profissionais até permitir "
+        "que você dedique mais tempo ao descanso — é o primeiro passo para quebrar esse bloqueio. Lembre-se: quanto "
+        "mais você ganha, mais pessoas você pode ajudar, seja doando horas de atendimento social ou empregando "
+        "colaboradores em seu consultório. Portanto, ao apresentar seus novos valores, explique ao paciente que esse "
+        "ajuste permite oferecer atendimentos mais seguros, atualizados e personalizados — e que isso, na prática, é "
+        "um ganho direto para o cuidado dele.",
+    # Reclamação de opções de tratamento
     "recebi reclamacao de um paciente que nao entendeu minhas opcoes de tratamento como apresentar uma unica solucao sem parecer autoritaria":
         "Isso se resolve usando o Gatilho da Razão em conjunto com o método “duas opções, uma escolha”:<br>"
         "1. Reconheça que existem várias alternativas (por exemplo: “Há três protocolos possíveis…”).<br>"
         "2. Apresente claramente a recomendação ideal: “O protocolo X é o mais indicado, pois gera 80% de adesão em menos tempo.”<br>"
         "3. Explique os benefícios concretos ao paciente (redução de tempo de tratamento, menor risco, melhores resultados).",
-
-    # Gatilho da Escassez
+    # Gatilho da Escassez (Módulo 1.7.5)
     "como garantir que meus pacientes nao faltem ou adiem sem aviso":
-        "Evite plataformas de agendamento que deixem “buracos” visíveis em sua agenda: isso passa a impressão de disponibilidade total e incentiva o paciente a adiar. "
-        "Use o gatilho da escassez:<br><br>"
-        "“Tenho apenas dois horários abertos para novas consultas nas próximas duas semanas. "
-        "Se quiser garantir seu atendimento, posso encaixá-lo na terça ou na quinta-feira.”<br><br>"
+        "Evite plataformas de agendamento que deixem “buracos” visíveis em sua agenda: isso passa a impressão de "
+        "disponibilidade total e incentiva o paciente a adiar. Use o gatilho da escassez:<br><br>"
+        "“Tenho apenas dois horários abertos para novas consultas nas próximas duas semanas. Se quiser garantir seu "
+        "atendimento, posso encaixá-lo na terça ou na quinta-feira.”<br><br>"
         "Assim, você demonstra que seu tempo é valioso, aumenta a percepção de prioridade e reduz faltas."
 }
+
 CANONICAL_QA_NORMALIZED = {normalize_key(k): v for k, v in CANONICAL_QA.items()}
 
 # -----------------------------
@@ -167,25 +165,27 @@ def classify_prompt(question: str) -> dict:
             return {"scope": "IN_SCOPE", "type": t}
     return {"scope": "OUT_OF_SCOPE", "type": "explicacao"}
 
-
 def generate_answer(question: str, context: str = "", history: list = None, tipo_de_prompt: str = None) -> str:
-    key = normalize_key(question)
-    # Saudação e encerramento dinâmicos
     saudacao = random.choice(GREETINGS)
     fechamento = random.choice(CLOSINGS)
+    key = normalize_key(question)
+
     # 1) Resposta canônica
     for canon, resp in CANONICAL_QA_NORMALIZED.items():
         if canon in key:
             return f"{saudacao}<br><br>{resp}<br><br>{fechamento}"
+
     # 2) Classificação de escopo
     cls = classify_prompt(question)
+
     # 3) Fallback fora de escopo
     if cls["scope"] == "OUT_OF_SCOPE":
         snippet = search_transcripts(question)
         if snippet:
             return f"{saudacao}<br><br>{snippet}<br><br>{fechamento}"
         return f"{saudacao}<br><br>{OUT_OF_SCOPE_MSG}<br><br>{fechamento}"
-    # 4) Prompt dinâmico
+
+    # 4) Prompt dinâmico para GPT
     system_msg = {"role": "system", "content": SYSTEM_PROMPT}
     parts = []
     if context:
@@ -194,6 +194,7 @@ def generate_answer(question: str, context: str = "", history: list = None, tipo
         parts.append("📜 Histórico:\n" + "\n".join(item['ai'] for item in history))
     parts.append(f"🤔 Pergunta:\n{question}")
     user_msg = {"role": "user", "content": "\n\n".join(parts)}
+
     # 5) Chamada ao OpenAI
     try:
         r = client.chat.completions.create(
@@ -209,5 +210,6 @@ def generate_answer(question: str, context: str = "", history: list = None, tipo
             temperature=0.7,
             max_tokens=500
         )
+
     answer = r.choices[0].message.content.strip()
     return f"{saudacao}<br><br>{answer}<br><br>{fechamento}"
