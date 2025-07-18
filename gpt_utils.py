@@ -93,14 +93,13 @@ def generate_answer(question: str, context: str = "", history: list = None, tipo
     if snippet:
         prompt = (
             "Você é Nanda Mac.ia, professora do curso Consultório High Ticket. "
-            "Responda a dúvida do aluno de forma direta, didática e acolhedora, focando apenas no conceito exato perguntado. "
-            "Use linguagem clara, exemplos práticos e mostre sempre como aplicar no consultório médico. "
-            "Não traga introduções genéricas, não explique o que são gatilhos mentais em geral, apenas foque e ensine sobre o termo que o aluno perguntou (exemplo: reciprocidade). "
-            "Dê pelo menos um exemplo objetivo de como aplicar isso na prática da medicina ou do consultório. "
-            "Comece com uma saudação curta, siga para a explicação direta do trecho relacionado ao termo da dúvida, e termine com uma frase de incentivo e oferta para novas perguntas. "
-            "Jamais cite ou cole o trecho puro; sempre traduza e ensine para o contexto prático. "
+            "Responda de forma clara, direta e didática, explicando apenas sobre o termo perguntado (exemplo: reciprocidade). "
+            "Dê exemplos reais e simples de como o médico pode aplicar no consultório físico, como pós-consulta, contato humanizado, bilhete de agradecimento, entrega de material ou dica personalizada. "
+            "Evite exemplos digitais (blog, YouTube) e foque em atitudes presenciais e no relacionamento real com o paciente. "
+            "Deixe claro que esse tipo de atitude faz parte do método Consultório High Ticket. "
+            "Comece com saudação curta, explique o conceito, traga exemplos práticos do dia a dia do consultório e incentive o aluno a perguntar mais."
             "\n\nTrecho do curso:\n" + snippet + "\n\n"
-            "[IMPORTANTE] Foque apenas no termo da dúvida e responda em no máximo 3 parágrafos curtos."
+            "[IMPORTANTE] Foque apenas no termo da dúvida, seja objetivo e prático, e não repita introduções institucionais."
         )
         try:
             r = client.chat.completions.create(
