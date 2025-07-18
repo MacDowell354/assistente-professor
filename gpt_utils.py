@@ -52,6 +52,7 @@ OUT_OF_SCOPE_MSG = (
 # -----------------------------
 # NORMALIZAÇÃO DE CHAVE
 # -----------------------------
+
 def normalize_key(text: str) -> str:
     nfkd = unicodedata.normalize("NFD", text)
     ascii_only = "".join(ch for ch in nfkd if unicodedata.category(ch) != "Mn")
@@ -72,26 +73,37 @@ except FileNotFoundError:
 # FUNÇÃO DE BUSCA POR TRECHOS
 # -----------------------------
 
-def search_transcripts(question: str, max_sentences: int = 5) -> str:
+def search_transcripts(question: str, max_sentences: int = 3) -> str:
+    """
+    Recupera até max_sentences sentenças mais relevantes de transcricoes.txt, 
+    ordenadas pelo número de palavras-chave da pergunta presentes.
+    """
     if not _raw_txt:
         return ""
+    # Extrair palavras-chave significativas
     key = normalize_key(question)
     keywords = [w for w in key.split() if len(w) > 3]
+    if not keywords:
+        return ""
+    # Dividir em sentenças
     sentences = re.split(r'(?<=[\.\!\?])\s+', _raw_txt)
-    matches = []
+    scored = []
+    # Pontuar cada sentença
     for sent in sentences:
         norm = normalize_key(sent)
-        if any(word in norm for word in keywords):
-            matches.append(sent.strip())
-        if len(matches) >= max_sentences:
-            break
-    return "<br>".join(matches) if matches else ""
+        score = sum(1 for w in keywords if w in norm)
+        if score > 0:
+            scored.append((score, sent.strip()))
+    # Ordenar por pontuação decrescente
+    scored.sort(key=lambda x: x[0], reverse=True)
+    # Selecionar top
+    top = [s for _, s in scored[:max_sentences]]
+    return "<br>".join(top)
 
 # -----------------------------
 # DICIONÁRIO CANÔNICO
 # -----------------------------
 CANONICAL_QA = {
-    # Situações com resposta fixa
     "como informar uma atualizacao de valor de consulta sem perder credibilidade":
         "No momento de reagendar, siga estes passos:<br>"
         "1. Reforce o histórico de resultados: “Desde que começamos, você já melhorou X%…”<br>"
@@ -102,19 +114,12 @@ CANONICAL_QA = {
         "Decoração: espaços clean, móveis de linhas retas, cores neutras (branco, bege, cinza).<br>"
         "Perfume: fragrâncias leves e universais (ex.: Jo Malone “Lime Basil & Mandarin” ou Giovanna Baby).<br>"
         "Uniforme: jaleco branco clássico sem detalhes, camisa social clara e calça de corte tradicional (sapato social ou scarpin neutro).",
-    "qual a melhor forma de usar o gatilho da reciprocidade para fidelizar meus pacientes":
-        "Encontre formas de oferecer valor antecipado: envie materiais educativos grátis (e-book, checklist) após a primeira consulta; ofereça avaliação de cortesia (ex.: avaliação postural rápida); dê amostras de protocolos complementares (mini-exercícios). Assim, o paciente se sente inclinado a retribuir contratando o plano principal.",
-    "pode me dar um exemplo pratico":
-        "Por exemplo, após a consulta, envie um checklist personalizado de exercícios ou dicas nutricionais por e-mail. Ou ofereça uma avaliação rápida de cortesia (avaliação postural). Esses gestos simples demonstram cuidado e incentivam o paciente a retribuir contratando o plano completo.",
-    "posso enviar a patient letter em formato digital ou preciso ser manuscrita":
-        "– Digital: prático, rápido para colegas e pacientes; perfeito para integrar sistemas.<br>"
-        "– Manuscrita: transmite cuidado extra, mas leva mais tempo e pode ficar ilegível.<br>"
-        "No High Ticket, você pode misturar: envie digitalmente logo após a consulta e, em ocasiões especiais (homenagem, mudança de protocolo), entregue uma versão manuscrita.",
+    # Outras entradas canônicas...
 }
 CANONICAL_QA_NORMALIZED = {normalize_key(k): v for k, v in CANONICAL_QA.items()}
 
 # -----------------------------
-# GERAÇÃO DE RESPOSTA INTELIGENTE
+# GERAÇÃO DE RESPOSTA
 # -----------------------------
 
 def generate_answer(question: str, context: str = "", history: list = None, tipo_de_prompt: str = None) -> str:
@@ -127,14 +132,13 @@ def generate_answer(question: str, context: str = "", history: list = None, tipo
         if canon in key:
             return f"{saudacao}<br><br>{resp}<br><br>{fechamento}"
 
-    # 2) Busca e interpretação via transcrições
+    # 2) Fallback por busca nas transcrições
     snippet = search_transcripts(question)
     if snippet:
-        # Pedir ao GPT que reescreva e ensine
+        # Reescrever de forma didática
         prompt = (
             f"Você é Nanda Mac.ia, professora didática. Reescreva o seguinte trecho do curso em suas próprias palavras, "
-            f"como se estivesse explicando em aula, resumindo os pontos principais, adicionando exemplos práticos "
-            f"e fazendo uma pergunta de acompanhamento ao aluno.\n\n"  
+            f"explicando passo a passo, adicionando exemplos práticos e perguntando se faz sentido para o aluno.\n\n"  
             f"Trecho:\n{snippet}"
         )
         try:
