@@ -37,10 +37,10 @@ CLOSINGS = [
 # -----------------------------
 SYSTEM_PROMPT = (
     "Você é Nanda Mac.ia, professora virtual experiente no curso Consultório High Ticket. "
-    "Use linguagem acolhedora e didática: inicie com uma saudação variada de GREETINGS, "
-    "explique passo a passo como uma professora e finalize com um encerramento de CLOSINGS. "
-    "Todas as respostas devem ser em português e baseadas nas transcrições do curso."
+    "Use linguagem acolhedora e didática: inicie com uma saudação variada, explique passo a passo "
+    "e finalize com um encerramento acolhedor. Todas as respostas devem ser em português e baseadas nas transcrições do curso."
 )
+
 OUT_OF_SCOPE_MSG = (
     "Parece que sua pergunta ainda não está contemplada nas aulas do curso Consultório High Ticket. "
     "Mas não se preocupe: nosso conteúdo está sempre em expansão! 😊<br><br>"
@@ -91,25 +91,31 @@ def search_transcripts(question: str, max_sentences: int = 5) -> str:
 # RESPOSTAS CANÔNICAS
 # -----------------------------
 CANONICAL_QA = {
+    # Atualização de Valor (Módulo 3.5)
+    "como informar uma atualizacao de valor de consulta sem perder credibilidade":
+        "No momento de reagendar, siga estes passos:<br>"
+        "1. Reforce o histórico de resultados: “Desde que começamos, você já melhorou X%…”<br>"
+        "2. Explique o aumento como investimento em atualizações e tecnologia.<br>"
+        "3. Ofereça opções de pagamento: parcelamento ou condições especiais por tempo limitado.<br><br>"
+        "Exemplo: “Nossa consulta agora é R$ 350, pois incluí novas técnicas de avaliação… Prefere Pix, cartão ou parcelamento em até 3x?”",
     # Senso Estético
     "como devo decorar meu consultorio e me vestir para nao afastar o paciente high ticket":
         "Decoração: espaços clean, móveis de linhas retas, cores neutras (branco, bege, cinza).<br>"
-        "Perfume: fragrâncias leves e universais (Jo Malone “Lime Basil & Mandarin” ou Giovanna Baby).<br>"
+        "Fragrância: fragrâncias leves e universais (Jo Malone “Lime Basil & Mandarin” ou Giovanna Baby).<br>"
         "Uniforme: jaleco branco clássico sem detalhes, camisa social clara e calça de corte tradicional (sapato social ou scarpin neutro).",
     # Gatilho da Reciprocidade
     "qual a melhor forma de usar o gatilho da reciprocidade para fidelizar meus pacientes":
-        "O gatilho da reciprocidade funciona assim: sempre que você oferece algo de valor antes mesmo do paciente pagar, ele se sente motivado a retribuir. No Consultório High Ticket, você pode:<br>"
+        "O gatilho da reciprocidade funciona assim: sempre que você oferece algo de valor antes mesmo do paciente pagar, "
+        "ele se sente motivado a retribuir. No Consultório High Ticket, você pode:<br>"
         "• Enviar materiais educativos grátis (e-book, checklist) após a primeira consulta.<br>"
         "• Oferecer uma avaliação de cortesia de um item extra (ex.: avaliação postural rápida).<br>"
-        "• Dar uma amostra de um protocolo complementar (ex.: um mini-exercício ou orientação nutricional).<br><br>"
-        "Depois, quando for propor seu plano principal, o paciente já estará predisposto a aceitar.",
+        "• Dar uma amostra de um protocolo complementar (ex.: um mini-exercício ou orientação nutricional).",
 }
 CANONICAL_QA_NORMALIZED = {normalize_key(k): v for k, v in CANONICAL_QA.items()}
 
 # -----------------------------
 # GERAÇÃO DE RESPOSTA
 # -----------------------------
-
 def generate_answer(question: str, context: str = "", history: list = None, tipo_de_prompt: str = None) -> str:
     saudacao = random.choice(GREETINGS)
     fechamento = random.choice(CLOSINGS)
