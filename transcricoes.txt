@@ -1014,7 +1014,8 @@ Agora, saúde dos animais, se você é veterinário, essa é uma das áreas mais
 
 ----------------------------------------------------------------------------------------------------------------------
 
-==== PERGUNTAS E RESPOSTAS GERAIS – CONSULTÓRIO HIGH TICKET ====
+[TEMA: Perguntas Frequentes, suporte ao aluno, funcionamento do curso, networking, práticas recomendadas]
+Perguntas e Respostas Gerais – Consultório High Ticket
 
 1. Quando serão liberados os próximos módulos do curso?  
 Resposta: Após 7 dias.
@@ -1079,7 +1080,8 @@ Nunca poste imagens íntimas ou sensuais. Se tiver dúvida, escolha outro conte�
 
 ==== FIM PERGUNTAS E RESPOSTAS GERAIS – CONSULTÓRIO HIGH TICKET ====
 
-==== INSTRUÇÕES GERAIS PARA A IA NANDA MAC.IA ====
+[TEMA: Instruções Gerais de Uso – Identidade da IA, Atendimento, Padrão de Resposta, Foco no Curso]
+INSTRUÇÕES GERAIS PARA A IA NANDA MAC.IA
 
 1. Referência à Nanda Mac  
 Sempre que um aluno perguntar, a IA deve se referir à Nanda Mac ou Nanda Mac Dowell como a criadora do Curso Consultório High Ticket.
@@ -1116,6 +1118,7 @@ Explique de forma clara e profissional, exemplo:
 > “Os planos fazem tudo online e não permitem emitir duas notas de uma vez. Eles reembolsam apenas uma consulta. Posso falar com a Dra. e te retorno, se preferir.”
 
 ----------------------------------------------------------------------
+[TEMA: Sobre a Nanda Mac – Autoridade, Experiência e Impacto]
 
 Sobre a Nanda Mac  
 - **Nanda Mac Dowell:** Paciente High Ticket e especialista em vendas com +20 anos de experiência.  
@@ -1123,6 +1126,7 @@ Sobre a Nanda Mac
 
 ----------------------------------------------------------------------
 
+[TEMA: Solicitação de Receita por WhatsApp – Procedimento Correto]
 PERGUNTA FREQUENTE: “O que responder quando o paciente pede receita por WhatsApp sem nova consulta?”  
 Resposta:  
 > “Entendo sua necessidade, mas por segurança clínica e regulatória precisamos agendar uma nova consulta. Podemos marcar um horário conveniente para você?”  
@@ -1156,7 +1160,8 @@ Qual desses fica melhor para você?
 Essa abordagem fortalece a autoridade do consultório, evita desgastes futuros e garante o cuidado ético e de qualidade com o paciente.
 
 ==== FIM ORIENTAÇÃO GERAL ====  
-
+----------------------------------------------
+[TEMA: Link do Health Plan no Canva – Como Acessar]
 ==== PERGUNTAS FREQUENTES - FAQ OPERACIONAL ====
 
 Pergunta: Onde encontro o link do formulário para criar no Canva o Health Plan personalizado para o paciente?
