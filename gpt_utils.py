@@ -1,63 +1,41 @@
-import os
 import re
-import unicodedata
 import random
-from openai import OpenAI, OpenAIError
+import unicodedata
+from openai import OpenAIError
+from openai import OpenAI
 
-# -----------------------------
-# CONFIGURAÇÃO DE AMBIENTE
-# -----------------------------
-api_key = os.getenv("OPENAI_API_KEY")
-if not api_key:
-    raise ValueError("❌ Variável de ambiente OPENAI_API_KEY não encontrada.")
-client = OpenAI(api_key=api_key)
+# Inicialização do cliente da OpenAI
+client = OpenAI(api_key="YOUR_API_KEY")
 
-# -----------------------------
-# SAUDAÇÕES NEUTRAS
-# -----------------------------
+# Mensagens
 GREETINGS = [
-    "Olá, tudo bem?",
-    "Que bom te ver por aqui!",
-    "Bem-vindo(a) de volta!",
-    "Olá, seja bem-vindo(a)!"
+    "Olá! 😊 Seja muito bem-vindo ao seu espaço de aprendizado!",
+    "Oi, que bom te ver aqui!",
+    "Olá, seja bem-vindo!"
 ]
 
 CLOSINGS = [
-    "Se tiver mais dúvidas, estou à disposição para ajudar.",
-    "Conte comigo sempre que quiser esclarecer algo.",
+    "Continue avançando e conte comigo no que precisar.",
     "Fique à vontade para perguntar sempre que quiser evoluir.",
-    "Sucesso na sua jornada, até breve!",
-    "Continue avançando e conte comigo no que precisar."
+    "Conte comigo sempre que precisar esclarecer algo."
 ]
 
-OUT_OF_SCOPE_MSG = (
-    "Ainda não temos esse tema nas aulas do curso Consultório High Ticket. "
-    "Vou sinalizar para a equipe incluir em breve! Enquanto isso, foque no que já está disponível para conquistar resultados concretos no consultório."
-)
+OUT_OF_SCOPE_MSG = "Essa dúvida ainda não está contemplada no nosso curso atual. Mas fique tranquilo, já anotei aqui para futuras melhorias!"
 
-# -----------------------------
-# NORMALIZAÇÃO DE CHAVE
-# -----------------------------
-def normalize_key(text: str) -> str:
-    nfkd = unicodedata.normalize("NFD", text)
-    ascii_only = "".join(ch for ch in nfkd if unicodedata.category(ch) != "Mn")
-    s = ascii_only.lower()
-    s = re.sub(r"[^\w\s]", "", s)
-    return re.sub(r"\s+", " ", s).strip()
+# Carregar transcrição
+with open("transcricoes.txt", encoding="utf-8") as f:
+    _raw_txt = f.read()
 
-# -----------------------------
-# LEITURA DO ARQUIVO DE TRANSCRIÇÕES
-# -----------------------------
-BASE_DIR = os.path.dirname(__file__)
-try:
-    _raw_txt = open(os.path.join(BASE_DIR, "transcricoes.txt"), encoding="utf-8").read()
-except FileNotFoundError:
-    _raw_txt = ""
+# Normalização
+NORMALIZATION_FORM = "NFD"
 
-# -----------------------------
-# BUSCA POR BLOCO TEMÁTICO
-# -----------------------------
-def search_transcripts_by_theme(question: str, max_blocks: int = 2) -> str:
+
+def normalize_key(s: str) -> str:
+    return unicodedata.normalize(NORMALIZATION_FORM, s.lower())
+
+
+# Busca otimizada por temas
+def search_transcripts_by_theme(question: str, max_blocks: int = 1, max_length: int = 3000) -> str:
     if not _raw_txt:
         return ""
     key = normalize_key(question)
@@ -71,16 +49,15 @@ def search_transcripts_by_theme(question: str, max_blocks: int = 2) -> str:
         tags = [normalize_key(t) for t in tagstr.split(',')]
         tag_score = sum(1 for w in keywords for t in tags if w in t)
         content_score = sum(1 for w in keywords if w in normalize_key(content))
-        total_score = tag_score * 3 + content_score  # Tags valem mais!
+        total_score = tag_score * 3 + content_score
         if total_score > 0:
             scored.append((total_score, content.strip()))
     scored.sort(key=lambda x: x[0], reverse=True)
-    top = [s for _, s in scored[:max_blocks]]
-    return "\n\n".join(top)
+    top_content = " ".join([s for _, s in scored[:max_blocks]])
 
-# -----------------------------
-# GERADOR DE RESPOSTAS DIDÁTICAS
-# -----------------------------
+    return top_content[:max_length]
+
+
 def generate_answer(
     question: str,
     context: str = "",
@@ -93,14 +70,18 @@ def generate_answer(
 
     snippet = search_transcripts_by_theme(question)
 
-    if snippet:
+    # Limitação de caracteres enviada ao GPT (3000 caracteres ~750 tokens)
+    max_characters = 3000
+    snippet_curto = snippet[:max_characters] if len(snippet) > max_characters else snippet
+
+    if snippet_curto:
         prompt = (
             "Você é Nanda Mac.ia, professora do curso Consultório High Ticket. "
             "Responda de forma clara, direta e didática, explicando apenas sobre o tema do trecho abaixo, que foi marcado como importante para a dúvida do aluno. "
             "Dê exemplos reais e simples de como o profissional pode aplicar no consultório físico, usando o método do curso. "
             "Evite repetir definições genéricas e foque na aplicação prática do tema detectado. "
             "Comece com uma saudação curta, explique o conceito, traga exemplos práticos do dia a dia do consultório e incentive o aluno a perguntar mais."
-            "\n\nTrecho do curso:\n" + snippet + "\n\n"
+            "\n\nTrecho do curso:\n" + snippet_curto + "\n\n"
             "[IMPORTANTE] Foque só no tema detectado na tag e seja objetivo e prático."
         )
         try:
