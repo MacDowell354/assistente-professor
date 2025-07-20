@@ -46,13 +46,25 @@ try:
 except FileNotFoundError:
     _raw_txt = ""
 
-# BUSCA POR BLOCO TEMÁTICO (COM LIMITE DE CARACTERES)
-def search_transcripts_by_theme(question: str, max_blocks: int = 2, max_length: int = 3000) -> str:
+# BUSCA OTIMIZADA POR TEMA EXATO
+def search_transcripts_by_theme(question: str, max_length: int = 3000) -> str:
     if not _raw_txt:
         return ""
     key = normalize_key(question)
-    keywords = [w for w in key.split() if len(w) > 3]
 
+    # Primeiro busca uma correspondência EXATA nas tags TEMA
+    exact_theme_pattern = re.compile(
+        rf'\[TEMA:[^\]]*{re.escape(question)}[^\]]*\](.*?)(?=\[TEMA:|\Z)',
+        re.DOTALL | re.IGNORECASE
+    )
+    exact_matches = exact_theme_pattern.findall(_raw_txt)
+
+    if exact_matches:
+        top_content = exact_matches[0].strip()
+        return top_content[:max_length]
+
+    # Se não houver correspondência exata, usa busca por pontuação tradicional
+    keywords = [w for w in key.split() if len(w) > 3]
     pattern = re.compile(r'\[TEMA:([^\]]+)\](.*?)(?=\[TEMA:|\Z)', re.DOTALL | re.IGNORECASE)
     blocks = pattern.findall(_raw_txt)
 
@@ -65,11 +77,11 @@ def search_transcripts_by_theme(question: str, max_blocks: int = 2, max_length: 
         if total_score > 0:
             scored.append((total_score, content.strip()))
     scored.sort(key=lambda x: x[0], reverse=True)
-    top_content = " ".join([s for _, s in scored[:max_blocks]])
+    top_content = " ".join([s for _, s in scored[:1]])
 
     return top_content[:max_length]
 
-# GERADOR DE RESPOSTAS DIDÁTICAS (COM LIMITE DE CONTEXTO)
+# GERADOR DE RESPOSTAS DIDÁTICAS COM RESPOSTA ESPECÍFICA AO TEMA
 def generate_answer(
     question: str,
     context: str = "",
@@ -85,12 +97,12 @@ def generate_answer(
     if snippet:
         prompt = (
             "Você é Nanda Mac.ia, professora do curso Consultório High Ticket. "
-            "Responda de forma clara, direta e didática, explicando apenas sobre o tema do trecho abaixo, que foi marcado como importante para a dúvida do aluno. "
-            "Dê exemplos reais e simples de como o profissional pode aplicar no consultório físico, usando o método do curso. "
-            "Evite repetir definições genéricas e foque na aplicação prática do tema detectado. "
-            "Comece com uma saudação curta, explique o conceito, traga exemplos práticos do dia a dia do consultório e incentive o aluno a perguntar mais."
+            "O trecho abaixo foi extraído do curso e está claramente marcado com um TEMA específico. "
+            "Use SOMENTE o conteúdo fornecido no trecho abaixo e explique APENAS o tema marcado. "
+            "Sua explicação deve ser extremamente objetiva, didática e com exemplos reais e práticos para aplicação em consultório. "
+            "NÃO inclua definições genéricas ou conteúdo fora do tema fornecido. "
             "\n\nTrecho do curso:\n" + snippet + "\n\n"
-            "[IMPORTANTE] Foque só no tema detectado na tag e seja objetivo e prático."
+            "[ATENÇÃO] Seja específico(a) e didático(a) respondendo APENAS sobre o tema claramente indicado no trecho."
         )
         try:
             r = client.chat.completions.create(
