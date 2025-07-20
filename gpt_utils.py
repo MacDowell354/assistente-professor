@@ -1,92 +1,79 @@
 import os
 import re
-import unicodedata
 import random
 from openai import OpenAI, OpenAIError
 
-# CONFIGURAÇÃO DE AMBIENTE
-api_key = os.getenv("OPENAI_API_KEY")
-if not api_key:
-    raise ValueError("❌ Variável de ambiente OPENAI_API_KEY não encontrada.")
-client = OpenAI(api_key=api_key)
+# Configurar seu arquivo de transcrições
+TRANSCRIPTS_PATH = os.path.join(os.path.dirname(__file__), "transcricoes.txt")
 
-# SAUDAÇÕES NEUTRAS
+# Instância do cliente OpenAI
+client = OpenAI()
+
+# Mensagem padrão para temas não encontrados
+OUT_OF_SCOPE_MSG = (
+    "Desculpe, ainda não tenho informações suficientes sobre esse tema específico do curso. "
+    "Por favor, envie outra pergunta ou consulte o material da aula."
+)
+
+# Saudações e fechamentos para humanizar as respostas
 GREETINGS = [
-    "Olá, tudo bem?",
-    "Que bom te ver por aqui!",
+    "Olá, querido aluno",
+    "Oi, tudo bem?",
     "Bem-vindo(a) de volta!",
-    "Olá, seja bem-vindo(a)!"
+    "Olá, estou aqui para ajudar"
 ]
 
 CLOSINGS = [
-    "Se tiver mais dúvidas, estou à disposição para ajudar.",
-    "Conte comigo sempre que quiser esclarecer algo.",
     "Fique à vontade para perguntar sempre que quiser evoluir.",
-    "Sucesso na sua jornada, até breve!",
-    "Continue avançando e conte comigo no que precisar."
+    "Espero ter ajudado! Qualquer dúvida, é só chamar.",
+    "Conte comigo para o seu sucesso no Consultório High Ticket."
 ]
 
-OUT_OF_SCOPE_MSG = (
-    "Ainda não temos esse tema nas aulas do curso Consultório High Ticket. "
-    "Vou sinalizar para a equipe incluir em breve! Enquanto isso, foque no que já está disponível para conquistar resultados concretos no consultório."
-)
+def normalize_text(text):
+    """Normaliza texto para melhorar buscas: minusculas, sem acentos, sem caracteres especiais."""
+    text = text.lower()
+    text = re.sub(r"[^a-z0-9\s]", "", text)
+    return text
 
-# NORMALIZAÇÃO DE CHAVE
-def normalize_key(text: str) -> str:
-    nfkd = unicodedata.normalize("NFD", text)
-    ascii_only = "".join(ch for ch in nfkd if unicodedata.category(ch) != "Mn")
-    s = ascii_only.lower()
-    s = re.sub(r"[^\w\s]", "", s)
-    return re.sub(r"\s+", " ", s).strip()
+def search_transcripts_by_theme(theme):
+    """
+    Busca no arquivo de transcrições o trecho que contém o tema.
+    Retorna um trecho do texto relevante para o tema.
+    """
+    theme_norm = normalize_text(theme)
+    if not os.path.exists(TRANSCRIPTS_PATH):
+        return None
 
-# LEITURA DO ARQUIVO DE TRANSCRIÇÕES
-BASE_DIR = os.path.dirname(__file__)
-try:
-    _raw_txt = open(os.path.join(BASE_DIR, "transcricoes.txt"), encoding="utf-8").read()
-except FileNotFoundError:
-    _raw_txt = ""
+    with open(TRANSCRIPTS_PATH, "r", encoding="utf-8") as f:
+        content = f.read()
 
-# BUSCA OTIMIZADA POR TEMA EXATO
-def search_transcripts_by_theme(question: str, max_length: int = 3000) -> str:
-    if not _raw_txt:
-        return ""
-    key = normalize_key(question)
+    content_norm = normalize_text(content)
 
-    exact_theme_pattern = re.compile(
-        rf'\[TEMA:[^\]]*{re.escape(question)}[^\]]*\](.*?)(?=\[TEMA:|\Z)',
-        re.DOTALL | re.IGNORECASE
-    )
-    exact_matches = exact_theme_pattern.findall(_raw_txt)
+    # Buscar o tema no conteúdo
+    pos = content_norm.find(theme_norm)
+    if pos == -1:
+        # Se não encontrar exato, tentar buscar por palavras-chave (simplificação)
+        palavras = theme_norm.split()
+        for palavra in palavras:
+            pos = content_norm.find(palavra)
+            if pos != -1:
+                break
+        else:
+            return None  # Não encontrou nada
 
-    if exact_matches:
-        top_content = exact_matches[0].strip()
-        return top_content[:max_length]
+    # Retorna trecho +/- 500 caracteres antes e depois do termo encontrado para contexto
+    start = max(0, pos - 500)
+    end = min(len(content), pos + 500)
+    snippet = content[start:end]
 
-    keywords = [w for w in key.split() if len(w) > 3]
-    pattern = re.compile(r'\[TEMA:([^\]]+)\](.*?)(?=\[TEMA:|\Z)', re.DOTALL | re.IGNORECASE)
-    blocks = pattern.findall(_raw_txt)
+    return snippet.strip()
 
-    scored = []
-    for tagstr, content in blocks:
-        tags = [normalize_key(t) for t in tagstr.split(',')]
-        tag_score = sum(1 for w in keywords for t in tags if w in t)
-        content_score = sum(1 for w in keywords if w in normalize_key(content))
-        total_score = tag_score * 3 + content_score
-        if total_score > 0:
-            scored.append((total_score, content.strip()))
-    scored.sort(key=lambda x: x[0], reverse=True)
-    top_content = " ".join([s for _, s in scored[:1]])
+def generate_answer(question, context="", history=None, tipo_de_prompt=None, is_first_question=True):
+    """
+    Gera resposta didática e objetiva para pergunta, buscando conteúdo no arquivo de transcrições.
+    Usa GPT-4 com fallback para GPT-3.5.
+    """
 
-    return top_content[:max_length]
-
-# GERADOR DE RESPOSTAS DIDÁTICAS, NATURAIS E HUMANIZADAS
-def generate_answer(
-    question: str,
-    context: str = "",
-    history: list = None,
-    tipo_de_prompt: str = None,
-    is_first_question: bool = True
-) -> str:
     saudacao = random.choice(GREETINGS) if is_first_question else ""
     fechamento = random.choice(CLOSINGS)
 
@@ -101,9 +88,10 @@ def generate_answer(
             "\n\nConteúdo da aula:\n" + snippet + "\n\n"
             "[IMPORTANTE] Seja objetiva, acolhedora e didática respondendo APENAS sobre o tema indicado."
         )
+
         try:
-            r = client.chat.completions.create(
-                model="gpt-4",
+            response = client.chat.completions.create(
+                model="gpt-4o-mini",
                 messages=[
                     {"role": "system", "content": "Responda SEMPRE em português do Brasil."},
                     {"role": "user", "content": prompt}
@@ -112,7 +100,8 @@ def generate_answer(
                 max_tokens=500
             )
         except OpenAIError:
-            r = client.chat.completions.create(
+            # Fallback para GPT-3.5
+            response = client.chat.completions.create(
                 model="gpt-3.5-turbo",
                 messages=[
                     {"role": "system", "content": "Responda SEMPRE em português do Brasil."},
@@ -121,13 +110,18 @@ def generate_answer(
                 temperature=0.4,
                 max_tokens=500
             )
-        explicacao = r.choices[0].message.content.strip()
+
+        explicacao = response.choices[0].message.content.strip()
         if saudacao:
             return f"{saudacao}<br><br>{explicacao}<br><br>{fechamento}"
         else:
             return f"{explicacao}<br><br>{fechamento}"
 
-    if saudacao:
-        return f"{saudacao}<br><br>{OUT_OF_SCOPE_MSG}<br><br>{fechamento}"
     else:
-        return f"{OUT_OF_SCOPE_MSG}<br><br>{fechamento}"
+        # Quando não tem conteúdo relevante
+        if saudacao:
+            return f"{saudacao}<br><br>{OUT_OF_SCOPE_MSG}<br><br>{fechamento}"
+        else:
+            return f"{OUT_OF_SCOPE_MSG}<br><br>{fechamento}"
+
+# Se desejar, pode incluir testes unitários aqui, mas geralmente esses arquivos não os incluem.
