@@ -52,7 +52,6 @@ def search_transcripts_by_theme(question: str, max_length: int = 3000) -> str:
         return ""
     key = normalize_key(question)
 
-    # Primeiro busca uma correspondência EXATA nas tags TEMA
     exact_theme_pattern = re.compile(
         rf'\[TEMA:[^\]]*{re.escape(question)}[^\]]*\](.*?)(?=\[TEMA:|\Z)',
         re.DOTALL | re.IGNORECASE
@@ -63,7 +62,6 @@ def search_transcripts_by_theme(question: str, max_length: int = 3000) -> str:
         top_content = exact_matches[0].strip()
         return top_content[:max_length]
 
-    # Se não houver correspondência exata, usa busca por pontuação tradicional
     keywords = [w for w in key.split() if len(w) > 3]
     pattern = re.compile(r'\[TEMA:([^\]]+)\](.*?)(?=\[TEMA:|\Z)', re.DOTALL | re.IGNORECASE)
     blocks = pattern.findall(_raw_txt)
@@ -81,7 +79,7 @@ def search_transcripts_by_theme(question: str, max_length: int = 3000) -> str:
 
     return top_content[:max_length]
 
-# GERADOR DE RESPOSTAS DIDÁTICAS COM RESPOSTA ESPECÍFICA AO TEMA
+# GERADOR DE RESPOSTAS DIDÁTICAS, NATURAIS E HUMANIZADAS
 def generate_answer(
     question: str,
     context: str = "",
@@ -97,12 +95,11 @@ def generate_answer(
     if snippet:
         prompt = (
             "Você é Nanda Mac.ia, professora do curso Consultório High Ticket. "
-            "O trecho abaixo foi extraído do curso e está claramente marcado com um TEMA específico. "
-            "Use SOMENTE o conteúdo fornecido no trecho abaixo e explique APENAS o tema marcado. "
-            "Sua explicação deve ser extremamente objetiva, didática e com exemplos reais e práticos para aplicação em consultório. "
-            "NÃO inclua definições genéricas ou conteúdo fora do tema fornecido. "
-            "\n\nTrecho do curso:\n" + snippet + "\n\n"
-            "[ATENÇÃO] Seja específico(a) e didático(a) respondendo APENAS sobre o tema claramente indicado no trecho."
+            "Explique com suas próprias palavras, de forma humana, didática e acolhedora o tema abaixo, exatamente como ensinaria numa aula particular ao aluno do curso. "
+            "Use SOMENTE as informações do conteúdo fornecido, seja direta e utilize exemplos práticos e simples para aplicação no dia a dia do consultório. "
+            "Não mencione a palavra 'trecho' ou que está respondendo com base em um texto específico, responda naturalmente como uma professora dedicada explicando diretamente ao aluno. "
+            "\n\nConteúdo da aula:\n" + snippet + "\n\n"
+            "[IMPORTANTE] Seja objetiva, acolhedora e didática respondendo APENAS sobre o tema indicado."
         )
         try:
             r = client.chat.completions.create(
