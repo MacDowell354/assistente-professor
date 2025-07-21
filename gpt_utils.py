@@ -17,10 +17,10 @@ OUT_OF_SCOPE_MSG = (
 
 # Saudações e fechamentos para humanizar as respostas
 GREETINGS = [
-    "Olá, querido aluno",
-    "Oi, tudo bem?",
-    "Bem-vindo(a) de volta!",
-    "Olá, estou aqui para ajudar"
+    "Olá, Doutor(a), seja muito bem-vindo(a)!",
+    "Oi, Doutor(a), tudo bem? Como posso ajudar?",
+    "Bem-vindo(a) de volta, Doutor(a)!",
+    "Olá, Doutor(a)! Estou aqui para apoiar você no seu crescimento"
 ]
 
 CLOSINGS = [
