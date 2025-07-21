@@ -36,10 +36,7 @@ def normalize_text(text):
     return text
 
 def search_transcripts_by_theme(theme):
-    """
-    Busca no arquivo de transcrições o trecho que contém o tema.
-    Retorna um trecho do texto relevante para o tema.
-    """
+    """Busca no arquivo de transcrições o trecho que contém o tema."""
     theme_norm = normalize_text(theme)
     if not os.path.exists(TRANSCRIPTS_PATH):
         return None
@@ -48,58 +45,39 @@ def search_transcripts_by_theme(theme):
         content = f.read()
 
     content_norm = normalize_text(content)
-
-    # Buscar o tema no conteúdo
     pos = content_norm.find(theme_norm)
     if pos == -1:
-        # Se não encontrar exato, tentar buscar por palavras-chave (simplificação)
         palavras = theme_norm.split()
         for palavra in palavras:
             pos = content_norm.find(palavra)
             if pos != -1:
                 break
         else:
-            return None  # Não encontrou nada
+            return None
 
-    # Retorna trecho +/- 500 caracteres antes e depois do termo encontrado para contexto
     start = max(0, pos - 500)
     end = min(len(content), pos + 500)
     snippet = content[start:end]
-
     return snippet.strip()
 
 def generate_answer(question, context="", history=None, tipo_de_prompt=None, is_first_question=True):
-    """
-    Gera resposta didática e objetiva para pergunta, buscando conteúdo no arquivo de transcrições.
-    Usa GPT-4 com fallback para GPT-3.5.
-    """
-
     saudacao = random.choice(GREETINGS) if is_first_question else ""
     fechamento = random.choice(CLOSINGS)
 
     snippet = search_transcripts_by_theme(question)
 
     if snippet:
-        
-prompt = (
-    f"Você é Nanda Mac.ia, professora do curso Consultório High Ticket. "
-    f"O aluno fez a seguinte pergunta:
-
-"
-    f"'{question}'
-
-"
-    "Responda de forma extremamente objetiva e didática, exatamente como faria numa aula particular. "
-    "Forneça uma resposta estruturada em tópicos numerados, utilizando exemplos práticos e claros. "
-    "Use APENAS o conteúdo fornecido abaixo como referência e responda diretamente à pergunta feita, "
-    "sem introduções ou divagações gerais:
-
-"
-    f"{snippet}
-
-"
-    "[IMPORTANTE] Seja objetiva, acolhedora e responda EXCLUSIVAMENTE ao tema solicitado."
-)
+        prompt = (
+            f"Você é Nanda Mac.ia, professora do curso Consultório High Ticket.\n"
+            f"O aluno fez a seguinte pergunta:\n\n"
+            f"'{question}'\n\n"
+            "Responda de forma extremamente objetiva e didática, exatamente como faria numa aula particular.\n"
+            "Forneça uma resposta estruturada em tópicos numerados, utilizando exemplos práticos e claros.\n"
+            "Use APENAS o conteúdo fornecido abaixo como referência e responda diretamente à pergunta feita,\n"
+            "sem introduções ou divagações gerais:\n\n"
+            f"{snippet}\n\n"
+            "[IMPORTANTE] Seja objetiva, acolhedora e responda EXCLUSIVAMENTE ao tema solicitado."
+        )
 
         try:
             response = client.chat.completions.create(
@@ -112,7 +90,6 @@ prompt = (
                 max_tokens=500
             )
         except OpenAIError:
-            # Fallback para GPT-3.5
             response = client.chat.completions.create(
                 model="gpt-3.5-turbo",
                 messages=[
@@ -130,10 +107,7 @@ prompt = (
             return f"{explicacao}<br><br>{fechamento}"
 
     else:
-        # Quando não tem conteúdo relevante
         if saudacao:
             return f"{saudacao}<br><br>{OUT_OF_SCOPE_MSG}<br><br>{fechamento}"
         else:
             return f"{OUT_OF_SCOPE_MSG}<br><br>{fechamento}"
-
-# Se desejar, pode incluir testes unitários aqui, mas geralmente esses arquivos não os incluem.
