@@ -2025,18 +2025,31 @@ Use a **Comunidade** como único canal de dúvidas sobre o método (isso gera in
 
 -----------------------------------------------------------------------------------------------------------------
 
-[TEMA: comunicação no WhatsApp, mensagem automática, psicologia, atendimento, urgência, gestão de tempo, paciente high ticket]
-DIRETRIZ OFICIAL – Resposta para psicólogos sobre mensagem automática no WhatsApp
+==== DIRETRIZ OFICIAL NANDA MAC – MENSAGEM AUTOMÁTICA NO WHATSAPP PARA PSICÓLOGAS/OS SEM SECRETÁRIA ====
 
-🗒️ Posição oficial da Nanda Mac sobre mensagens automáticas para psicólogos:
+[TEMA: mensagem automática, WhatsApp, psicóloga, psicólogo, sem secretária, resposta ao paciente, paciente high ticket, fora do expediente, recomendação Nanda Mac, curso Consultório High Ticket]
 
-> “Eu não gosto de mensagem automática do tipo ‘Ah, já te respondo’, porque isso não é uma resposta de verdade. E não tem problema nenhum o psicólogo ou psicóloga não estar disponível o tempo todo no WhatsApp.
->
-> A minha própria psicóloga, por exemplo, não tem secretária, atende paciente high ticket, e ela tira um momento no dia para responder. O paciente já sabe que a psicóloga está atendendo o dia inteiro e que não vai responder na hora.
->
-> Psicólogo não é pediatra. Não está lidando com urgência de criança morrendo. Até em casos graves de pacientes que têm risco de suicídio, o paciente já sabe que a psicóloga não vai responder na hora. Eles sabem que ela vai responder depois, no momento que ela tira para isso.”
+Se você é **psicóloga, psicólogo ou terapeuta** e **não possui secretária**, esta é a **orientação oficial da Nanda Mac** sobre mensagens automáticas no WhatsApp para pacientes high ticket:
 
-✅ Orientação prática para o método Consultório High Ticket:
-Para psicólogos(as), não é necessário configurar mensagens automáticas no WhatsApp. O paciente high ticket compreende que o profissional não está disponível o tempo inteiro e respeita o tempo do psicólogo(a) para responder.
+- **Pacientes high ticket NÃO gostam de mensagens automáticas genéricas, frases de robô ou respostas padrão.**
+- **Porém**, caso você **não tenha secretária**, pode utilizar mensagem automática, desde que seja **personalizada, acolhedora e informe o prazo real de resposta**.
 
-O importante é manter consistência: ter um momento específico do dia para responder as mensagens e, assim, o paciente sente que há um padrão de cuidado, sem esperar por respostas imediatas.
+**Exemplo de mensagem automática durante o expediente:**
+> "Olá! 😊 Muito obrigada pela sua mensagem. No momento estou em atendimento, mas assim que possível eu retorno seu contato ainda hoje."
+
+**Exemplo de mensagem automática fora do expediente ou aos fins de semana:**
+> "Olá! 😊 Agradeço pela sua mensagem. Estou fora do meu horário de atendimento e retornarei na próxima segunda-feira. Agradeço pela compreensão!"
+
+**Orientação importante da Nanda Mac:**
+- Psicólogos(as) **não lidam com urgências imediatas** pelo WhatsApp. O paciente high ticket compreende que você só pode responder nos seus horários, e respeita o tempo do profissional.
+- Para quem **possui secretária**, é recomendado que a secretária realize o primeiro atendimento e retorne no horário de expediente, evitando uso de mensagem automática padrão.
+
+**Resumo prático:**
+- Mantenha comunicação humana, próxima e respeitosa.
+- Não utilize mensagem automática genérica.
+- Informe sempre o prazo em que vai responder e personalize a mensagem.
+- Isso transmite profissionalismo e respeito ao paciente high ticket.
+
+**Sempre siga esta diretriz para perguntas sobre mensagem automática no WhatsApp, psicologia, ausência de secretária e atendimento high ticket no curso Consultório High Ticket da Nanda Mac.**
+
+====
