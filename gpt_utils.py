@@ -29,15 +29,26 @@ CLOSINGS = [
     "Conte comigo para o seu sucesso no Consultório High Ticket."
 ]
 
-# Lista de cumprimentos simples
-CUMPRIMENTOS = [
-    "oi", "olá", "ola", "bom dia", "boa tarde", "boa noite", "tudo bem", "oi, tudo bem", "e aí"
-]
+# Cumprimentos específicos e respostas dedicadas
+CUMPRIMENTOS_RESPOSTAS = {
+    "bom dia": "Bom dia! Se quiser tirar dúvidas sobre o curso, é só perguntar. Estou à disposição.",
+    "boa tarde": "Boa tarde! Se quiser tirar dúvidas sobre o curso, é só perguntar. Estou à disposição.",
+    "boa noite": "Boa noite! Estou aqui para ajudar. Pode enviar sua dúvida quando quiser.",
+    "oi": "Oi, Doutor(a)! 😊 Seja bem-vindo(a)! Pode enviar sua dúvida quando quiser.",
+    "olá": "Olá! Estou aqui para ajudar. Pode perguntar sobre Consultório High Ticket quando quiser!",
+    "ola": "Olá! Estou aqui para ajudar. Pode perguntar sobre Consultório High Ticket quando quiser!",
+    "tudo bem": "Tudo ótimo por aqui! Se quiser perguntar algo sobre o curso, fique à vontade.",
+    "oi, tudo bem": "Oi, tudo bem! Se quiser tirar dúvidas, pode perguntar que estou à disposição.",
+    "e aí": "E aí! Se quiser tirar dúvidas sobre o curso, estou por aqui para te ajudar."
+}
 
 def is_greeting(question):
     pergunta = question.strip().lower()
-    # Considera cumprimento se a pergunta for igual ou começar por qualquer item da lista
-    return any(pergunta == c or pergunta.startswith(c) for c in CUMPRIMENTOS)
+    # Se pergunta é um cumprimento exato ou começa com um cumprimento
+    for c in CUMPRIMENTOS_RESPOSTAS.keys():
+        if pergunta == c or pergunta.startswith(c):
+            return c
+    return None
 
 def normalize_text(text):
     """Normaliza texto para melhorar buscas: minusculas, sem acentos, sem caracteres especiais."""
@@ -72,12 +83,9 @@ def search_transcripts_by_theme(theme):
 
 def generate_answer(question, context="", history=None, tipo_de_prompt=None, is_first_question=True):
     # NOVO: Detecta cumprimento simples antes de todo o resto
-    if is_greeting(question):
-        return random.choice([
-            "Oi, Doutor(a)! 😊 Seja bem-vindo(a)! Pode enviar sua dúvida quando quiser.",
-            "Olá! Estou aqui para ajudar. Pode perguntar sobre Consultório High Ticket quando quiser!",
-            "Boa tarde! Se quiser tirar dúvidas sobre o curso, é só perguntar. Estou à disposição."
-        ])
+    cumprimento_detectado = is_greeting(question)
+    if cumprimento_detectado:
+        return CUMPRIMENTOS_RESPOSTAS[cumprimento_detectado]
 
     saudacao = random.choice(GREETINGS) if is_first_question else ""
     fechamento = random.choice(CLOSINGS)
