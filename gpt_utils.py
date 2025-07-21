@@ -98,7 +98,6 @@ def generate_answer(question, context="", history=None, tipo_de_prompt=None, is_
     if cumprimento_detectado and not pergunta_limpa.strip():
         return CUMPRIMENTOS_RESPOSTAS[cumprimento_detectado]
 
-    # Caso contrário, segue o fluxo normal, usando a pergunta limpa para busca e repetição
     saudacao = random.choice(GREETINGS) if is_first_question else ""
     fechamento = random.choice(CLOSINGS)
 
@@ -106,7 +105,21 @@ def generate_answer(question, context="", history=None, tipo_de_prompt=None, is_
 
     pergunta_repetida = f"<strong>Sua pergunta:</strong> \"{question}\"<br><br>"
 
-    if snippet:
+    # NOVO: Gera prompt considerando histórico de chat, se disponível
+    if history:
+        prompt = (
+            f"Você é Nanda Mac.ia, professora do curso Consultório High Ticket.\n"
+            f"Abaixo está a conversa até agora entre o aluno e a professora:\n\n"
+            f"{history}\n\n"
+            f"O aluno enviou agora:\n"
+            f"'{question}'\n\n"
+            "Continue a conversa considerando o contexto anterior. Se o aluno pedir mais detalhes, exemplos, ou disser 'mais específico', aprofunde sobre o assunto que estavam conversando, sem mudar de tema e sem repetir tudo do zero."
+            "\nSe for uma dúvida nova, responda normalmente."
+            "\n[IMPORTANTE] Seja didática, acolhedora e responda exatamente ao que o aluno pediu."
+            "\nUtilize o conteúdo abaixo como base para a resposta:\n"
+            f"{snippet}\n"
+        )
+    else:
         prompt = (
             f"Você é Nanda Mac.ia, professora do curso Consultório High Ticket.\n"
             f"O aluno fez a seguinte pergunta:\n\n"
@@ -119,36 +132,31 @@ def generate_answer(question, context="", history=None, tipo_de_prompt=None, is_
             "[IMPORTANTE] Seja objetiva, acolhedora e responda EXCLUSIVAMENTE ao tema solicitado."
         )
 
-        try:
-            response = client.chat.completions.create(
-                model="gpt-4o-mini",
-                messages=[
-                    {"role": "system", "content": "Responda SEMPRE em português do Brasil."},
-                    {"role": "user", "content": prompt}
-                ],
-                temperature=0.4,
-                max_tokens=500
-            )
-        except OpenAIError:
-            response = client.chat.completions.create(
-                model="gpt-3.5-turbo",
-                messages=[
-                    {"role": "system", "content": "Responda SEMPRE em português do Brasil."},
-                    {"role": "user", "content": prompt}
-                ],
-                temperature=0.4,
-                max_tokens=500
-            )
+    try:
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "system", "content": "Responda SEMPRE em português do Brasil."},
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0.4,
+            max_tokens=500
+        )
+    except OpenAIError:
+        response = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": "Responda SEMPRE em português do Brasil."},
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0.4,
+            max_tokens=500
+        )
 
-        explicacao = response.choices[0].message.content.strip()
+    explicacao = response.choices[0].message.content.strip()
 
-        if saudacao:
-            return f"{saudacao}<br><br>{pergunta_repetida}{explicacao}<br><br>{fechamento}"
-        else:
-            return f"{pergunta_repetida}{explicacao}<br><br>{fechamento}"
-
+    if saudacao:
+        return f"{saudacao}<br><br>{pergunta_repetida}{explicacao}<br><br>{fechamento}"
     else:
-        if saudacao:
-            return f"{saudacao}<br><br>{pergunta_repetida}{OUT_OF_SCOPE_MSG}<br><br>{fechamento}"
-        else:
-            return f"{pergunta_repetida}{OUT_OF_SCOPE_MSG}<br><br>{fechamento}"
+        return f"{pergunta_repetida}{explicacao}<br><br>{fechamento}"
+
