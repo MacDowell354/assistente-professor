@@ -66,6 +66,8 @@ def generate_answer(question, context="", history=None, tipo_de_prompt=None, is_
 
     snippet = search_transcripts_by_theme(question)
 
+    pergunta_repetida = f"<strong>Sua pergunta:</strong> \"{question}\"<br><br>"
+
     if snippet:
         prompt = (
             f"Você é Nanda Mac.ia, professora do curso Consultório High Ticket.\n"
@@ -101,13 +103,14 @@ def generate_answer(question, context="", history=None, tipo_de_prompt=None, is_
             )
 
         explicacao = response.choices[0].message.content.strip()
+
         if saudacao:
-            return f"{saudacao}<br><br>{explicacao}<br><br>{fechamento}"
+            return f"{saudacao}<br><br>{pergunta_repetida}{explicacao}<br><br>{fechamento}"
         else:
-            return f"{explicacao}<br><br>{fechamento}"
+            return f"{pergunta_repetida}{explicacao}<br><br>{fechamento}"
 
     else:
         if saudacao:
-            return f"{saudacao}<br><br>{OUT_OF_SCOPE_MSG}<br><br>{fechamento}"
+            return f"{saudacao}<br><br>{pergunta_repetida}{OUT_OF_SCOPE_MSG}<br><br>{fechamento}"
         else:
-            return f"{OUT_OF_SCOPE_MSG}<br><br>{fechamento}"
+            return f"{pergunta_repetida}{OUT_OF_SCOPE_MSG}<br><br>{fechamento}"
