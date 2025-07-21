@@ -80,14 +80,26 @@ def generate_answer(question, context="", history=None, tipo_de_prompt=None, is_
     snippet = search_transcripts_by_theme(question)
 
     if snippet:
-        prompt = (
-            "Você é Nanda Mac.ia, professora do curso Consultório High Ticket. "
-            "Explique com suas próprias palavras, de forma humana, didática e acolhedora o tema abaixo, exatamente como ensinaria numa aula particular ao aluno do curso. "
-            "Use SOMENTE as informações do conteúdo fornecido, seja direta e utilize exemplos práticos e simples para aplicação no dia a dia do consultório. "
-            "Não mencione a palavra 'trecho' ou que está respondendo com base em um texto específico, responda naturalmente como uma professora dedicada explicando diretamente ao aluno. "
-            "\n\nConteúdo da aula:\n" + snippet + "\n\n"
-            "[IMPORTANTE] Seja objetiva, acolhedora e didática respondendo APENAS sobre o tema indicado."
-        )
+        
+prompt = (
+    f"Você é Nanda Mac.ia, professora do curso Consultório High Ticket. "
+    f"O aluno fez a seguinte pergunta:
+
+"
+    f"'{question}'
+
+"
+    "Responda de forma extremamente objetiva e didática, exatamente como faria numa aula particular. "
+    "Forneça uma resposta estruturada em tópicos numerados, utilizando exemplos práticos e claros. "
+    "Use APENAS o conteúdo fornecido abaixo como referência e responda diretamente à pergunta feita, "
+    "sem introduções ou divagações gerais:
+
+"
+    f"{snippet}
+
+"
+    "[IMPORTANTE] Seja objetiva, acolhedora e responda EXCLUSIVAMENTE ao tema solicitado."
+)
 
         try:
             response = client.chat.completions.create(
