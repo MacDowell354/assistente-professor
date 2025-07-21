@@ -29,6 +29,16 @@ CLOSINGS = [
     "Conte comigo para o seu sucesso no Consultório High Ticket."
 ]
 
+# Lista de cumprimentos simples
+CUMPRIMENTOS = [
+    "oi", "olá", "ola", "bom dia", "boa tarde", "boa noite", "tudo bem", "oi, tudo bem", "e aí"
+]
+
+def is_greeting(question):
+    pergunta = question.strip().lower()
+    # Considera cumprimento se a pergunta for igual ou começar por qualquer item da lista
+    return any(pergunta == c or pergunta.startswith(c) for c in CUMPRIMENTOS)
+
 def normalize_text(text):
     """Normaliza texto para melhorar buscas: minusculas, sem acentos, sem caracteres especiais."""
     text = text.lower()
@@ -61,6 +71,14 @@ def search_transcripts_by_theme(theme):
     return snippet.strip()
 
 def generate_answer(question, context="", history=None, tipo_de_prompt=None, is_first_question=True):
+    # NOVO: Detecta cumprimento simples antes de todo o resto
+    if is_greeting(question):
+        return random.choice([
+            "Oi, Doutor(a)! 😊 Seja bem-vindo(a)! Pode enviar sua dúvida quando quiser.",
+            "Olá! Estou aqui para ajudar. Pode perguntar sobre Consultório High Ticket quando quiser!",
+            "Boa tarde! Se quiser tirar dúvidas sobre o curso, é só perguntar. Estou à disposição."
+        ])
+
     saudacao = random.choice(GREETINGS) if is_first_question else ""
     fechamento = random.choice(CLOSINGS)
 
