@@ -44,11 +44,20 @@ CUMPRIMENTOS_RESPOSTAS = {
 
 def is_greeting(question):
     pergunta = question.strip().lower()
-    # Se pergunta é um cumprimento exato ou começa com um cumprimento
     for c in CUMPRIMENTOS_RESPOSTAS.keys():
         if pergunta == c or pergunta.startswith(c):
             return c
     return None
+
+def remove_greeting_from_question(question):
+    """Remove cumprimento do início da pergunta, se houver, para detectar dúvida real."""
+    pergunta = question.strip().lower()
+    for c in CUMPRIMENTOS_RESPOSTAS.keys():
+        if pergunta.startswith(c):
+            # Remove o cumprimento + possíveis vírgulas, pontuações e espaços após ele
+            pergunta_sem_cumprimento = pergunta[len(c):].lstrip(" ,.!?;-")
+            return pergunta_sem_cumprimento
+    return pergunta
 
 def normalize_text(text):
     """Normaliza texto para melhorar buscas: minusculas, sem acentos, sem caracteres especiais."""
@@ -82,15 +91,18 @@ def search_transcripts_by_theme(theme):
     return snippet.strip()
 
 def generate_answer(question, context="", history=None, tipo_de_prompt=None, is_first_question=True):
-    # NOVO: Detecta cumprimento simples antes de todo o resto
     cumprimento_detectado = is_greeting(question)
-    if cumprimento_detectado:
+    pergunta_limpa = remove_greeting_from_question(question)
+
+    # Se, depois de remover o cumprimento, não sobrou nada relevante, responda só ao cumprimento
+    if cumprimento_detectado and not pergunta_limpa.strip():
         return CUMPRIMENTOS_RESPOSTAS[cumprimento_detectado]
 
+    # Caso contrário, segue o fluxo normal, usando a pergunta limpa para busca e repetição
     saudacao = random.choice(GREETINGS) if is_first_question else ""
     fechamento = random.choice(CLOSINGS)
 
-    snippet = search_transcripts_by_theme(question)
+    snippet = search_transcripts_by_theme(pergunta_limpa if pergunta_limpa.strip() else question)
 
     pergunta_repetida = f"<strong>Sua pergunta:</strong> \"{question}\"<br><br>"
 
