@@ -54,7 +54,6 @@ def remove_greeting_from_question(question):
     pergunta = question.strip().lower()
     for c in CUMPRIMENTOS_RESPOSTAS.keys():
         if pergunta.startswith(c):
-            # Remove o cumprimento + possíveis vírgulas, pontuações e espaços após ele
             pergunta_sem_cumprimento = pergunta[len(c):].lstrip(" ,.!?;-")
             return pergunta_sem_cumprimento
     return pergunta
@@ -98,14 +97,18 @@ def generate_answer(question, context="", history=None, tipo_de_prompt=None, is_
     if cumprimento_detectado and not pergunta_limpa.strip():
         return CUMPRIMENTOS_RESPOSTAS[cumprimento_detectado]
 
-    saudacao = random.choice(GREETINGS) if is_first_question else ""
+    # Decide se deve exibir saudação e pergunta repetida só na primeira resposta
+    mostrar_saudacao = is_first_question
+    mostrar_pergunta_repetida = is_first_question
+
+    saudacao = random.choice(GREETINGS) if mostrar_saudacao else ""
     fechamento = random.choice(CLOSINGS)
 
     snippet = search_transcripts_by_theme(pergunta_limpa if pergunta_limpa.strip() else question)
 
-    pergunta_repetida = f"<strong>Sua pergunta:</strong> \"{question}\"<br><br>"
+    pergunta_repetida = f"<strong>Sua pergunta:</strong> \"{question}\"<br><br>" if mostrar_pergunta_repetida else ""
 
-    # NOVO: Gera prompt considerando histórico de chat, se disponível
+    # Gera prompt considerando histórico de chat, se disponível
     if history:
         prompt = (
             f"Você é Nanda Mac.ia, professora do curso Consultório High Ticket.\n"
@@ -155,8 +158,9 @@ def generate_answer(question, context="", history=None, tipo_de_prompt=None, is_
 
     explicacao = response.choices[0].message.content.strip()
 
-    if saudacao:
+    # Só exibe saudação e pergunta na primeira interação
+    if mostrar_saudacao:
         return f"{saudacao}<br><br>{pergunta_repetida}{explicacao}<br><br>{fechamento}"
     else:
-        return f"{pergunta_repetida}{explicacao}<br><br>{fechamento}"
+        return f"{explicacao}<br><br>{fechamento}"
 
