@@ -86,12 +86,21 @@ async def ask(
     if tipo_de_prompt == "health_plan":
         registrar_healthplan(pergunta=question, usuario=user)
 
-    # 🧠 Gera resposta (AGORA RETORNA 2 VARIÁVEIS)
+    # 🚩 Controle refinado para saudação premium e chips/quick replies
+    chip_perguntas = [
+        "Ver Exemplo de Plano", "Modelo PDF", "Novo Tema",
+        "Preciso de exemplo", "Exemplo para Acne", "Tratamento Oral", "Cuidados Diários"
+    ]
+    is_chip = str(question).strip() in chip_perguntas
+    is_first_question = (len(history) == 0) and (not is_chip)
+
+    # 🧠 Gera resposta (agora com controle premium)
     answer_markdown, quick_replies = generate_answer(
         question=question,
         context=context,
         history=history,
-        tipo_de_prompt=tipo_de_prompt
+        tipo_de_prompt=tipo_de_prompt,
+        is_first_question=is_first_question
     )
 
     # 🖥️ Renderiza markdown como HTML
