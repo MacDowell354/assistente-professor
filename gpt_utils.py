@@ -44,7 +44,7 @@ CUMPRIMENTOS_RESPOSTAS = {
 CHIP_PERGUNTAS = [
     "Ver Exemplo de Plano", "Modelo no Canva", "Modelo PDF", "Novo Tema",
     "Preciso de exemplo", "Exemplo para Acne", "Tratamento Oral", "Cuidados Diários",
-    "Baixar Plano de Ação", "Baixar Guia do Curso"
+    "Baixar Plano de Ação", "Baixar Guia do Curso", "Baixar Dossiê 007"
 ]
 
 def is_greeting(question):
@@ -94,7 +94,7 @@ def search_transcripts_by_theme(theme):
 def gerar_quick_replies(question, explicacao, history=None):
     """
     Sugere quick replies (chips) de acordo com o tema original e histórico de uso.
-    Chips essenciais (ex: Modelo no Canva, Baixar Plano de Ação, Baixar Guia do Curso) permanecem até o usuário utilizar.
+    Chips essenciais (ex: Modelo no Canva, Baixar Plano de Ação, Baixar Guia do Curso, Baixar Dossiê 007) permanecem até o usuário utilizar.
     """
     base_replies = ["Novo Tema", "Preciso de exemplo"]
     # Detecta o TEMA da conversa (olhando o início do histórico)
@@ -102,8 +102,9 @@ def gerar_quick_replies(question, explicacao, history=None):
     tema_acne = False
     tema_plano_acao = False
     tema_guia_curso = False
+    tema_dossie_007 = False
 
-    # Palavras-chave para plano de ação/onboarding e guia do curso
+    # Palavras-chave para materiais especiais
     PLANO_ACAO_KEYWORDS = [
         "plano de ação", "pdf plano de ação", "atividade da primeira semana",
         "material do onboarding", "ação consultório", "plano onboarding",
@@ -114,9 +115,12 @@ def gerar_quick_replies(question, explicacao, history=None):
         "manual do curso", "manual cht", "material de onboarding",
         "passos iniciais", "guia onboarding", "baixar guia do curso"
     ]
+    DOSSIÊ_007_KEYWORDS = [
+        "dossiê 007", "dossie 007", "dossiê captação", "dossie aula 5.8",
+        "captação de pacientes", "estratégias 007", "baixar dossiê 007"
+    ]
 
     if history and isinstance(history, list) and len(history) > 0:
-        # Busca a PRIMEIRA pergunta do aluno para identificar o contexto geral
         for msg in history:
             if "user" in msg and isinstance(msg["user"], str):
                 q = msg["user"].lower()
@@ -132,6 +136,9 @@ def gerar_quick_replies(question, explicacao, history=None):
                 elif any(x in q for x in GUIA_CURSO_KEYWORDS):
                     tema_guia_curso = True
                     break
+                elif any(x in q for x in DOSSIÊ_007_KEYWORDS):
+                    tema_dossie_007 = True
+                    break
     else:
         q = question.lower()
         if any(x in q for x in ["health plan", "healthplan", "realplan"]):
@@ -142,6 +149,8 @@ def gerar_quick_replies(question, explicacao, history=None):
             tema_plano_acao = True
         elif any(x in q for x in GUIA_CURSO_KEYWORDS):
             tema_guia_curso = True
+        elif any(x in q for x in DOSSIÊ_007_KEYWORDS):
+            tema_dossie_007 = True
 
     replies = []
     if tema_healthplan:
@@ -152,33 +161,29 @@ def gerar_quick_replies(question, explicacao, history=None):
         replies += ["Baixar Plano de Ação"]
     if tema_guia_curso:
         replies += ["Baixar Guia do Curso"]
+    if tema_dossie_007:
+        replies += ["Baixar Dossiê 007"]
     if not replies:
         replies = base_replies
 
-    # Controle de histórico: identifica chips já usados
     usados = set()
     if history and isinstance(history, list):
         for msg in history:
-            # Se o usuário clicou em um chip
             if "chip" in msg and msg["chip"]:
                 usados.add(msg["chip"].strip().lower())
-            # Ou se já digitou igual ao chip sugerido anteriormente
             if "user" in msg and msg["user"]:
                 u = msg["user"].strip().lower()
                 if u in [x.lower() for x in replies]:
                     usados.add(u)
-    # Chips essenciais
-    ESSENCIAIS = ["modelo no canva", "baixar plano de ação", "baixar guia do curso"]
+    ESSENCIAIS = ["modelo no canva", "baixar plano de ação", "baixar guia do curso", "baixar dossiê 007"]
     filtered = []
     for r in replies:
         if r.lower() in ESSENCIAIS:
-            # Só some se já usado
             if r.lower() not in usados:
                 filtered.append(r)
         else:
             if r.lower() not in usados:
                 filtered.append(r)
-    # Garante pelo menos opções básicas
     if len(filtered) < 2:
         filtered += [r for r in base_replies if r not in filtered]
     return filtered[:3]
@@ -189,11 +194,7 @@ def generate_answer(
     cumprimento_detectado = is_greeting(question)
     pergunta_limpa = remove_greeting_from_question(question)
 
-    # Só responde cumprimento simples
-    if cumprimento_detectado and not pergunta_limpa.strip():
-        return CUMPRIMENTOS_RESPOSTAS[cumprimento_detectado], []
-
-    # --- RESPOSTA ESPECIAL: PDF PLANO DE AÇÃO ONBOARDING ---
+    # --- Bloco especial: PDF Plano de Ação ---
     PLANO_ACAO_KEYWORDS = [
         "plano de ação", "pdf plano de ação", "atividade da primeira semana",
         "material do onboarding", "ação consultório", "plano onboarding",
@@ -201,7 +202,6 @@ def generate_answer(
     ]
     pergunta_baixar_plano = any(x in pergunta_limpa for x in PLANO_ACAO_KEYWORDS) or \
         (question and any(x in question.lower() for x in PLANO_ACAO_KEYWORDS))
-
     if pergunta_baixar_plano or (question.strip().lower() == "baixar plano de ação"):
         resposta = (
             "<strong>Plano de Ação do Consultório High Ticket</strong><br>"
@@ -217,7 +217,7 @@ def generate_answer(
         )
         return resposta, []
 
-    # --- RESPOSTA ESPECIAL: PDF GUIA DO CURSO CHT ---
+    # --- Bloco especial: PDF Guia do Curso ---
     GUIA_CURSO_KEYWORDS = [
         "guia do curso", "guia cht", "guia consultório high ticket",
         "manual do curso", "manual cht", "material de onboarding",
@@ -239,6 +239,28 @@ def generate_answer(
             "<a class='chip' href='https://nandamac-my.sharepoint.com/:b:/p/lmacdowell/EQZrQJpHXlVCsK1N5YdDIHEBHocn7FR2yQUHhydgN84yOw?e=GAut9r' target='_blank'>📄 Baixar Guia do Curso Consultório High Ticket</a><br><br>"
             "Você também pode encontrar esse PDF fixado no módulo de onboarding da sua área de alunos.<br>"
             "Se precisar de ajuda para acessar, me avise por aqui!"
+        )
+        return resposta, []
+
+    # --- Bloco especial: PDF Dossiê 007 ---
+    DOSSIÊ_007_KEYWORDS = [
+        "dossiê 007", "dossie 007", "dossiê captação", "dossie aula 5.8",
+        "captação de pacientes", "estratégias 007", "baixar dossiê 007"
+    ]
+    pergunta_dossie_007 = any(x in pergunta_limpa for x in DOSSIÊ_007_KEYWORDS) or \
+        (question and any(x in question.lower() for x in DOSSIÊ_007_KEYWORDS))
+    if pergunta_dossie_007 or (question.strip().lower() == "baixar dossiê 007"):
+        resposta = (
+            "<strong>Dossiê 007 – Captação de Pacientes High Ticket</strong><br>"
+            "Esse material especial faz parte da Aula 5.8 do curso e reúne 3 estratégias comprovadas para você captar, reter e fidelizar pacientes High Ticket de forma ética e lucrativa.<br><br>"
+            "<b>O que você encontra nesse PDF:</b><br>"
+            "- Networking inteligente com outros profissionais da saúde para gerar indicações<br>"
+            "- Scripts prontos para confirmação e remarcação de consultas (elimine faltas e remarcações)<br>"
+            "- Scripts e estratégias para reativar pacientes antigos<br>"
+            "- Técnicas de encantamento, reciprocidade e presentes memoráveis para fidelizar<br><br>"
+            "<a class='chip' href='https://nandamac-my.sharepoint.com/:b:/p/lmacdowell/EVdOpjU1frVBhApTKmmYAwgBFkbNggnj2Cp0w9luTajxgg?e=iQOnk0' target='_blank'>📄 Baixar Dossiê 007 – Captação de Pacientes High Ticket</a><br><br>"
+            "Esse PDF está disponível na Aula 5.8 do Módulo 5 e pode ser baixado sempre que precisar.<br>"
+            "Se tiver qualquer dúvida para aplicar as ações, pode me perguntar por aqui!"
         )
         return resposta, []
 
