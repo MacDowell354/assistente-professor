@@ -6,6 +6,8 @@
   <title>IA - Nanda Mac</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
+    /* ... (todo o seu CSS igual ao anterior, sem mudanças) ... */
+    /* (copiei o seu CSS na íntegra) */
     :root {
       --bg-main: #f8fafc;
       --chat-bubble-ia: #ffffff;
@@ -224,6 +226,11 @@
     function feedback(btn) {
       document.querySelectorAll('.feedback button').forEach(b=>b.classList.remove('selected'));
       btn.classList.add('selected');
+    }
+    // Scroll automático para o final do chat
+    window.onload = function() {
+      var box = document.getElementById('chat-box');
+      if (box) box.scrollTop = box.scrollHeight;
     }
   </script>
 </head>
