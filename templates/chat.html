@@ -6,98 +6,226 @@
   <title>IA - Nanda Mac</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --bg-main: #f8fafc;
+      --chat-bubble-ia: #ffffff;
+      --chat-bubble-user: #e7effc;
+      --border-bubble: #e4e6ea;
+      --text-main: #232d3b;
+      --blue-navy: #365486;
+      --blue-accent: #5893df;
+      --chip-bg: #fff;
+      --chip-border: #b4c8e9;
+      --chip-text: #365486;
+      --input-bg: #f4f6fb;
+    }
     body {
-      font-family: 'Inter', sans-serif;
-      background-color: #f8f9fb;
+      font-family: 'Inter', Arial, sans-serif;
+      background-color: var(--bg-main);
       margin: 0;
       padding: 0;
-      color: #333;
+      color: var(--text-main);
     }
     .container {
-      max-width: 720px;
-      margin: 2rem auto;
-      background: white;
-      border-radius: 16px;
-      box-shadow: 0 0 12px rgba(0,0,0,0.05);
-      padding: 2rem;
+      max-width: 640px;
+      margin: 2.5rem auto;
+      background: #fff;
+      border-radius: 24px;
+      box-shadow: 0 4px 28px rgba(54,84,134,0.07);
+      padding: 0;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      min-height: 80vh;
     }
     .header {
       text-align: center;
-      margin-bottom: 1.5rem;
-    }
-    .header h1 {
-      font-size: 1.8rem;
-      color: #6c3de2;
-      margin: 0;
+      padding: 2rem 2rem 1.5rem 2rem;
+      border-bottom: 1px solid #f1f3f8;
+      background: var(--bg-main);
     }
     .header .emoji {
-      font-size: 1.5rem;
+      font-size: 2.1rem;
+      margin-bottom: 0.25rem;
+      display: block;
+    }
+    .header h1 {
+      font-size: 2.1rem;
+      color: var(--blue-navy);
+      font-weight: 700;
+      margin: 0;
+      letter-spacing: -1px;
     }
     .intro {
-      background-color: #f1f3f8;
-      padding: 1.25rem;
-      border-radius: 12px;
-      margin-bottom: 1.5rem;
-    }
-    .intro p {
-      margin: 0.6rem 0;
-      line-height: 1.5;
+      background-color: #f8fafc;
+      border-left: 4px solid var(--blue-accent);
+      padding: 1.2rem 1.2rem 1.2rem 2rem;
+      border-radius: 0 20px 20px 0;
+      margin: 1.5rem 0 1.2rem 0;
+      color: var(--blue-navy);
+      font-size: 1.08rem;
+      box-shadow: 0 2px 8px rgba(54,84,134,0.04);
     }
     .chat-box {
-      max-height: 400px;
+      flex: 1;
+      max-height: 50vh;
+      min-height: 300px;
       overflow-y: auto;
-      margin-bottom: 1.5rem;
-    }
-    .message.user {
-      background-color: #e7e5fd;
-      padding: 0.75rem;
-      border-radius: 12px;
-      margin-bottom: 0.75rem;
-      color: #372aa0;
-      font-weight: 600;
-    }
-    .message.assistant {
-      background-color: #fffefb;
-      padding: 0.9rem;
-      border-left: 4px solid #ffeb99;
-      border-radius: 12px;
-      margin-bottom: 0.75rem;
-    }
-    .thinking {
-      background-color: #fff4cc;
-      padding: 0.75rem;
-      border-radius: 8px;
-      color: #6a4d00;
-      margin-bottom: 1rem;
-      font-weight: 500;
-      font-style: italic;
-    }
-    form {
+      padding: 1rem 2rem 0.5rem 2rem;
+      background: #f8fafc;
       display: flex;
       flex-direction: column;
     }
+    .message {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.85rem;
+      margin-bottom: 0.6rem;
+      line-height: 1.6;
+    }
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #e3e8f1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.7rem;
+      color: var(--blue-navy);
+      font-weight: 700;
+    }
+    .message.assistant .bubble {
+      background: var(--chat-bubble-ia);
+      color: var(--text-main);
+      border-radius: 20px 20px 20px 8px;
+      border: 1.5px solid var(--border-bubble);
+      box-shadow: 0 1px 4px rgba(54,84,134,0.06);
+      padding: 1.05rem 1.2rem;
+      font-size: 1.06rem;
+      min-width: 0;
+      max-width: 85%;
+    }
+    .message.user {
+      flex-direction: row-reverse;
+      justify-content: flex-end;
+    }
+    .message.user .avatar {
+      background: var(--blue-accent);
+      color: #fff;
+      font-weight: 700;
+    }
+    .message.user .bubble {
+      background: var(--chat-bubble-user);
+      color: var(--blue-navy);
+      border-radius: 20px 20px 8px 20px;
+      border: 1.5px solid var(--chip-border);
+      font-weight: 500;
+      font-size: 1.06rem;
+      min-width: 0;
+      max-width: 85%;
+      box-shadow: 0 2px 8px rgba(54,84,134,0.05);
+      padding: 1.05rem 1.2rem;
+    }
+    .quick-replies {
+      margin: 1rem 0 0.5rem 3.4rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.7rem;
+    }
+    .chip {
+      display: inline-block;
+      padding: 0.5rem 1.3rem;
+      background: var(--chip-bg);
+      border-radius: 18px;
+      border: 1.5px solid var(--chip-border);
+      color: var(--chip-text);
+      font-weight: 600;
+      font-size: 1.01rem;
+      cursor: pointer;
+      transition: background 0.18s, color 0.18s, box-shadow 0.18s;
+      box-shadow: 0 1px 3px rgba(54,84,134,0.04);
+      user-select: none;
+    }
+    .chip:hover {
+      background: var(--blue-accent);
+      color: #fff;
+      border-color: var(--blue-accent);
+    }
+    .feedback {
+      margin-left: 3.4rem;
+      margin-bottom: 1.2rem;
+    }
+    .feedback button {
+      border: none;
+      background: transparent;
+      font-size: 1.2rem;
+      cursor: pointer;
+      margin-right: 0.7rem;
+      transition: color 0.2s;
+      color: #b9b9c6;
+    }
+    .feedback button.selected,
+    .feedback button:hover {
+      color: var(--blue-accent);
+    }
+    form {
+      display: flex;
+      flex-direction: row;
+      padding: 1.1rem 2rem 1.6rem 2rem;
+      background: #fff;
+      border-top: 1px solid #f1f3f8;
+      gap: 0.7rem;
+      align-items: center;
+    }
     textarea {
+      flex: 1;
       resize: none;
-      padding: 1rem;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      font-size: 1rem;
-      margin-bottom: 1rem;
+      padding: 1.07rem 1.15rem;
+      border-radius: 15px;
+      border: 1.5px solid #e2e6ef;
+      font-size: 1.09rem;
+      background: var(--input-bg);
+      min-height: 48px;
+      max-height: 120px;
+      transition: border 0.2s;
+      outline: none;
+    }
+    textarea:focus {
+      border: 1.5px solid var(--blue-accent);
+      background: #fff;
     }
     button {
-      background-color: #6c3de2;
+      background-color: var(--blue-navy);
       color: white;
-      padding: 0.8rem;
-      font-size: 1rem;
+      padding: 0.9rem 2.1rem;
+      font-size: 1.08rem;
       border: none;
-      border-radius: 8px;
+      border-radius: 15px;
       cursor: pointer;
-      font-weight: 600;
+      font-weight: 700;
+      transition: background 0.18s;
     }
     button:hover {
-      background-color: #5930c4;
+      background-color: var(--blue-accent);
+    }
+    @media (max-width: 768px) {
+      .container { max-width: 98vw; }
+      .header, .chat-box, form { padding-left: 0.7rem; padding-right: 0.7rem; }
     }
   </style>
+  <script>
+    // Quick reply: envia texto para textarea e submit automático
+    function setQuickReply(text) {
+      document.querySelector('textarea[name="question"]').value = text;
+      document.querySelector('form').submit();
+    }
+    // Feedback (dummy visual, para UX)
+    function feedback(btn) {
+      document.querySelectorAll('.feedback button').forEach(b=>b.classList.remove('selected'));
+      btn.classList.add('selected');
+    }
+  </script>
 </head>
 <body>
   <div class="container">
@@ -107,26 +235,40 @@
     </div>
 
     <div class="intro">
-      <p><strong>IA - Nanda Mac:</strong></p>
-      <p>Olá! 😊 Seja muito bem-vindo ao seu espaço de aprendizado!</p>
-      <p>Eu sou a <strong>Nanda Mac.ia</strong>, sua professora virtual aqui no curso <em>Consultório High Ticket</em>. Estou aqui para caminhar com você e esclarecer todas as suas dúvidas com base nas aulas do curso, como uma <strong>professora dedicada e experiente</strong>.</p>
-      <p>Meu objetivo é te ajudar a aplicar o método da Nanda com clareza, segurança e foco nos resultados.</p>
-      <p>Pode perguntar o que quiser, que eu te explico como se estivéssemos em uma aula particular. 🥰</p>
+      <p><strong>IA - Nanda Mac:</strong> Olá! 😊 Seja muito bem-vindo ao seu espaço de aprendizado!</p>
+      <p>Eu sou a <strong>Nanda Mac.ia</strong>, professora virtual do curso <em>Consultório High Ticket</em>. Tire dúvidas e converse como se estivesse comigo no consultório.</p>
+      <p>Quer avançar ou mudar de assunto? Só clicar nos botões rápidos ou digitar sua dúvida abaixo.</p>
     </div>
 
     <div class="chat-box" id="chat-box">
       {% for msg in history %}
-        <div class="message user"><strong>Você:</strong> {{ msg.user }}</div>
-        <div class="message assistant">{{ msg.ai | safe }}</div>
+        <div class="message user">
+          <div class="avatar" title="Você">👤</div>
+          <div class="bubble"><strong>Você:</strong> {{ msg.user }}</div>
+        </div>
+        <div class="message assistant">
+          <div class="avatar" title="Nanda Mac.ia">🤖</div>
+          <div class="bubble">{{ msg.ai | safe }}</div>
+        </div>
+        <!-- Quick replies exemplo - personalize conforme saída da IA -->
+        {% if msg.quick_replies %}
+          <div class="quick-replies">
+            {% for reply in msg.quick_replies %}
+              <span class="chip" onclick="setQuickReply('{{ reply }}')">{{ reply }}</span>
+            {% endfor %}
+          </div>
+        {% endif %}
+        <!-- Feedback -->
+        <div class="feedback">
+          <button type="button" onclick="feedback(this)" title="Me ajudou!">👍</button>
+          <button type="button" onclick="feedback(this)" title="Preciso de mais detalhes">👎</button>
+        </div>
       {% endfor %}
     </div>
 
-    <form method="POST" action="/ask">
-      <!-- Persiste o histórico de mensagens -->
+    <form method="POST" action="/ask" autocomplete="off">
       <input type="hidden" name="history" value='{{ history | tojson }}'>
-
-      <!-- Este campo casa com `question: str = Form(...)` no FastAPI -->
-      <textarea name="question" rows="3" placeholder="Digite sua dúvida aqui..."></textarea>
+      <textarea name="question" rows="2" placeholder="Digite sua dúvida (ex: Como criar um Health Plan para dermatologia?)"></textarea>
       <button type="submit">Enviar</button>
     </form>
   </div>
