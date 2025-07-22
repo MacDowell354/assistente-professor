@@ -264,6 +264,34 @@ def generate_answer(
         )
         return resposta, []
 
+    # --- Bloco especial: Check-list Consultório High Ticket ---
+    CHECKLIST_KEYWORDS = [
+        "checklist", "check-list", "lista de checagem", "check list", "check list cht",
+        "checklist cht", "check list consultório", "check-list consultório", "lista de verificação"
+    ]
+    pergunta_checklist = any(x in pergunta_limpa for x in CHECKLIST_KEYWORDS) or \
+        (question and any(x in question.lower() for x in CHECKLIST_KEYWORDS))
+    if pergunta_checklist or (question.strip().lower() == "baixar checklist"):
+        resposta = (
+            "<strong>Check-list Consultório High Ticket</strong><br>"
+            "Esse check-list prático é um guia rápido para você avaliar se já aplicou os principais fundamentos do método no seu consultório.<br><br>"
+            "<b>O que o Check-list ajuda você a revisar:</b><br>"
+            "- Identificou e comunicou seu diferencial?<br>"
+            "- Está com a agenda organizada?<br>"
+            "- Implementou o script de recepção e encantamento?<br>"
+            "- Já validou sua precificação e proposta de valor?<br>"
+            "- Está captando e fidelizando pacientes High Ticket de forma recorrente?<br><br>"
+            "<a class='chip' href='https://nandamac-my.sharepoint.com/:b:/p/lmacdowell/EcYEXrJ9q3pAq8A62K6YNqgBjlh0AkkHG3k43el7gYaK9Q?e=8F9VnQ' target='_blank'>📄 Baixar Check-list Consultório High Ticket</a><br><br>"
+            "Baixe, revise e mantenha sempre esse material por perto para garantir que está no caminho certo!<br>"
+            "Se precisar de orientação sobre algum item, me envie sua dúvida."
+        )
+        return resposta, []
+
+    # Evita saudação/repetição para chips
+    is_chip = any(question.strip().lower() == c.lower() for c in CHIP_PERGUNTAS)
+
+
+
     # Evita saudação/repetição para chips
     is_chip = any(question.strip().lower() == c.lower() for c in CHIP_PERGUNTAS)
     mostrar_saudacao = is_first_question and not is_chip
