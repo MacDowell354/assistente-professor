@@ -43,7 +43,8 @@ CUMPRIMENTOS_RESPOSTAS = {
 # Lista de perguntas/chips que nunca devem receber saudação ou repetição
 CHIP_PERGUNTAS = [
     "Ver Exemplo de Plano", "Modelo no Canva", "Modelo PDF", "Novo Tema",
-    "Preciso de exemplo", "Exemplo para Acne", "Tratamento Oral", "Cuidados Diários"
+    "Preciso de exemplo", "Exemplo para Acne", "Tratamento Oral", "Cuidados Diários",
+    "Baixar Plano de Ação"
 ]
 
 def is_greeting(question):
@@ -93,12 +94,20 @@ def search_transcripts_by_theme(theme):
 def gerar_quick_replies(question, explicacao, history=None):
     """
     Sugere quick replies (chips) de acordo com o tema original e histórico de uso.
-    Chips essenciais (ex: Modelo no Canva) permanecem até o usuário utilizar.
+    Chips essenciais (ex: Modelo no Canva, Baixar Plano de Ação) permanecem até o usuário utilizar.
     """
     base_replies = ["Novo Tema", "Preciso de exemplo"]
     # Detecta o TEMA da conversa (olhando o início do histórico)
     tema_healthplan = False
     tema_acne = False
+    tema_plano_acao = False
+
+    # Palavras-chave para plano de ação/onboarding
+    PLANO_ACAO_KEYWORDS = [
+        "plano de ação", "pdf plano de ação", "atividade da primeira semana",
+        "material do onboarding", "ação consultório", "plano onboarding",
+        "plano de ação consultório", "atividade plano", "baixar plano de ação"
+    ]
 
     if history and isinstance(history, list) and len(history) > 0:
         # Busca a PRIMEIRA pergunta do aluno para identificar o contexto geral
@@ -111,18 +120,25 @@ def gerar_quick_replies(question, explicacao, history=None):
                 elif "acne" in q:
                     tema_acne = True
                     break
+                elif any(x in q for x in PLANO_ACAO_KEYWORDS):
+                    tema_plano_acao = True
+                    break
     else:
         q = question.lower()
         if any(x in q for x in ["health plan", "healthplan", "realplan"]):
             tema_healthplan = True
         elif "acne" in q:
             tema_acne = True
+        elif any(x in q for x in PLANO_ACAO_KEYWORDS):
+            tema_plano_acao = True
 
     replies = []
     if tema_healthplan:
         replies += ["Ver Exemplo de Plano", "Modelo no Canva"]
     elif tema_acne:
         replies += ["Exemplo para Acne", "Tratamento Oral", "Cuidados Diários"]
+    if tema_plano_acao:
+        replies += ["Baixar Plano de Ação"]
     if not replies:
         replies = base_replies
 
@@ -139,7 +155,7 @@ def gerar_quick_replies(question, explicacao, history=None):
                 if u in [x.lower() for x in replies]:
                     usados.add(u)
     # Chips essenciais
-    ESSENCIAIS = ["modelo no canva"]
+    ESSENCIAIS = ["modelo no canva", "baixar plano de ação"]
     filtered = []
     for r in replies:
         if r.lower() in ESSENCIAIS:
@@ -163,6 +179,30 @@ def generate_answer(
     # Só responde cumprimento simples
     if cumprimento_detectado and not pergunta_limpa.strip():
         return CUMPRIMENTOS_RESPOSTAS[cumprimento_detectado], []
+
+    # --- RESPOSTA ESPECIAL: PDF PLANO DE AÇÃO ONBOARDING ---
+    PLANO_ACAO_KEYWORDS = [
+        "plano de ação", "pdf plano de ação", "atividade da primeira semana",
+        "material do onboarding", "ação consultório", "plano onboarding",
+        "plano de ação consultório", "atividade plano", "baixar plano de ação"
+    ]
+    pergunta_baixar_plano = any(x in pergunta_limpa for x in PLANO_ACAO_KEYWORDS) or \
+        (question and any(x in question.lower() for x in PLANO_ACAO_KEYWORDS))
+
+    if pergunta_baixar_plano or (question.strip().lower() == "baixar plano de ação"):
+        resposta = (
+            "<strong>Plano de Ação do Consultório High Ticket</strong><br>"
+            "Esse material faz parte do onboarding do curso e é essencial para você organizar seus próximos passos.<br><br>"
+            "<b>O que você vai encontrar nesse PDF:</b><br>"
+            "- Reflexão sobre bloqueios financeiros e autoconfiança<br>"
+            "- Definição de nicho de atuação e ajustes de posicionamento<br>"
+            "- Planejamento de ações práticas para atrair pacientes High Ticket já na primeira semana<br>"
+            "- Exercícios para transformar sua mentalidade e o consultório<br><br>"
+            "<a class='chip' href='https://nandamac-my.sharepoint.com/:b:/p/lmacdowell/EV6wZ42I9nhHpmnSGa4DHfEBaff0ewZIsmH_4LqLAI46eQ?e=gd5hR0' target='_blank'>📄 Baixar Plano de Ação do Consultório High Ticket</a><br><br>"
+            "Você também pode baixar esse PDF dentro do módulo de onboarding, na sua área de alunos.<br>"
+            "Se tiver dificuldade para acessar, me avise que envio suporte!"
+        )
+        return resposta, []
 
     # Evita saudação/repetição para chips
     is_chip = any(question.strip().lower() == c.lower() for c in CHIP_PERGUNTAS)
