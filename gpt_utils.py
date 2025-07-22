@@ -40,10 +40,11 @@ CUMPRIMENTOS_RESPOSTAS = {
     "e aí": "E aí! Se quiser tirar dúvidas sobre o curso, estou por aqui para te ajudar."
 }
 
+# Lista de perguntas/chips que nunca devem receber saudação ou repetição
 CHIP_PERGUNTAS = [
     "Ver Exemplo de Plano", "Modelo no Canva", "Modelo PDF", "Novo Tema",
     "Preciso de exemplo", "Exemplo para Acne", "Tratamento Oral", "Cuidados Diários",
-    "Baixar Plano de Ação", "Baixar Guia do Curso", "Baixar Dossiê 007", "Baixar Check-list"
+    "Baixar Plano de Ação", "Baixar Guia do Curso", "Baixar Dossiê 007"
 ]
 
 def is_greeting(question):
@@ -91,14 +92,19 @@ def search_transcripts_by_theme(theme):
     return snippet.strip()
 
 def gerar_quick_replies(question, explicacao, history=None):
+    """
+    Sugere quick replies (chips) de acordo com o tema original e histórico de uso.
+    Chips essenciais (ex: Modelo no Canva, Baixar Plano de Ação, Baixar Guia do Curso, Baixar Dossiê 007) permanecem até o usuário utilizar.
+    """
     base_replies = ["Novo Tema", "Preciso de exemplo"]
+    # Detecta o TEMA da conversa (olhando o início do histórico)
     tema_healthplan = False
     tema_acne = False
     tema_plano_acao = False
     tema_guia_curso = False
     tema_dossie_007 = False
-    tema_checklist = False
 
+    # Palavras-chave para materiais especiais
     PLANO_ACAO_KEYWORDS = [
         "plano de ação", "pdf plano de ação", "atividade da primeira semana",
         "material do onboarding", "ação consultório", "plano onboarding",
@@ -112,10 +118,6 @@ def gerar_quick_replies(question, explicacao, history=None):
     DOSSIÊ_007_KEYWORDS = [
         "dossiê 007", "dossie 007", "dossiê captação", "dossie aula 5.8",
         "captação de pacientes", "estratégias 007", "baixar dossiê 007"
-    ]
-    CHECKLIST_KEYWORDS = [
-        "check-list consultório", "checklist consultório", "checklist high ticket",
-        "check-list high ticket", "checklist aula 6.8", "baixar check-list", "checklist cht"
     ]
 
     if history and isinstance(history, list) and len(history) > 0:
@@ -137,9 +139,6 @@ def gerar_quick_replies(question, explicacao, history=None):
                 elif any(x in q for x in DOSSIÊ_007_KEYWORDS):
                     tema_dossie_007 = True
                     break
-                elif any(x in q for x in CHECKLIST_KEYWORDS):
-                    tema_checklist = True
-                    break
     else:
         q = question.lower()
         if any(x in q for x in ["health plan", "healthplan", "realplan"]):
@@ -152,8 +151,6 @@ def gerar_quick_replies(question, explicacao, history=None):
             tema_guia_curso = True
         elif any(x in q for x in DOSSIÊ_007_KEYWORDS):
             tema_dossie_007 = True
-        elif any(x in q for x in CHECKLIST_KEYWORDS):
-            tema_checklist = True
 
     replies = []
     if tema_healthplan:
@@ -166,8 +163,6 @@ def gerar_quick_replies(question, explicacao, history=None):
         replies += ["Baixar Guia do Curso"]
     if tema_dossie_007:
         replies += ["Baixar Dossiê 007"]
-    if tema_checklist:
-        replies += ["Baixar Check-list"]
     if not replies:
         replies = base_replies
 
@@ -180,9 +175,7 @@ def gerar_quick_replies(question, explicacao, history=None):
                 u = msg["user"].strip().lower()
                 if u in [x.lower() for x in replies]:
                     usados.add(u)
-    ESSENCIAIS = [
-        "modelo no canva", "baixar plano de ação", "baixar guia do curso", "baixar dossiê 007", "baixar check-list"
-    ]
+    ESSENCIAIS = ["modelo no canva", "baixar plano de ação", "baixar guia do curso", "baixar dossiê 007"]
     filtered = []
     for r in replies:
         if r.lower() in ESSENCIAIS:
@@ -271,32 +264,17 @@ def generate_answer(
         )
         return resposta, []
 
-    # --- Bloco especial: PDF Check-list Consultório High Ticket ---
-       # --- Bloco especial: PDF Check-list Consultório High Ticket ---
-    CHECKLIST_KEYWORDS = [
-        "check-list consultório", "checklist consultório", "checklist high ticket",
-        "check-list high ticket", "checklist aula 6.8", "baixar check-list", "checklist cht"
-    ]
-    pergunta_checklist = any(x in pergunta_limpa for x in CHECKLIST_KEYWORDS) or \
-        (question and any(x in question.lower() for x in CHECKLIST_KEYWORDS))
-    if pergunta_checklist or (question.strip().lower() == "baixar check-list"):
-        resposta = (
-            "<strong>Check-list do Consultório High Ticket</strong><br>"
-            "Esse material prático da Aula 6.8 traz uma lista detalhada de ajustes para transformar seu consultório em um ambiente High Ticket, desde atendimento e linguagem até ambiente físico e equipe.<br><br>"
-            "<b>O que você encontra neste check-list:</b><br>"
-            "- Adaptação da linguagem para encantar e fidelizar pacientes<br>"
-            "- Scripts e rotinas para atendimento High Ticket<br>"
-            "- Padrão visual e organização do ambiente<br>"
-            "- Brindes, política de descontos, apresentação de valores<br>"
-            "- Check-list por etapas: atendimento, ambiente, posicionamento digital e mais<br><br>"
-            "<a class='chip' href='https://nandamac-my.sharepoint.com/:b:/p/lmacdowell/EaV1U2Y-6CZHoVL8DhxYDXQBeMienn2uZG4Qsruo1sBcuw?e=zz0TUL' target='_blank'>📄 Baixar Check-list do Consultório High Ticket</a><br><br>"
-            "Esse PDF está disponível na Aula 6.8 e pode ser baixado a qualquer momento.<br>"
-            "Se quiser detalhar algum item ou receber dicas práticas para aplicar cada etapa, é só perguntar!"
-        )
-        return resposta, []
+    # Evita saudação/repetição para chips
+    is_chip = any(question.strip().lower() == c.lower() for c in CHIP_PERGUNTAS)
+    mostrar_saudacao = is_first_question and not is_chip
+    mostrar_pergunta_repetida = is_first_question and not is_chip
+
+    saudacao = random.choice(GREETINGS) if mostrar_saudacao else ""
+    fechamento = random.choice(CLOSINGS)
 
     # --- RESPOSTA ESPECIAL: "Modelo no Canva" para Health Plan/RealPlan ---
     if question.strip().lower() == "modelo no canva":
+        # Busca o TEMA da conversa (primeira pergunta relevante do histórico)
         tema_healthplan = False
         if history and isinstance(history, list):
             for msg in history:
@@ -327,11 +305,8 @@ def generate_answer(
 
     snippet = search_transcripts_by_theme(pergunta_limpa if pergunta_limpa.strip() else question)
     pergunta_repetida = (
-        f"<strong>Sua pergunta:</strong> \"{question}\"<br><br>" if is_first_question else ""
+        f"<strong>Sua pergunta:</strong> \"{question}\"<br><br>" if mostrar_pergunta_repetida else ""
     )
-
-    saudacao = random.choice(GREETINGS) if is_first_question and not any(question.strip().lower() == c.lower() for c in CHIP_PERGUNTAS) else ""
-    fechamento = random.choice(CLOSINGS)
 
     if history:
         prompt = (
@@ -384,7 +359,7 @@ def generate_answer(
     quick_replies = gerar_quick_replies(question, explicacao, history)
 
     resposta = ""
-    if saudacao:
+    if mostrar_saudacao:
         resposta += f"{saudacao}<br><br>{pergunta_repetida}{explicacao}<br><br>{fechamento}"
     else:
         resposta += f"{explicacao}<br><br>{fechamento}"
