@@ -272,27 +272,28 @@ def generate_answer(
         return resposta, []
 
     # --- Bloco especial: PDF Check-list Consultório High Ticket ---
-    CHECKLIST_KEYWORDS = [
-        "check-list consultório", "checklist consultório", "checklist high ticket",
-        "check-list high ticket", "checklist aula 6.8", "baixar check-list", "checklist cht"
-    ]
-    pergunta_checklist = any(x in pergunta_limpa for x in CHECKLIST_KEYWORDS) or \
-        (question and any(x in question.lower() for x in CHECKLIST_KEYWORDS))
-    if pergunta_checklist or (question.strip().lower() == "baixar check-list"):
-        resposta = (
-            "<strong>Check-list do Consultório High Ticket</strong><br>"
-            "Esse material prático da Aula 6.8 traz uma lista detalhada de ajustes para transformar seu consultório em um ambiente High Ticket, desde atendimento e linguagem até ambiente físico e equipe.<br><br>"
-            "<b>O que você encontra neste check-list:</b><br>"
-            "- Adaptação da linguagem para encantar e fidelizar pacientes<br>"
-            "- Scripts e rotinas para atendimento High Ticket<br>"
-            "- Padrão visual e organização do ambiente<br>"
-            "- Brindes, política de descontos, apresentação de valores<br>"
-            "- Check-list por etapas: atendimento, ambiente, posicionamento digital e mais<br><br>"
-            "<a class='chip' href='https://nandamac-my.sharepoint.com/:b:/p/lmacdowell/EaV1U2Y-6CZHoVL8DhxYDXQBeMienn2uZG4Qsruo1sBcuw?e=pTXlmu' target='_blank'>📄 Baixar Check-list do Consultório High Ticket</a><br><br>"
-            "Esse PDF está disponível na Aula 6.8 e pode ser baixado a qualquer momento.<br>"
-            "Se quiser detalhar algum item ou receber dicas práticas para aplicar cada etapa, é só perguntar!"
-        )
-        return resposta, []
+   # --- Bloco especial: PDF Check-list Consultório High Ticket ---
+CHECKLIST_KEYWORDS = [
+    "check-list consultório", "checklist consultório", "checklist high ticket",
+    "check-list high ticket", "checklist aula 6.8", "baixar check-list", "checklist cht"
+]
+pergunta_checklist = any(x in pergunta_limpa for x in CHECKLIST_KEYWORDS) or \
+    (question and any(x in question.lower() for x in CHECKLIST_KEYWORDS))
+if pergunta_checklist or (question.strip().lower() == "baixar check-list"):
+    resposta = (
+        "<strong>Check-list do Consultório High Ticket</strong><br>"
+        "Esse material prático da Aula 6.8 traz uma lista detalhada de ajustes para transformar seu consultório em um ambiente High Ticket, desde atendimento e linguagem até ambiente físico e equipe.<br><br>"
+        "<b>O que você encontra neste check-list:</b><br>"
+        "- Adaptação da linguagem para encantar e fidelizar pacientes<br>"
+        "- Scripts e rotinas para atendimento High Ticket<br>"
+        "- Padrão visual e organização do ambiente<br>"
+        "- Brindes, política de descontos, apresentação de valores<br>"
+        "- Check-list por etapas: atendimento, ambiente, posicionamento digital e mais<br><br>"
+        "<a class='chip' href='https://nandamac-my.sharepoint.com/:b:/p/lmacdowell/EaV1U2Y-6CZHoVL8DhxYDXQBeMienn2uZG4Qsruo1sBcuw?e=zz0TUL' target='_blank'>📄 Baixar Check-list do Consultório High Ticket</a><br><br>"
+        "Esse PDF está disponível na Aula 6.8 e pode ser baixado a qualquer momento.<br>"
+        "Se quiser detalhar algum item ou receber dicas práticas para aplicar cada etapa, é só perguntar!"
+    )
+    return resposta, []
 
     # Evita saudação/repetição para chips
     is_chip = any(question.strip().lower() == c.lower() for c in CHIP_PERGUNTAS)
