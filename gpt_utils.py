@@ -138,6 +138,7 @@ def generate_answer(
         if ("health plan" in last_user_question or "realplan" in last_user_question or "healthplan" in last_user_question):
             resposta = (
                 "Aqui está o modelo de Health Plan para você adaptar ao seu consultório:<br>"
+                "<strong>Esse modelo é 100% editável:</strong> faça uma cópia no Canva, preencha com os dados do seu paciente e adapte conforme a sua especialidade (psicologia, nutrição, dermato, etc.).<br>"
                 "Basta clicar no botão abaixo, fazer login gratuito no Canva e, em seguida, clicar em ‘Usar este modelo’ para editar conforme sua especialidade.<br>"
                 "<a class='chip' href='https://www.canva.com/design/DAEteeUPSUQ/0isBewvgUTJF0gZaRYZw2g/view?utm_content=DAEteeUPSUQ&utm_campaign=designshare&utm_medium=link&utm_source=publishsharelink&mode=preview' target='_blank'>Abrir Modelo no Canva</a>"
             )
