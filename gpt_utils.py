@@ -24,9 +24,11 @@ GREETINGS = [
 ]
 
 CLOSINGS = [
-    "Fique à vontade para perguntar sempre que quiser evoluir.",
-    "Espero ter ajudado! Qualquer dúvida, é só chamar.",
-    "Conte comigo para o seu sucesso no Consultório High Ticket."
+    "Se quiser um exemplo prático ou modelo, clique nos botões abaixo.",
+    "Tem outro desafio no seu consultório? Me conte ou clique em Novo Tema.",
+    "Se quiser aprofundar, escolha uma opção rápida ou pergunte de novo!",
+    "Quer mudar de assunto? Só digitar ‘novo tema’.",
+    "Essa resposta te ajudou? Clique em 👍 ou 👎."
 ]
 
 # Cumprimentos específicos e respostas dedicadas
@@ -89,15 +91,27 @@ def search_transcripts_by_theme(theme):
     snippet = content[start:end]
     return snippet.strip()
 
+def gerar_quick_replies(question, explicacao):
+    """Sugere quick replies (chips) para UX moderna, de acordo com o tema."""
+    base_replies = ["Novo Tema", "Preciso de exemplo", "Modelo PDF"]
+    replies = []
+    q = question.lower()
+    if "plano" in q or "plan" in q:
+        replies += ["Ver Exemplo de Plano", "Modelo PDF"]
+    if "acne" in q:
+        replies += ["Exemplo para Acne", "Tratamento Oral", "Cuidados Diários"]
+    if not replies:
+        replies = base_replies
+    return list(dict.fromkeys(replies))[:3]  # Remove duplicatas e limita a 3
+
 def generate_answer(question, context="", history=None, tipo_de_prompt=None, is_first_question=True):
     cumprimento_detectado = is_greeting(question)
     pergunta_limpa = remove_greeting_from_question(question)
 
     # Se, depois de remover o cumprimento, não sobrou nada relevante, responda só ao cumprimento
     if cumprimento_detectado and not pergunta_limpa.strip():
-        return CUMPRIMENTOS_RESPOSTAS[cumprimento_detectado]
+        return CUMPRIMENTOS_RESPOSTAS[cumprimento_detectado], []
 
-    # Decide se deve exibir saudação e pergunta repetida só na primeira resposta
     mostrar_saudacao = is_first_question
     mostrar_pergunta_repetida = is_first_question
 
@@ -105,7 +119,6 @@ def generate_answer(question, context="", history=None, tipo_de_prompt=None, is_
     fechamento = random.choice(CLOSINGS)
 
     snippet = search_transcripts_by_theme(pergunta_limpa if pergunta_limpa.strip() else question)
-
     pergunta_repetida = f"<strong>Sua pergunta:</strong> \"{question}\"<br><br>" if mostrar_pergunta_repetida else ""
 
     # Gera prompt considerando histórico de chat, se disponível
@@ -157,10 +170,13 @@ def generate_answer(question, context="", history=None, tipo_de_prompt=None, is_
         )
 
     explicacao = response.choices[0].message.content.strip()
+    quick_replies = gerar_quick_replies(question, explicacao)
 
     # Só exibe saudação e pergunta na primeira interação
+    resposta = ""
     if mostrar_saudacao:
-        return f"{saudacao}<br><br>{pergunta_repetida}{explicacao}<br><br>{fechamento}"
+        resposta += f"{saudacao}<br><br>{pergunta_repetida}{explicacao}<br><br>{fechamento}"
     else:
-        return f"{explicacao}<br><br>{fechamento}"
+        resposta += f"{explicacao}<br><br>{fechamento}"
 
+    return resposta, quick_replies
