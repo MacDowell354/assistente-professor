@@ -6,8 +6,7 @@
   <title>IA - Nanda Mac</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
-    /* ... (todo o seu CSS igual ao anterior, sem mudanças) ... */
-    /* (copiei o seu CSS na íntegra) */
+    /* (todo o seu CSS permanece igual) */
     :root {
       --bg-main: #f8fafc;
       --chat-bubble-ia: #ffffff;
@@ -61,12 +60,16 @@
     .intro {
       background-color: #f8fafc;
       border-left: 4px solid var(--blue-accent);
-      padding: 1.2rem 1.2rem 1.2rem 2rem;
-      border-radius: 0 20px 20px 0;
-      margin: 1.5rem 0 1.2rem 0;
+      padding: 1.1rem 1.1rem 1.1rem 1.4rem;
+      border-radius: 0 18px 18px 0;
+      margin: 1.3rem 0 1.0rem 0;
       color: var(--blue-navy);
-      font-size: 1.08rem;
+      font-size: 1.03rem;
       box-shadow: 0 2px 8px rgba(54,84,134,0.04);
+    }
+    .intro .quick-replies {
+      margin: 1.1rem 0 0.1rem 0;
+      gap: 0.4rem;
     }
     .chat-box {
       flex: 1;
@@ -241,11 +244,16 @@
       <h1>IA - Nanda Mac</h1>
     </div>
 
-    <div class="intro">
-      <p><strong>IA - Nanda Mac:</strong> Olá! 😊 Seja muito bem-vindo ao seu espaço de aprendizado!</p>
-      <p>Eu sou a <strong>Nanda Mac.ia</strong>, professora virtual do curso <em>Consultório High Ticket</em>. Tire dúvidas e converse como se estivesse comigo no consultório.</p>
-      <p>Quer avançar ou mudar de assunto? Só clicar nos botões rápidos ou digitar sua dúvida abaixo.</p>
-    </div>
+    {% if history|length == 0 %}
+      <div class="intro">
+        <p><strong>Oi, eu sou a Nanda Mac.ia.</strong> Professora virtual do <em>Consultório High Ticket</em>. Tire dúvidas das aulas, peça exemplos práticos ou pergunte como aplicar o método na sua especialidade.</p>
+        <div class="quick-replies">
+          <span class="chip" onclick="setQuickReply('Como criar um Health Plan para nutrição?')">Como criar um Health Plan?</span>
+          <span class="chip" onclick="setQuickReply('Quais os maiores erros no consultório?')">Erros mais comuns</span>
+          <span class="chip" onclick="setQuickReply('Como melhorar a experiência do paciente?')">Experiência do paciente</span>
+        </div>
+      </div>
+    {% endif %}
 
     <div class="chat-box" id="chat-box">
       {% for msg in history %}
