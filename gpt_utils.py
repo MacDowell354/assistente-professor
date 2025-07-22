@@ -174,14 +174,21 @@ def generate_answer(
 
     # --- RESPOSTA ESPECIAL: "Modelo no Canva" para Health Plan/RealPlan ---
     if question.strip().lower() == "modelo no canva":
-        # Busca última pergunta do usuário para garantir contexto
-        last_user_question = ""
+        # Busca o TEMA da conversa (primeira pergunta relevante do histórico)
+        tema_healthplan = False
         if history and isinstance(history, list):
-            for msg in reversed(history):
-                if "user" in msg and msg["user"].strip():
-                    last_user_question = msg["user"].lower()
-                    break
-        if ("health plan" in last_user_question or "realplan" in last_user_question or "healthplan" in last_user_question):
+            for msg in history:
+                if "user" in msg and isinstance(msg["user"], str):
+                    q = msg["user"].lower()
+                    if any(x in q for x in ["health plan", "healthplan", "realplan"]):
+                        tema_healthplan = True
+                        break
+        else:
+            q = question.lower()
+            if any(x in q for x in ["health plan", "healthplan", "realplan"]):
+                tema_healthplan = True
+
+        if tema_healthplan:
             resposta = (
                 "Aqui está o modelo de Health Plan para você adaptar ao seu consultório:<br>"
                 "<strong>Esse modelo é 100% editável:</strong> faça uma cópia no Canva, preencha com os dados do seu paciente e adapte conforme a sua especialidade (psicologia, nutrição, dermato, etc.).<br>"
