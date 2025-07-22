@@ -90,23 +90,51 @@ def search_transcripts_by_theme(theme):
     snippet = content[start:end]
     return snippet.strip()
 
-def gerar_quick_replies(question, explicacao):
-    """Sugere quick replies (chips) de acordo com o tema."""
+def gerar_quick_replies(question, explicacao, history=None):
+    """
+    Sugere quick replies (chips) de acordo com o tema, removendo só os que o aluno já clicou.
+    Chips essenciais (ex: Modelo no Canva) permanecem até o usuário utilizar.
+    """
     base_replies = ["Novo Tema", "Preciso de exemplo"]
     replies = []
     q = question.lower()
-    # HEALTH PLAN / REALPLAN recebe chip do Canva
+    # Temas que ativam chips extras
     if "health plan" in q or "healthplan" in q or "realplan" in q:
         replies += ["Ver Exemplo de Plano", "Modelo no Canva"]
-    # Outros temas específicos de exemplo
     elif "acne" in q:
         replies += ["Exemplo para Acne", "Tratamento Oral", "Cuidados Diários"]
-    # Se no futuro houver PDF de outros temas, pode incluir aqui:
-    # elif "script de atendimento" in q:
-    #     replies += ["Ver Script", "Modelo PDF"]
     if not replies:
         replies = base_replies
-    return list(dict.fromkeys(replies))[:3]
+
+    # Controle de histórico: identifica chips já usados
+    usados = set()
+    if history and isinstance(history, list):
+        for msg in history:
+            # Checa se veio de um clique de chip (usuário)
+            if "chip" in msg:
+                chip = msg.get("chip")
+                if chip:
+                    usados.add(chip.strip().lower())
+            # Ou se já clicou em um quick_reply sugerido anteriormente
+            if "user" in msg and msg["user"]:
+                u = msg["user"].strip().lower()
+                if u in [x.lower() for x in replies]:
+                    usados.add(u)
+    # Chips que só desaparecem se realmente usados
+    ESSENCIAIS = ["modelo no canva"]
+    filtered = []
+    for r in replies:
+        if r.lower() in ESSENCIAIS:
+            # Só some se já usado
+            if r.lower() not in usados:
+                filtered.append(r)
+        else:
+            if r.lower() not in usados:
+                filtered.append(r)
+    # Garante pelo menos opções básicas
+    if len(filtered) < 2:
+        filtered += [r for r in base_replies if r not in filtered]
+    return filtered[:3]
 
 def generate_answer(
     question, context="", history=None, tipo_de_prompt=None, is_first_question=True
@@ -203,7 +231,8 @@ def generate_answer(
         )
 
     explicacao = response.choices[0].message.content.strip()
-    quick_replies = gerar_quick_replies(question, explicacao)
+    # **AQUI: chama gerar_quick_replies já passando o history**
+    quick_replies = gerar_quick_replies(question, explicacao, history)
 
     resposta = ""
     if mostrar_saudacao:
