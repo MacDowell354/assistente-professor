@@ -88,7 +88,7 @@ async def ask(
 
     # 🚩 Controle refinado para saudação premium e chips/quick replies
     chip_perguntas = [
-        "Ver Exemplo de Plano", "Modelo PDF", "Novo Tema",
+        "Ver Exemplo de Plano", "Modelo no Canva", "Modelo PDF", "Novo Tema",
         "Preciso de exemplo", "Exemplo para Acne", "Tratamento Oral", "Cuidados Diários"
     ]
     is_chip = str(question).strip() in chip_perguntas
@@ -116,10 +116,15 @@ async def ask(
     )
 
     # Adiciona quick replies ao histórico da resposta
+    chip = None
+    if str(question).strip() in chip_perguntas:
+        chip = str(question).strip()
+
     new_history = history + [{
         "user": question,
         "ai": answer_html,
-        "quick_replies": quick_replies
+        "quick_replies": quick_replies,
+        "chip": chip  # Fica None se não for clique de chip, ou o nome do chip se for.
     }]
 
     return templates.TemplateResponse("chat.html", {
