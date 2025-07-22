@@ -44,6 +44,12 @@ CUMPRIMENTOS_RESPOSTAS = {
     "e aí": "E aí! Se quiser tirar dúvidas sobre o curso, estou por aqui para te ajudar."
 }
 
+# Lista de perguntas/chips que nunca devem receber saudação ou repetição
+CHIP_PERGUNTAS = [
+    "Ver Exemplo de Plano", "Modelo PDF", "Novo Tema",
+    "Preciso de exemplo", "Exemplo para Acne", "Tratamento Oral", "Cuidados Diários"
+]
+
 def is_greeting(question):
     pergunta = question.strip().lower()
     for c in CUMPRIMENTOS_RESPOSTAS.keys():
@@ -104,7 +110,9 @@ def gerar_quick_replies(question, explicacao):
         replies = base_replies
     return list(dict.fromkeys(replies))[:3]  # Remove duplicatas e limita a 3
 
-def generate_answer(question, context="", history=None, tipo_de_prompt=None, is_first_question=True):
+def generate_answer(
+    question, context="", history=None, tipo_de_prompt=None, is_first_question=True
+):
     cumprimento_detectado = is_greeting(question)
     pergunta_limpa = remove_greeting_from_question(question)
 
@@ -112,14 +120,19 @@ def generate_answer(question, context="", history=None, tipo_de_prompt=None, is_
     if cumprimento_detectado and not pergunta_limpa.strip():
         return CUMPRIMENTOS_RESPOSTAS[cumprimento_detectado], []
 
-    mostrar_saudacao = is_first_question
-    mostrar_pergunta_repetida = is_first_question
+    # Evita saudação/repetição se for pergunta do tipo chip, mesmo que seja primeira
+    is_chip = any(question.strip().lower() == c.lower() for c in CHIP_PERGUNTAS)
+
+    mostrar_saudacao = is_first_question and not is_chip
+    mostrar_pergunta_repetida = is_first_question and not is_chip
 
     saudacao = random.choice(GREETINGS) if mostrar_saudacao else ""
     fechamento = random.choice(CLOSINGS)
 
     snippet = search_transcripts_by_theme(pergunta_limpa if pergunta_limpa.strip() else question)
-    pergunta_repetida = f"<strong>Sua pergunta:</strong> \"{question}\"<br><br>" if mostrar_pergunta_repetida else ""
+    pergunta_repetida = (
+        f"<strong>Sua pergunta:</strong> \"{question}\"<br><br>" if mostrar_pergunta_repetida else ""
+    )
 
     # Gera prompt considerando histórico de chat, se disponível
     if history:
@@ -172,7 +185,7 @@ def generate_answer(question, context="", history=None, tipo_de_prompt=None, is_
     explicacao = response.choices[0].message.content.strip()
     quick_replies = gerar_quick_replies(question, explicacao)
 
-    # Só exibe saudação e pergunta na primeira interação
+    # Só exibe saudação e pergunta na primeira interação, exceto para chips
     resposta = ""
     if mostrar_saudacao:
         resposta += f"{saudacao}<br><br>{pergunta_repetida}{explicacao}<br><br>{fechamento}"
