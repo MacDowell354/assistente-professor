@@ -92,16 +92,36 @@ def search_transcripts_by_theme(theme):
 
 def gerar_quick_replies(question, explicacao, history=None):
     """
-    Sugere quick replies (chips) de acordo com o tema, removendo só os que o aluno já clicou.
+    Sugere quick replies (chips) de acordo com o tema original e histórico de uso.
     Chips essenciais (ex: Modelo no Canva) permanecem até o usuário utilizar.
     """
     base_replies = ["Novo Tema", "Preciso de exemplo"]
+    # Detecta o TEMA da conversa (olhando o início do histórico)
+    tema_healthplan = False
+    tema_acne = False
+
+    if history and isinstance(history, list) and len(history) > 0:
+        # Busca a PRIMEIRA pergunta do aluno para identificar o contexto geral
+        for msg in history:
+            if "user" in msg and isinstance(msg["user"], str):
+                q = msg["user"].lower()
+                if any(x in q for x in ["health plan", "healthplan", "realplan"]):
+                    tema_healthplan = True
+                    break
+                elif "acne" in q:
+                    tema_acne = True
+                    break
+    else:
+        q = question.lower()
+        if any(x in q for x in ["health plan", "healthplan", "realplan"]):
+            tema_healthplan = True
+        elif "acne" in q:
+            tema_acne = True
+
     replies = []
-    q = question.lower()
-    # Temas que ativam chips extras
-    if "health plan" in q or "healthplan" in q or "realplan" in q:
+    if tema_healthplan:
         replies += ["Ver Exemplo de Plano", "Modelo no Canva"]
-    elif "acne" in q:
+    elif tema_acne:
         replies += ["Exemplo para Acne", "Tratamento Oral", "Cuidados Diários"]
     if not replies:
         replies = base_replies
@@ -110,17 +130,15 @@ def gerar_quick_replies(question, explicacao, history=None):
     usados = set()
     if history and isinstance(history, list):
         for msg in history:
-            # Checa se veio de um clique de chip (usuário)
-            if "chip" in msg:
-                chip = msg.get("chip")
-                if chip:
-                    usados.add(chip.strip().lower())
-            # Ou se já clicou em um quick_reply sugerido anteriormente
+            # Se o usuário clicou em um chip
+            if "chip" in msg and msg["chip"]:
+                usados.add(msg["chip"].strip().lower())
+            # Ou se já digitou igual ao chip sugerido anteriormente
             if "user" in msg and msg["user"]:
                 u = msg["user"].strip().lower()
                 if u in [x.lower() for x in replies]:
                     usados.add(u)
-    # Chips que só desaparecem se realmente usados
+    # Chips essenciais
     ESSENCIAIS = ["modelo no canva"]
     filtered = []
     for r in replies:
@@ -231,7 +249,6 @@ def generate_answer(
         )
 
     explicacao = response.choices[0].message.content.strip()
-    # **AQUI: chama gerar_quick_replies já passando o history**
     quick_replies = gerar_quick_replies(question, explicacao, history)
 
     resposta = ""
