@@ -44,7 +44,7 @@ CUMPRIMENTOS_RESPOSTAS = {
 CHIP_PERGUNTAS = [
     "Ver Exemplo de Plano", "Modelo no Canva", "Modelo PDF", "Novo Tema",
     "Preciso de exemplo", "Exemplo para Acne", "Tratamento Oral", "Cuidados Diários",
-    "Baixar Plano de Ação"
+    "Baixar Plano de Ação", "Baixar Guia do Curso"
 ]
 
 def is_greeting(question):
@@ -94,19 +94,25 @@ def search_transcripts_by_theme(theme):
 def gerar_quick_replies(question, explicacao, history=None):
     """
     Sugere quick replies (chips) de acordo com o tema original e histórico de uso.
-    Chips essenciais (ex: Modelo no Canva, Baixar Plano de Ação) permanecem até o usuário utilizar.
+    Chips essenciais (ex: Modelo no Canva, Baixar Plano de Ação, Baixar Guia do Curso) permanecem até o usuário utilizar.
     """
     base_replies = ["Novo Tema", "Preciso de exemplo"]
     # Detecta o TEMA da conversa (olhando o início do histórico)
     tema_healthplan = False
     tema_acne = False
     tema_plano_acao = False
+    tema_guia_curso = False
 
-    # Palavras-chave para plano de ação/onboarding
+    # Palavras-chave para plano de ação/onboarding e guia do curso
     PLANO_ACAO_KEYWORDS = [
         "plano de ação", "pdf plano de ação", "atividade da primeira semana",
         "material do onboarding", "ação consultório", "plano onboarding",
         "plano de ação consultório", "atividade plano", "baixar plano de ação"
+    ]
+    GUIA_CURSO_KEYWORDS = [
+        "guia do curso", "guia cht", "guia consultório high ticket",
+        "manual do curso", "manual cht", "material de onboarding",
+        "passos iniciais", "guia onboarding", "baixar guia do curso"
     ]
 
     if history and isinstance(history, list) and len(history) > 0:
@@ -123,6 +129,9 @@ def gerar_quick_replies(question, explicacao, history=None):
                 elif any(x in q for x in PLANO_ACAO_KEYWORDS):
                     tema_plano_acao = True
                     break
+                elif any(x in q for x in GUIA_CURSO_KEYWORDS):
+                    tema_guia_curso = True
+                    break
     else:
         q = question.lower()
         if any(x in q for x in ["health plan", "healthplan", "realplan"]):
@@ -131,6 +140,8 @@ def gerar_quick_replies(question, explicacao, history=None):
             tema_acne = True
         elif any(x in q for x in PLANO_ACAO_KEYWORDS):
             tema_plano_acao = True
+        elif any(x in q for x in GUIA_CURSO_KEYWORDS):
+            tema_guia_curso = True
 
     replies = []
     if tema_healthplan:
@@ -139,6 +150,8 @@ def gerar_quick_replies(question, explicacao, history=None):
         replies += ["Exemplo para Acne", "Tratamento Oral", "Cuidados Diários"]
     if tema_plano_acao:
         replies += ["Baixar Plano de Ação"]
+    if tema_guia_curso:
+        replies += ["Baixar Guia do Curso"]
     if not replies:
         replies = base_replies
 
@@ -155,7 +168,7 @@ def gerar_quick_replies(question, explicacao, history=None):
                 if u in [x.lower() for x in replies]:
                     usados.add(u)
     # Chips essenciais
-    ESSENCIAIS = ["modelo no canva", "baixar plano de ação"]
+    ESSENCIAIS = ["modelo no canva", "baixar plano de ação", "baixar guia do curso"]
     filtered = []
     for r in replies:
         if r.lower() in ESSENCIAIS:
@@ -201,6 +214,31 @@ def generate_answer(
             "<a class='chip' href='https://nandamac-my.sharepoint.com/:b:/p/lmacdowell/EV6wZ42I9nhHpmnSGa4DHfEBaff0ewZIsmH_4LqLAI46eQ?e=gd5hR0' target='_blank'>📄 Baixar Plano de Ação do Consultório High Ticket</a><br><br>"
             "Você também pode baixar esse PDF dentro do módulo de onboarding, na sua área de alunos.<br>"
             "Se tiver dificuldade para acessar, me avise que envio suporte!"
+        )
+        return resposta, []
+
+    # --- RESPOSTA ESPECIAL: PDF GUIA DO CURSO CHT ---
+    GUIA_CURSO_KEYWORDS = [
+        "guia do curso", "guia cht", "guia consultório high ticket",
+        "manual do curso", "manual cht", "material de onboarding",
+        "passos iniciais", "guia onboarding", "baixar guia do curso"
+    ]
+    pergunta_guia_curso = any(x in pergunta_limpa for x in GUIA_CURSO_KEYWORDS) or \
+        (question and any(x in question.lower() for x in GUIA_CURSO_KEYWORDS))
+    if pergunta_guia_curso or (question.strip().lower() == "baixar guia do curso"):
+        resposta = (
+            "<strong>Guia do Curso Consultório High Ticket</strong><br>"
+            "Esse material é essencial para te orientar nos primeiros passos do curso, desde o onboarding até as tarefas e integração na comunidade.<br><br>"
+            "<b>O que você encontra nesse guia:</b><br>"
+            "- Passo a passo para assistir à aula de onboarding<br>"
+            "- Como entrar no grupo de avisos da sua turma<br>"
+            "- Como acessar a área de membros e comunidade<br>"
+            "- Detalhes sobre o Desafio Health Plan<br>"
+            "- Como participar das atividades da primeira semana<br>"
+            "- Canais de suporte e regras de uso<br><br>"
+            "<a class='chip' href='https://nandamac-my.sharepoint.com/:b:/p/lmacdowell/EQZrQJpHXlVCsK1N5YdDIHEBHocn7FR2yQUHhydgN84yOw?e=GAut9r' target='_blank'>📄 Baixar Guia do Curso Consultório High Ticket</a><br><br>"
+            "Você também pode encontrar esse PDF fixado no módulo de onboarding da sua área de alunos.<br>"
+            "Se precisar de ajuda para acessar, me avise por aqui!"
         )
         return resposta, []
 
