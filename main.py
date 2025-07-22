@@ -86,8 +86,8 @@ async def ask(
     if tipo_de_prompt == "health_plan":
         registrar_healthplan(pergunta=question, usuario=user)
 
-    # 🧠 Gera resposta
-    answer_markdown = generate_answer(
+    # 🧠 Gera resposta (AGORA RETORNA 2 VARIÁVEIS)
+    answer_markdown, quick_replies = generate_answer(
         question=question,
         context=context,
         history=history,
@@ -106,7 +106,13 @@ async def ask(
         tipo_prompt=tipo_de_prompt
     )
 
-    new_history = history + [{"user": question, "ai": answer_html}]
+    # Adiciona quick replies ao histórico da resposta
+    new_history = history + [{
+        "user": question,
+        "ai": answer_html,
+        "quick_replies": quick_replies
+    }]
+
     return templates.TemplateResponse("chat.html", {
         "request": request,
         "history": new_history
