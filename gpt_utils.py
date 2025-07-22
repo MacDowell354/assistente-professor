@@ -6,16 +6,13 @@ from openai import OpenAI, OpenAIError
 # Configurar seu arquivo de transcrições
 TRANSCRIPTS_PATH = os.path.join(os.path.dirname(__file__), "transcricoes.txt")
 
-# Instância do cliente OpenAI
 client = OpenAI()
 
-# Mensagem padrão para temas não encontrados
 OUT_OF_SCOPE_MSG = (
     "Desculpe, ainda não tenho informações suficientes sobre esse tema específico do curso. "
     "Por favor, envie outra pergunta ou consulte o material da aula."
 )
 
-# Saudações e fechamentos para humanizar as respostas
 GREETINGS = [
     "Olá, Doutor(a), seja muito bem-vindo(a)!",
     "Oi, Doutor(a), tudo bem? Como posso ajudar?",
@@ -31,7 +28,6 @@ CLOSINGS = [
     "Essa resposta te ajudou? Clique em 👍 ou 👎."
 ]
 
-# Cumprimentos específicos e respostas dedicadas
 CUMPRIMENTOS_RESPOSTAS = {
     "bom dia": "Bom dia! Se quiser tirar dúvidas sobre o curso, é só perguntar. Estou à disposição.",
     "boa tarde": "Boa tarde! Se quiser tirar dúvidas sobre o curso, é só perguntar. Estou à disposição.",
@@ -46,7 +42,7 @@ CUMPRIMENTOS_RESPOSTAS = {
 
 # Lista de perguntas/chips que nunca devem receber saudação ou repetição
 CHIP_PERGUNTAS = [
-    "Ver Exemplo de Plano", "Modelo PDF", "Novo Tema",
+    "Ver Exemplo de Plano", "Modelo no Canva", "Modelo PDF", "Novo Tema",
     "Preciso de exemplo", "Exemplo para Acne", "Tratamento Oral", "Cuidados Diários"
 ]
 
@@ -58,7 +54,6 @@ def is_greeting(question):
     return None
 
 def remove_greeting_from_question(question):
-    """Remove cumprimento do início da pergunta, se houver, para detectar dúvida real."""
     pergunta = question.strip().lower()
     for c in CUMPRIMENTOS_RESPOSTAS.keys():
         if pergunta.startswith(c):
@@ -67,13 +62,11 @@ def remove_greeting_from_question(question):
     return pergunta
 
 def normalize_text(text):
-    """Normaliza texto para melhorar buscas: minusculas, sem acentos, sem caracteres especiais."""
     text = text.lower()
     text = re.sub(r"[^a-z0-9\s]", "", text)
     return text
 
 def search_transcripts_by_theme(theme):
-    """Busca no arquivo de transcrições o trecho que contém o tema."""
     theme_norm = normalize_text(theme)
     if not os.path.exists(TRANSCRIPTS_PATH):
         return None
@@ -98,17 +91,22 @@ def search_transcripts_by_theme(theme):
     return snippet.strip()
 
 def gerar_quick_replies(question, explicacao):
-    """Sugere quick replies (chips) para UX moderna, de acordo com o tema."""
-    base_replies = ["Novo Tema", "Preciso de exemplo", "Modelo PDF"]
+    """Sugere quick replies (chips) de acordo com o tema."""
+    base_replies = ["Novo Tema", "Preciso de exemplo"]
     replies = []
     q = question.lower()
-    if "plano" in q or "plan" in q:
-        replies += ["Ver Exemplo de Plano", "Modelo PDF"]
-    if "acne" in q:
+    # HEALTH PLAN / REALPLAN recebe chip do Canva
+    if "health plan" in q or "healthplan" in q or "realplan" in q:
+        replies += ["Ver Exemplo de Plano", "Modelo no Canva"]
+    # Outros temas específicos de exemplo
+    elif "acne" in q:
         replies += ["Exemplo para Acne", "Tratamento Oral", "Cuidados Diários"]
+    # Se no futuro houver PDF de outros temas, pode incluir aqui:
+    # elif "script de atendimento" in q:
+    #     replies += ["Ver Script", "Modelo PDF"]
     if not replies:
         replies = base_replies
-    return list(dict.fromkeys(replies))[:3]  # Remove duplicatas e limita a 3
+    return list(dict.fromkeys(replies))[:3]
 
 def generate_answer(
     question, context="", history=None, tipo_de_prompt=None, is_first_question=True
@@ -116,25 +114,46 @@ def generate_answer(
     cumprimento_detectado = is_greeting(question)
     pergunta_limpa = remove_greeting_from_question(question)
 
-    # Se, depois de remover o cumprimento, não sobrou nada relevante, responda só ao cumprimento
+    # Só responde cumprimento simples
     if cumprimento_detectado and not pergunta_limpa.strip():
         return CUMPRIMENTOS_RESPOSTAS[cumprimento_detectado], []
 
-    # Evita saudação/repetição se for pergunta do tipo chip, mesmo que seja primeira
+    # Evita saudação/repetição para chips
     is_chip = any(question.strip().lower() == c.lower() for c in CHIP_PERGUNTAS)
-
     mostrar_saudacao = is_first_question and not is_chip
     mostrar_pergunta_repetida = is_first_question and not is_chip
 
     saudacao = random.choice(GREETINGS) if mostrar_saudacao else ""
     fechamento = random.choice(CLOSINGS)
 
+    # --- RESPOSTA ESPECIAL: "Modelo no Canva" para Health Plan/RealPlan ---
+    if question.strip().lower() == "modelo no canva":
+        # Busca última pergunta do usuário para garantir contexto
+        last_user_question = ""
+        if history and isinstance(history, list):
+            for msg in reversed(history):
+                if "user" in msg and msg["user"].strip():
+                    last_user_question = msg["user"].lower()
+                    break
+        if ("health plan" in last_user_question or "realplan" in last_user_question or "healthplan" in last_user_question):
+            resposta = (
+                "Aqui está o modelo de Health Plan para você adaptar ao seu consultório:<br>"
+                "Basta clicar no botão abaixo, fazer login gratuito no Canva e, em seguida, clicar em ‘Usar este modelo’ para editar conforme sua especialidade.<br>"
+                "<a class='chip' href='https://www.canva.com/design/DAEteeUPSUQ/0isBewvgUTJF0gZaRYZw2g/view?utm_content=DAEteeUPSUQ&utm_campaign=designshare&utm_medium=link&utm_source=publishsharelink&mode=preview' target='_blank'>Abrir Modelo no Canva</a>"
+            )
+            return resposta, []
+        else:
+            resposta = (
+                "No momento, este recurso está disponível apenas para dúvidas sobre Health Plan. "
+                "Se precisar de ajuda com outro tema, posso te orientar a criar um modelo personalizado!"
+            )
+            return resposta, []
+
     snippet = search_transcripts_by_theme(pergunta_limpa if pergunta_limpa.strip() else question)
     pergunta_repetida = (
         f"<strong>Sua pergunta:</strong> \"{question}\"<br><br>" if mostrar_pergunta_repetida else ""
     )
 
-    # Gera prompt considerando histórico de chat, se disponível
     if history:
         prompt = (
             f"Você é Nanda Mac.ia, professora do curso Consultório High Ticket.\n"
@@ -185,7 +204,6 @@ def generate_answer(
     explicacao = response.choices[0].message.content.strip()
     quick_replies = gerar_quick_replies(question, explicacao)
 
-    # Só exibe saudação e pergunta na primeira interação, exceto para chips
     resposta = ""
     if mostrar_saudacao:
         resposta += f"{saudacao}<br><br>{pergunta_repetida}{explicacao}<br><br>{fechamento}"
