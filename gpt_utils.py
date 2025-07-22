@@ -272,6 +272,7 @@ def generate_answer(
         return resposta, []
 
     # --- Bloco especial: PDF Check-list Consultório High Ticket ---
+       # --- Bloco especial: PDF Check-list Consultório High Ticket ---
     CHECKLIST_KEYWORDS = [
         "check-list consultório", "checklist consultório", "checklist high ticket",
         "check-list high ticket", "checklist aula 6.8", "baixar check-list", "checklist cht"
