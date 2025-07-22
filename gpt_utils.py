@@ -272,28 +272,27 @@ def generate_answer(
         return resposta, []
 
     # --- Bloco especial: PDF Check-list Consultório High Ticket ---
-   # --- Bloco especial: PDF Check-list Consultório High Ticket ---
-CHECKLIST_KEYWORDS = [
-    "check-list consultório", "checklist consultório", "checklist high ticket",
-    "check-list high ticket", "checklist aula 6.8", "baixar check-list", "checklist cht"
-]
-pergunta_checklist = any(x in pergunta_limpa for x in CHECKLIST_KEYWORDS) or \
-    (question and any(x in question.lower() for x in CHECKLIST_KEYWORDS))
-if pergunta_checklist or (question.strip().lower() == "baixar check-list"):
-    resposta = (
-        "<strong>Check-list do Consultório High Ticket</strong><br>"
-        "Esse material prático da Aula 6.8 traz uma lista detalhada de ajustes para transformar seu consultório em um ambiente High Ticket, desde atendimento e linguagem até ambiente físico e equipe.<br><br>"
-        "<b>O que você encontra neste check-list:</b><br>"
-        "- Adaptação da linguagem para encantar e fidelizar pacientes<br>"
-        "- Scripts e rotinas para atendimento High Ticket<br>"
-        "- Padrão visual e organização do ambiente<br>"
-        "- Brindes, política de descontos, apresentação de valores<br>"
-        "- Check-list por etapas: atendimento, ambiente, posicionamento digital e mais<br><br>"
-        "<a class='chip' href='https://nandamac-my.sharepoint.com/:b:/p/lmacdowell/EaV1U2Y-6CZHoVL8DhxYDXQBeMienn2uZG4Qsruo1sBcuw?e=zz0TUL' target='_blank'>📄 Baixar Check-list do Consultório High Ticket</a><br><br>"
-        "Esse PDF está disponível na Aula 6.8 e pode ser baixado a qualquer momento.<br>"
-        "Se quiser detalhar algum item ou receber dicas práticas para aplicar cada etapa, é só perguntar!"
-    )
-    return resposta, []
+    CHECKLIST_KEYWORDS = [
+        "check-list consultório", "checklist consultório", "checklist high ticket",
+        "check-list high ticket", "checklist aula 6.8", "baixar check-list", "checklist cht"
+    ]
+    pergunta_checklist = any(x in pergunta_limpa for x in CHECKLIST_KEYWORDS) or \
+        (question and any(x in question.lower() for x in CHECKLIST_KEYWORDS))
+    if pergunta_checklist or (question.strip().lower() == "baixar check-list"):
+        resposta = (
+            "<strong>Check-list do Consultório High Ticket</strong><br>"
+            "Esse material prático da Aula 6.8 traz uma lista detalhada de ajustes para transformar seu consultório em um ambiente High Ticket, desde atendimento e linguagem até ambiente físico e equipe.<br><br>"
+            "<b>O que você encontra neste check-list:</b><br>"
+            "- Adaptação da linguagem para encantar e fidelizar pacientes<br>"
+            "- Scripts e rotinas para atendimento High Ticket<br>"
+            "- Padrão visual e organização do ambiente<br>"
+            "- Brindes, política de descontos, apresentação de valores<br>"
+            "- Check-list por etapas: atendimento, ambiente, posicionamento digital e mais<br><br>"
+            "<a class='chip' href='https://nandamac-my.sharepoint.com/:b:/p/lmacdowell/EaV1U2Y-6CZHoVL8DhxYDXQBeMienn2uZG4Qsruo1sBcuw?e=zz0TUL' target='_blank'>📄 Baixar Check-list do Consultório High Ticket</a><br><br>"
+            "Esse PDF está disponível na Aula 6.8 e pode ser baixado a qualquer momento.<br>"
+            "Se quiser detalhar algum item ou receber dicas práticas para aplicar cada etapa, é só perguntar!"
+        )
+        return resposta, []
 
     # Evita saudação/repetição para chips
     is_chip = any(question.strip().lower() == c.lower() for c in CHIP_PERGUNTAS)
@@ -302,6 +301,36 @@ if pergunta_checklist or (question.strip().lower() == "baixar check-list"):
 
     saudacao = random.choice(GREETINGS) if mostrar_saudacao else ""
     fechamento = random.choice(CLOSINGS)
+
+    # --- RESPOSTA ESPECIAL: "Modelo no Canva" para Health Plan/RealPlan ---
+    if question.strip().lower() == "modelo no canva":
+        tema_healthplan = False
+        if history and isinstance(history, list):
+            for msg in history:
+                if "user" in msg and isinstance(msg["user"], str):
+                    q = msg["user"].lower()
+                    if any(x in q for x in ["health plan", "healthplan", "realplan"]):
+                        tema_healthplan = True
+                        break
+        else:
+            q = question.lower()
+            if any(x in q for x in ["health plan", "healthplan", "realplan"]):
+                tema_healthplan = True
+
+        if tema_healthplan:
+            resposta = (
+                "Aqui está o modelo de Health Plan para você adaptar ao seu consultório:<br>"
+                "<strong>Esse modelo é 100% editável:</strong> faça uma cópia no Canva, preencha com os dados do seu paciente e adapte conforme a sua especialidade (psicologia, nutrição, dermato, etc.).<br>"
+                "Basta clicar no botão abaixo, fazer login gratuito no Canva e, em seguida, clicar em ‘Usar este modelo’ para editar conforme sua especialidade.<br>"
+                "<a class='chip' href='https://www.canva.com/design/DAEteeUPSUQ/0isBewvgUTJF0gZaRYZw2g/view?utm_content=DAEteeUPSUQ&utm_campaign=designshare&utm_medium=link&utm_source=publishsharelink&mode=preview' target='_blank'>Abrir Modelo no Canva</a>"
+            )
+            return resposta, []
+        else:
+            resposta = (
+                "No momento, este recurso está disponível apenas para dúvidas sobre Health Plan. "
+                "Se precisar de ajuda com outro tema, posso te orientar a criar um modelo personalizado!"
+            )
+            return resposta, []
 
     snippet = search_transcripts_by_theme(pergunta_limpa if pergunta_limpa.strip() else question)
     pergunta_repetida = (
