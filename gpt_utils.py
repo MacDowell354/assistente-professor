@@ -294,14 +294,6 @@ def generate_answer(
         )
         return resposta, []
 
-    # Evita saudação/repetição para chips
-    is_chip = any(question.strip().lower() == c.lower() for c in CHIP_PERGUNTAS)
-    mostrar_saudacao = is_first_question and not is_chip
-    mostrar_pergunta_repetida = is_first_question and not is_chip
-
-    saudacao = random.choice(GREETINGS) if mostrar_saudacao else ""
-    fechamento = random.choice(CLOSINGS)
-
     # --- RESPOSTA ESPECIAL: "Modelo no Canva" para Health Plan/RealPlan ---
     if question.strip().lower() == "modelo no canva":
         tema_healthplan = False
@@ -334,8 +326,11 @@ def generate_answer(
 
     snippet = search_transcripts_by_theme(pergunta_limpa if pergunta_limpa.strip() else question)
     pergunta_repetida = (
-        f"<strong>Sua pergunta:</strong> \"{question}\"<br><br>" if mostrar_pergunta_repetida else ""
+        f"<strong>Sua pergunta:</strong> \"{question}\"<br><br>" if is_first_question else ""
     )
+
+    saudacao = random.choice(GREETINGS) if is_first_question and not any(question.strip().lower() == c.lower() for c in CHIP_PERGUNTAS) else ""
+    fechamento = random.choice(CLOSINGS)
 
     if history:
         prompt = (
@@ -388,7 +383,7 @@ def generate_answer(
     quick_replies = gerar_quick_replies(question, explicacao, history)
 
     resposta = ""
-    if mostrar_saudacao:
+    if saudacao:
         resposta += f"{saudacao}<br><br>{pergunta_repetida}{explicacao}<br><br>{fechamento}"
     else:
         resposta += f"{explicacao}<br><br>{fechamento}"
