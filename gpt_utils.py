@@ -178,119 +178,57 @@ def gerar_quick_replies(question, explicacao, history=None):
         filtered += [r for r in base_replies if r not in filtered]
     return filtered[:3]
 
+# NOVA FUNÇÃO DE LINK ACOLHEDOR
+def resposta_link(titulo, url):
+    return (
+        f"Olá, Doutor(a)! 😊 Aqui está o link direto para baixar o {titulo}:<br>"
+        f"<a class='chip' href='{url}' target='_blank'>📄 Baixar {titulo}</a><br>"
+        "Se precisar de orientação ou tiver dúvidas sobre como aplicar, é só perguntar!"
+    )
+
 def generate_answer(
     question, context="", history=None, tipo_de_prompt=None, is_first_question=True
 ):
     cumprimento_detectado = is_greeting(question)
     pergunta_limpa = remove_greeting_from_question(question)
 
-    # --- Bloco especial: PDF Plano de Ação ---
+    # Blocos ESPECIAIS de PDF/links: agora entregam link direto, acolhimento e explicação
     PLANO_ACAO_KEYWORDS = [
         "plano de ação", "pdf plano de ação", "atividade da primeira semana",
         "material do onboarding", "ação consultório", "plano onboarding",
         "plano de ação consultório", "atividade plano", "baixar plano de ação"
     ]
-    pergunta_baixar_plano = any(x in pergunta_limpa for x in PLANO_ACAO_KEYWORDS) or \
-        (question and any(x in question.lower() for x in PLANO_ACAO_KEYWORDS))
-    if pergunta_baixar_plano or (question.strip().lower() == "baixar plano de ação"):
-        resposta = (
-            "<strong>Plano de Ação do Consultório High Ticket</strong><br>"
-            "Esse material faz parte do onboarding do curso e é essencial para você organizar seus próximos passos.<br><br>"
-            "<b>O que você vai encontrar nesse PDF:</b><br>"
-            "- Reflexão sobre bloqueios financeiros e autoconfiança<br>"
-            "- Definição de nicho de atuação e ajustes de posicionamento<br>"
-            "- Planejamento de ações práticas para atrair pacientes High Ticket já na primeira semana<br>"
-            "- Exercícios para transformar sua mentalidade e o consultório<br><br>"
-            "<a class='chip' href='https://nandamac-my.sharepoint.com/:b:/p/lmacdowell/EV6wZ42I9nhHpmnSGa4DHfEBaff0ewZIsmH_4LqLAI46eQ?e=gd5hR0' target='_blank'>📄 Baixar Plano de Ação do Consultório High Ticket</a><br><br>"
-            "Você também pode baixar esse PDF dentro do módulo de onboarding, na sua área de alunos.<br>"
-            "Se tiver dificuldade para acessar, me avise que envio suporte!"
-        )
-        return resposta, []
+    if any(x in pergunta_limpa for x in PLANO_ACAO_KEYWORDS) or \
+        (question and any(x in question.lower() for x in PLANO_ACAO_KEYWORDS)):
+        return resposta_link("Plano de Ação do Consultório High Ticket", "https://nandamac-my.sharepoint.com/:b:/p/lmacdowell/EV6wZ42I9nhHpmnSGa4DHfEBaff0ewZIsmH_4LqLAI46eQ?e=gd5hR0"), []
 
-    # --- Bloco especial: PDF Guia do Curso ---
     GUIA_CURSO_KEYWORDS = [
         "guia do curso", "guia cht", "guia consultório high ticket",
         "manual do curso", "manual cht", "material de onboarding",
         "passos iniciais", "guia onboarding", "baixar guia do curso"
     ]
-    pergunta_guia_curso = any(x in pergunta_limpa for x in GUIA_CURSO_KEYWORDS) or \
-        (question and any(x in question.lower() for x in GUIA_CURSO_KEYWORDS))
-    if pergunta_guia_curso or (question.strip().lower() == "baixar guia do curso"):
-        resposta = (
-            "<strong>Guia do Curso Consultório High Ticket</strong><br>"
-            "Esse material é essencial para te orientar nos primeiros passos do curso, desde o onboarding até as tarefas e integração na comunidade.<br><br>"
-            "<b>O que você encontra nesse guia:</b><br>"
-            "- Passo a passo para assistir à aula de onboarding<br>"
-            "- Como entrar no grupo de avisos da sua turma<br>"
-            "- Como acessar a área de membros e comunidade<br>"
-            "- Detalhes sobre o Desafio Health Plan<br>"
-            "- Como participar das atividades da primeira semana<br>"
-            "- Canais de suporte e regras de uso<br><br>"
-            "<a class='chip' href='https://nandamac-my.sharepoint.com/:b:/p/lmacdowell/EQZrQJpHXlVCsK1N5YdDIHEBHocn7FR2yQUHhydgN84yOw?e=GAut9r' target='_blank'>📄 Baixar Guia do Curso Consultório High Ticket</a><br><br>"
-            "Você também pode encontrar esse PDF fixado no módulo de onboarding da sua área de alunos.<br>"
-            "Se precisar de ajuda para acessar, me avise por aqui!"
-        )
-        return resposta, []
+    if any(x in pergunta_limpa for x in GUIA_CURSO_KEYWORDS) or \
+        (question and any(x in question.lower() for x in GUIA_CURSO_KEYWORDS)):
+        return resposta_link("Guia do Curso Consultório High Ticket", "https://nandamac-my.sharepoint.com/:b:/p/lmacdowell/EQZrQJpHXlVCsK1N5YdDIHEBHocn7FR2yQUHhydgN84yOw?e=GAut9r"), []
 
-    # --- Bloco especial: PDF Dossiê 007 ---
     DOSSIÊ_007_KEYWORDS = [
         "dossiê 007", "dossie 007", "dossiê captação", "dossie aula 5.8",
         "captação de pacientes", "estratégias 007", "baixar dossiê 007"
     ]
-    pergunta_dossie_007 = any(x in pergunta_limpa for x in DOSSIÊ_007_KEYWORDS) or \
-        (question and any(x in question.lower() for x in DOSSIÊ_007_KEYWORDS))
-    if pergunta_dossie_007 or (question.strip().lower() == "baixar dossiê 007"):
-        resposta = (
-            "<strong>Dossiê 007 – Captação de Pacientes High Ticket</strong><br>"
-            "Esse material especial faz parte da Aula 5.8 do curso e reúne 3 estratégias comprovadas para você captar, reter e fidelizar pacientes High Ticket de forma ética e lucrativa.<br><br>"
-            "<b>O que você encontra nesse PDF:</b><br>"
-            "- Networking inteligente com outros profissionais da saúde para gerar indicações<br>"
-            "- Scripts prontos para confirmação e remarcação de consultas (elimine faltas e remarcações)<br>"
-            "- Scripts e estratégias para reativar pacientes antigos<br>"
-            "- Técnicas de encantamento, reciprocidade e presentes memoráveis para fidelizar<br><br>"
-            "<a class='chip' href='https://nandamac-my.sharepoint.com/:b:/p/lmacdowell/EVdOpjU1frVBhApTKmmYAwgBFkbNggnj2Cp0w9luTajxgg?e=iQOnk0' target='_blank'>📄 Baixar Dossiê 007 – Captação de Pacientes High Ticket</a><br><br>"
-            "Esse PDF está disponível na Aula 5.8 do Módulo 5 e pode ser baixado sempre que precisar.<br>"
-            "Se tiver qualquer dúvida para aplicar as ações, pode me perguntar por aqui!"
-        )
-        return resposta, []
+    if any(x in pergunta_limpa for x in DOSSIÊ_007_KEYWORDS) or \
+        (question and any(x in question.lower() for x in DOSSIÊ_007_KEYWORDS)):
+        return resposta_link("Dossiê 007 – Captação de Pacientes High Ticket", "https://nandamac-my.sharepoint.com/:b:/p/lmacdowell/EVdOpjU1frVBhApTKmmYAwgBFkbNggnj2Cp0w9luTajxgg?e=iQOnk0"), []
 
-    # Evita saudação/repetição para chips
+    if "modelo no canva" in pergunta_limpa or "modelo health plan" in pergunta_limpa or "modelo healthplan" in pergunta_limpa or "modelo de health plan" in pergunta_limpa:
+        return resposta_link("Modelo de Health Plan no Canva", "https://www.canva.com/design/DAEteeUPSUQ/0isBewvgUTJF0gZaRYZw2g/view?utm_content=DAEteeUPSUQ&utm_campaign=designshare&utm_medium=link&utm_source=publishsharelink&mode=preview"), []
+
+    # SEGUE TUDO COMO ANTES para perguntas normais
     is_chip = any(question.strip().lower() == c.lower() for c in CHIP_PERGUNTAS)
     mostrar_saudacao = is_first_question and not is_chip
     mostrar_pergunta_repetida = is_first_question and not is_chip
 
     saudacao = random.choice(GREETINGS) if mostrar_saudacao else ""
     fechamento = random.choice(CLOSINGS)
-
-    # --- RESPOSTA ESPECIAL: "Modelo no Canva" para Health Plan/RealPlan ---
-    if question.strip().lower() == "modelo no canva":
-        tema_healthplan = False
-        if history and isinstance(history, list):
-            for msg in history:
-                if "user" in msg and isinstance(msg["user"], str):
-                    q = msg["user"].lower()
-                    if any(x in q for x in ["health plan", "healthplan", "realplan"]):
-                        tema_healthplan = True
-                        break
-        else:
-            q = question.lower()
-            if any(x in q for x in ["health plan", "healthplan", "realplan"]):
-                tema_healthplan = True
-
-        if tema_healthplan:
-            resposta = (
-                "Aqui está o modelo de Health Plan para você adaptar ao seu consultório:<br>"
-                "<strong>Esse modelo é 100% editável:</strong> faça uma cópia no Canva, preencha com os dados do seu paciente e adapte conforme a sua especialidade (psicologia, nutrição, dermato, etc.).<br>"
-                "Basta clicar no botão abaixo, fazer login gratuito no Canva e, em seguida, clicar em ‘Usar este modelo’ para editar conforme sua especialidade.<br>"
-                "<a class='chip' href='https://www.canva.com/design/DAEteeUPSUQ/0isBewvgUTJF0gZaRYZw2g/view?utm_content=DAEteeUPSUQ&utm_campaign=designshare&utm_medium=link&utm_source=publishsharelink&mode=preview' target='_blank'>Abrir Modelo no Canva</a>"
-            )
-            return resposta, []
-        else:
-            resposta = (
-                "No momento, este recurso está disponível apenas para dúvidas sobre Health Plan. "
-                "Se precisar de ajuda com outro tema, posso te orientar a criar um modelo personalizado!"
-            )
-            return resposta, []
 
     snippet = search_transcripts_by_theme(pergunta_limpa if pergunta_limpa.strip() else question)
     pergunta_repetida = (
