@@ -202,48 +202,44 @@ def generate_answer(
     cumprimento_detectado = is_greeting(question)
     pergunta_limpa = remove_greeting_from_question(question)
 
-    # --- Bloco especial: PDF Plano de Ação ---
-    if question.strip().lower() in [
-        "baixar plano de ação", "pdf plano de ação", "plano de ação pdf", "baixar o plano de ação"
-    ]:
+    # --- Blocos de LINKS e PDFs (busca por variações) ---
+    if any(x in question.lower() for x in [
+        "plano de ação", "pdf plano de ação", "baixar plano de ação", "plano de ação do consultório", "atividade da primeira semana", "material do onboarding"
+    ]):
         resposta = (
-            "<a class='chip' href='https://nandamac-my.sharepoint.com/:b:/p/lmacdowell/EV6wZ42I9nhHpmnSGa4DHfEBaff0ewZIsmH_4LqLAI46eQ?e=gd5hR0' target='_blank'>📄 Baixar Plano de Ação do Consultório High Ticket</a>"
+            "<a class='chip' href='https://nandamac-my.sharepoint.com/:b:/p/lmacdowell/EQ3X_DgcfCZJjrkZLO4tlQMBvzVNOQ55sNsT-hOHYpzTkQ?e=Lg5WOQ' target='_blank'>📄 Baixar Plano de Ação do Consultório High Ticket</a>"
         )
         return resposta, []
 
-    # --- Bloco especial: PDF Patient Letter ---
-    if question.strip().lower() in [
-        "baixar patient letter", "pdf patient letter", "modelo patient letter", "baixar carta de encaminhamento", "baixar carta patient letter", "download patient letter"
-    ]:
+    if any(x in question.lower() for x in [
+        "patient letter", "pdf patient letter", "baixar patient letter", "carta de encaminhamento", "modelo patient letter", "modelo de carta", "download patient letter", "modelo de indicação", "modelo patient letter"
+    ]):
         resposta = (
             "<a class='chip' href='https://nandamac-my.sharepoint.com/:b:/p/lmacdowell/EbdJ4rqiywhOjG0Yy3cDhjYBf04FMiNmoOXos4M5eZmoaA?e=YhljQ7' target='_blank'>📄 Baixar Patient Letter – Modelo Oficial</a>"
         )
         return resposta, []
 
-    # --- Bloco especial: PDF Guia do Curso ---
-    if question.strip().lower() in [
-        "baixar guia do curso", "pdf guia do curso", "guia do curso pdf", "baixar o guia do curso"
-    ]:
+    if any(x in question.lower() for x in [
+        "health plan", "modelo health plan", "modelo healthplan", "modelo de health plan", "formulário health plan", "formulário no canva", "modelo no canva", "canva health plan", "health plan editável", "link health plan", "criar health plan", "modelo de plano de tratamento"
+    ]):
+        resposta = (
+            "<a class='chip' href='https://www.canva.com/design/DAEteeUPSUQ/0isBewvgUTJF0gZaRYZw2g/view?utm_content=DAEteeUPSUQ&utm_campaign=designshare&utm_medium=link&utm_source=publishsharelink&mode=preview' target='_blank'>Abrir Modelo no Canva – Health Plan</a>"
+        )
+        return resposta, []
+
+    if any(x in question.lower() for x in [
+        "guia do curso", "pdf guia do curso", "baixar guia do curso", "guia cht", "manual do curso", "material de onboarding", "passos iniciais"
+    ]):
         resposta = (
             "<a class='chip' href='https://nandamac-my.sharepoint.com/:b:/p/lmacdowell/EQZrQJpHXlVCsK1N5YdDIHEBHocn7FR2yQUHhydgN84yOw?e=GAut9r' target='_blank'>📄 Baixar Guia do Curso Consultório High Ticket</a>"
         )
         return resposta, []
 
-    # --- Bloco especial: PDF Dossiê 007 ---
-    if question.strip().lower() in [
-        "baixar dossiê 007", "baixar dossie 007", "pdf dossiê 007", "dossiê 007 pdf", "baixar o dossiê 007"
-    ]:
+    if any(x in question.lower() for x in [
+        "dossiê 007", "dossie 007", "pdf dossiê 007", "baixar dossiê 007", "dossiê captação", "dossie aula 5.8"
+    ]):
         resposta = (
             "<a class='chip' href='https://nandamac-my.sharepoint.com/:b:/p/lmacdowell/EVdOpjU1frVBhApTKmmYAwgBFkbNggnj2Cp0w9luTajxgg?e=iQOnk0' target='_blank'>📄 Baixar Dossiê 007 – Captação de Pacientes High Ticket</a>"
-        )
-        return resposta, []
-
-    # --- Bloco especial: Modelo no Canva Health Plan ---
-    if question.strip().lower() in [
-        "modelo no canva", "modelo health plan", "modelo healthplan", "modelo de health plan"
-    ]:
-        resposta = (
-            "<a class='chip' href='https://www.canva.com/design/DAEteeUPSUQ/0isBewvgUTJF0gZaRYZw2g/view?utm_content=DAEteeUPSUQ&utm_campaign=designshare&utm_medium=link&utm_source=publishsharelink&mode=preview' target='_blank'>Abrir Modelo no Canva – Health Plan</a>"
         )
         return resposta, []
 
