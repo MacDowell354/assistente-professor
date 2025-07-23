@@ -264,49 +264,6 @@ def generate_answer(
         )
         return resposta, []
 
-    # --- Bloco especial: Check-list Consultório High Ticket ---
-    CHECKLIST_KEYWORDS = [
-        "checklist", "check-list", "lista de checagem", "check list", "check list cht",
-        "checklist cht", "check list consultório", "check-list consultório", "lista de verificação"
-    ]
-    pergunta_checklist = any(x in pergunta_limpa for x in CHECKLIST_KEYWORDS) or \
-        (question and any(x in question.lower() for x in CHECKLIST_KEYWORDS))
-    if pergunta_checklist or (question.strip().lower() == "baixar checklist"):
-        resposta = (
-            "<strong>Check-list Consultório High Ticket</strong><br>"
-            "Esse check-list prático é um guia rápido para você avaliar se já aplicou os principais fundamentos do método no seu consultório.<br><br>"
-            "<b>O que o Check-list ajuda você a revisar:</b><br>"
-            "- Identificou e comunicou seu diferencial?<br>"
-            "- Está com a agenda organizada?<br>"
-            "- Implementou o script de recepção e encantamento?<br>"
-            "- Já validou sua precificação e proposta de valor?<br>"
-            "- Está captando e fidelizando pacientes High Ticket de forma recorrente?<br><br>"
-            "<a class='chip' href='https://nandamac-my.sharepoint.com/:b:/p/lmacdowell/EcYEXrJ9q3pAq8A62K6YNqgBjlh0AkkHG3k43el7gYaK9Q?e=8F9VnQ' target='_blank'>📄 Baixar Check-list Consultório High Ticket</a><br><br>"
-            "Baixe, revise e mantenha sempre esse material por perto para garantir que está no caminho certo!<br>"
-            "Se precisar de orientação sobre algum item, me envie sua dúvida."
-        )
-        return resposta, []
-    # --- Bloco especial: Health Plan + Modelo no Canva ---
-    HEALTH_PLAN_KEYWORDS = ["health plan", "healthplan", "realplan"]
-    pergunta_healthplan = any(x in pergunta_limpa for x in HEALTH_PLAN_KEYWORDS) or \
-        (question and any(x in question.lower() for x in HEALTH_PLAN_KEYWORDS))
-    if pergunta_healthplan:
-        resposta = (
-            "<strong>Health Plan</strong><br>"
-            "O Health Plan é uma ferramenta estratégica para comunicar de forma clara o valor do seu tratamento e engajar o paciente no processo.<br><br>"
-            "<b>O que incluir no seu Health Plan:</b><br>"
-            "- Objetivos do tratamento<br>"
-            "- Etapas do processo<br>"
-            "- Expectativas de resultados<br>"
-            "- Compromissos do paciente e do profissional<br>"
-            "- Recursos e apoios disponíveis<br><br>"
-            "Esse modelo não só melhora a comunicação, mas fortalece a confiança e aumenta a adesão ao tratamento.<br><br>"
-            "<b>Quer um modelo pronto?</b> Basta clicar abaixo para acessar e editar no Canva conforme sua especialidade:<br><br>"
-            "<a class='chip' href='https://www.canva.com/design/DAEteeUPSUQ/0isBewvgUTJF0gZaRYZw2g/view?utm_content=DAEteeUPSUQ&utm_campaign=designshare&utm_medium=link&utm_source=publishsharelink&mode=preview' target='_blank'>Abrir Modelo no Canva</a><br><br>"
-            "Se quiser exemplos práticos ou personalizar para sua área, me peça que te ajudo!"
-        )
-        return resposta, []
-
     # Evita saudação/repetição para chips
     is_chip = any(question.strip().lower() == c.lower() for c in CHIP_PERGUNTAS)
     mostrar_saudacao = is_first_question and not is_chip
