@@ -266,10 +266,10 @@ def generate_answer(
             "Responda de forma extremamente objetiva e didática, exatamente como faria numa aula particular.\n"
             "Forneça uma resposta estruturada em tópicos numerados, utilizando exemplos práticos e claros.\n"
             "Use APENAS o conteúdo fornecido abaixo como referência e responda diretamente à pergunta feita,\n"
-"sem introduções ou divagações gerais.\n"
-"SE O CONTEÚDO ABAIXO TIVER UM LINK OU PDF RELEVANTE, APRESENTE O LINK CLARAMENTE NA RESPOSTA PARA O ALUNO:\n\n"
-f"{snippet}\n\n"
-"[IMPORTANTE] Seja objetiva, acolhedora e responda EXCLUSIVAMENTE ao tema solicitado."
+            "sem introduções ou divagações gerais.\n"
+            "SE O CONTEÚDO ABAIXO TIVER UM LINK OU PDF RELEVANTE, APRESENTE O LINK CLARAMENTE NA RESPOSTA PARA O ALUNO:\n\n"
+            f"{snippet}\n\n"
+            "[IMPORTANTE] Seja objetiva, acolhedora e responda EXCLUSIVAMENTE ao tema solicitado."
         )
 
     try:
@@ -294,6 +294,14 @@ f"{snippet}\n\n"
         )
 
     explicacao = response.choices[0].message.content.strip()
+
+    # --- Pós-processamento para garantir exibição do link puro, se houver ---
+    snippet_links = re.findall(r'https?://[^\s)]+', snippet if snippet else "")
+    if snippet_links:
+        link_text = f"**Link direto para download:**\n{snippet_links[0]}\n\n"
+        if snippet_links[0] not in explicacao:
+            explicacao = link_text + explicacao
+
     quick_replies = gerar_quick_replies(question, explicacao, history)
 
     resposta = ""
