@@ -286,11 +286,26 @@ def generate_answer(
             "Se precisar de orientação sobre algum item, me envie sua dúvida."
         )
         return resposta, []
-
-    # Evita saudação/repetição para chips
-    is_chip = any(question.strip().lower() == c.lower() for c in CHIP_PERGUNTAS)
-
-
+    # --- Bloco especial: Health Plan + Modelo no Canva ---
+    HEALTH_PLAN_KEYWORDS = ["health plan", "healthplan", "realplan"]
+    pergunta_healthplan = any(x in pergunta_limpa for x in HEALTH_PLAN_KEYWORDS) or \
+        (question and any(x in question.lower() for x in HEALTH_PLAN_KEYWORDS))
+    if pergunta_healthplan:
+        resposta = (
+            "<strong>Health Plan</strong><br>"
+            "O Health Plan é uma ferramenta estratégica para comunicar de forma clara o valor do seu tratamento e engajar o paciente no processo.<br><br>"
+            "<b>O que incluir no seu Health Plan:</b><br>"
+            "- Objetivos do tratamento<br>"
+            "- Etapas do processo<br>"
+            "- Expectativas de resultados<br>"
+            "- Compromissos do paciente e do profissional<br>"
+            "- Recursos e apoios disponíveis<br><br>"
+            "Esse modelo não só melhora a comunicação, mas fortalece a confiança e aumenta a adesão ao tratamento.<br><br>"
+            "<b>Quer um modelo pronto?</b> Basta clicar abaixo para acessar e editar no Canva conforme sua especialidade:<br><br>"
+            "<a class='chip' href='https://www.canva.com/design/DAEteeUPSUQ/0isBewvgUTJF0gZaRYZw2g/view?utm_content=DAEteeUPSUQ&utm_campaign=designshare&utm_medium=link&utm_source=publishsharelink&mode=preview' target='_blank'>Abrir Modelo no Canva</a><br><br>"
+            "Se quiser exemplos práticos ou personalizar para sua área, me peça que te ajudo!"
+        )
+        return resposta, []
 
     # Evita saudação/repetição para chips
     is_chip = any(question.strip().lower() == c.lower() for c in CHIP_PERGUNTAS)
