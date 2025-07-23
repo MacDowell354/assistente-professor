@@ -85,8 +85,23 @@ def search_transcripts_by_theme(theme):
         else:
             return None
 
-    start = max(0, pos - 500)
-    end = min(len(content), pos + 500)
+    # Busca delimitador antes e depois (==== ou ----)
+    delimitadores = ["====", "----"]
+    start = 0
+    end = len(content)
+
+    # Busca início do bloco
+    for d in delimitadores:
+        bloco_inicio = content.rfind(d, 0, pos)
+        if bloco_inicio > start:
+            start = bloco_inicio
+
+    # Busca final do bloco
+    for d in delimitadores:
+        bloco_fim = content.find(d, pos)
+        if bloco_fim != -1 and bloco_fim < end:
+            end = bloco_fim + len(d)
+
     snippet = content[start:end]
     return snippet.strip()
 
