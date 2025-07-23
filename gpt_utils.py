@@ -196,6 +196,15 @@ def generate_answer(
         )
         return resposta, []
 
+    # --- Bloco especial: PDF Patient Letter ---
+    if question.strip().lower() in [
+        "baixar patient letter", "pdf patient letter", "modelo patient letter", "baixar carta de encaminhamento", "baixar carta patient letter", "download patient letter"
+    ]:
+        resposta = (
+            "<a class='chip' href='https://nandamac-my.sharepoint.com/:b:/p/lmacdowell/EbdJ4rqiywhOjG0Yy3cDhjYBf04FMiNmoOXos4M5eZmoaA?e=YhljQ7' target='_blank'>📄 Baixar Patient Letter – Modelo Oficial</a>"
+        )
+        return resposta, []
+
     # --- Bloco especial: PDF Guia do Curso ---
     if question.strip().lower() in [
         "baixar guia do curso", "pdf guia do curso", "guia do curso pdf", "baixar o guia do curso"
