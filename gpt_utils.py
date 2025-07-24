@@ -241,7 +241,8 @@ def generate_answer(
             "Olá, Doutor(a)! 😊 Aqui está o link para acessar a Playlist Oficial do Consultório High Ticket no Spotify:<br>"
             "<a class='chip' href='https://open.spotify.com/playlist/5Vop9zNsLcz0pkpD9aLQML?si=vJDC7OfcQXWpTernDbzwHA&nd=1&dlsi=964d4360d35e4b80' target='_blank'>🎵 Ouvir Playlist no Spotify</a><br>"
             "Se quiser recomendações de músicas para concentração ou foco nos estudos, é só pedir!"
- 
+  ), []
+
      SECRETARIA_KEYWORDS = [
     "scripts da secretária", "script da secretária", "roteiro secretária",
     "pdf scripts secretária", "modelo de secretária", "secretaria", "secretária"
