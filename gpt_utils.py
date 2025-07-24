@@ -201,6 +201,17 @@ def generate_answer(
         (question and any(x in question.lower() for x in PLANO_ACAO_KEYWORDS)):
         return resposta_link("Plano de Ação do Consultório High Ticket", "https://nandamac-my.sharepoint.com/:b:/p/lmacdowell/EV6wZ42I9nhHpmnSGa4DHfEBaff0ewZIsmH_4LqLAI46eQ?e=gd5hR0"), []
 
+    # NOVO BLOCO: PATIENT LETTER
+    PATIENT_LETTER_KEYWORDS = [
+        "patient letter", "carta patient letter", "pdf patient letter", "modelo patient letter", "baixar patient letter", "patient letter do curso"
+    ]
+    if any(x in pergunta_limpa for x in PATIENT_LETTER_KEYWORDS) or \
+        (question and any(x in question.lower() for x in PATIENT_LETTER_KEYWORDS)):
+        return resposta_link(
+            "Patient Letter – Modelo Oficial",
+            "https://nandamac-my.sharepoint.com/:b:/p/lmacdowell/EbdJ4rqiywhOjG0Yy3cDhjYBf04FMiNmoOXos4M5eZmoaA?e=90kaBp"
+        ), []
+
     GUIA_CURSO_KEYWORDS = [
         "guia do curso", "guia cht", "guia consultório high ticket",
         "manual do curso", "manual cht", "material de onboarding",
