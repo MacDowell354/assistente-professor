@@ -239,8 +239,18 @@ def generate_answer(
         extra_link = resposta_link("Baixar Scripts da Secretária – Consultório High Ticket", "https://nandamac-my.sharepoint.com/:b:/p/lmacdowell/EVgtSPvwpw9OhOS4CibHXGYB7KNAolar5o0iY2I2dOKCAw?e=LVZlX3")
     elif any(x in pergunta_limpa for x in HEALTHPLAN_KEYWORDS) or any(x in question.lower() for x in HEALTHPLAN_KEYWORDS):
         extra_link = resposta_link_externo("Acessar Modelo Editável de Health Plan no Canva", "https://www.canva.com/design/DAEteeUPSUQ/0isBewvgUTJF0gZaRYZw2g/view?utm_content=DAEteeUPSUQ&utm_campaign=designshare&utm_medium=link&utm_source=publishsharelink&mode=preview", icone="📝")
-    elif any(x in pergunta_limpa for x in SPOTIFY_KEYWORDS) or any(x in question.lower() for x in SPOTIFY_KEYWORDS):
-        extra_link = resposta_link_externo("Acessar Playlist Oficial do Consultório High Ticket no Spotify", "https://open.spotify.com/playlist/5Vop9zNsLcz0pkpD9aLQML?si=vJDC7OfcQXWpTernDbzwHA&nd=1&dlsi=964d4360d35e4b80", icone="🎵")
+    # --------- CORREÇÃO DO SPOTIFY: busca ampla por qualquer variação ------------
+    elif (
+        any(x in pergunta_limpa for x in SPOTIFY_KEYWORDS)
+        or any(x in question.lower() for x in SPOTIFY_KEYWORDS)
+        or any(kw in pergunta_limpa.lower() for kw in ["spotify", "playlist", "música", "musica", "trilha sonora"])
+        or any(kw in question.lower() for kw in ["spotify", "playlist", "música", "musica", "trilha sonora"])
+    ):
+        extra_link = resposta_link_externo(
+            "Acessar Playlist Oficial do Consultório High Ticket no Spotify",
+            "https://open.spotify.com/playlist/5Vop9zNsLcz0pkpD9aLQML?si=vJDC7OfcQXWpTernDbzwHA&nd=1&dlsi=964d4360d35e4b80",
+            icone="🎵"
+        )
 
     is_chip = any(question.strip().lower() == c.lower() for c in CHIP_PERGUNTAS)
     mostrar_saudacao = is_first_question and not is_chip
