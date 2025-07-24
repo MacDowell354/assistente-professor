@@ -241,7 +241,16 @@ def generate_answer(
             "Olá, Doutor(a)! 😊 Aqui está o link para acessar a Playlist Oficial do Consultório High Ticket no Spotify:<br>"
             "<a class='chip' href='https://open.spotify.com/playlist/5Vop9zNsLcz0pkpD9aLQML?si=vJDC7OfcQXWpTernDbzwHA&nd=1&dlsi=964d4360d35e4b80' target='_blank'>🎵 Ouvir Playlist no Spotify</a><br>"
             "Se quiser recomendações de músicas para concentração ou foco nos estudos, é só pedir!"
-        ), []
+ 
+       SECRETARIA_KEYWORDS = [
+    "scripts da secretária", "script da secretária", "roteiro secretária", "pdf scripts secretária", "modelo de secretária", "secretaria", "secretária"
+]
+if any(x in pergunta_limpa for x in SECRETARIA_KEYWORDS) or \
+    (question and any(x in question.lower() for x in SECRETARIA_KEYWORDS)):
+    return resposta_link(
+        "Scripts da Secretária – Consultório High Ticket",
+        "https://nandamac-my.sharepoint.com/:b:/p/lmacdowell/EVgtSPvwpw9OhOS4CibHXGYB7KNAolar5o0iY2I2dOKCAw?e=w4i8Gl"
+    ), []
 
     # SEGUE TUDO COMO ANTES para perguntas normais
     is_chip = any(question.strip().lower() == c.lower() for c in CHIP_PERGUNTAS)
