@@ -3,6 +3,7 @@ import re
 import random
 from openai import OpenAI, OpenAIError
 
+# Configuração do caminho para o arquivo de transcrições
 TRANSCRIPTS_PATH = os.path.join(os.path.dirname(__file__), "transcricoes.txt")
 
 client = OpenAI()
@@ -44,52 +45,6 @@ CHIP_PERGUNTAS = [
     "Preciso de exemplo", "Exemplo para Acne", "Tratamento Oral", "Cuidados Diários",
     "Baixar Plano de Ação", "Baixar Guia do Curso", "Baixar Dossiê 007"
 ]
-
-# --- KEYWORDS E LINKS PADRÕES ---
-PLANO_ACAO_KEYWORDS = [
-    "plano de ação", "pdf plano de ação", "atividade da primeira semana",
-    "material do onboarding", "ação consultório", "plano onboarding",
-    "plano de ação consultório", "atividade plano", "baixar plano de ação"
-]
-PLANO_ACAO_LINK = "https://nandamac-my.sharepoint.com/:b:/p/lmacdowell/EV6wZ42I9nhHpmnSGa4DHfEBaff0ewZIsmH_4LqLAI46eQ?e=gd5hR0"
-
-PATIENT_LETTER_KEYWORDS = [
-    "patient letter", "carta patient letter", "pdf patient letter", "modelo patient letter",
-    "baixar patient letter", "patient letter do curso", "carta de encaminhamento", "modelo de carta", "carta de indicação"
-]
-PATIENT_LETTER_LINK = "https://nandamac-my.sharepoint.com/:b:/p/lmacdowell/EbdJ4rqiywhOjG0Yy3cDhjYBf04FMiNmoOXos4M5eZmoaA?e=YhljQ7"
-
-GUIA_CURSO_KEYWORDS = [
-    "guia do curso", "guia cht", "guia consultório high ticket",
-    "manual do curso", "manual cht", "material de onboarding",
-    "passos iniciais", "guia onboarding", "baixar guia do curso"
-]
-GUIA_CURSO_LINK = "https://nandamac-my.sharepoint.com/:b:/p/lmacdowell/EQZrQJpHXlVCsK1N5YdDIHEBHocn7FR2yQUHhydgN84yOw?e=GAut9r"
-
-DOSSIÊ_007_KEYWORDS = [
-    "dossiê 007", "dossie 007", "dossiê captação", "dossie aula 5.8",
-    "captação de pacientes", "estratégias 007", "baixar dossiê 007"
-]
-DOSSIÊ_007_LINK = "https://nandamac-my.sharepoint.com/:b:/p/lmacdowell/EVdOpjU1frVBhApTKmmYAwgBFkbNggnj2Cp0w9luTajxgg?e=iQOnk0"
-
-SPOTIFY_KEYWORDS = [
-    "playlist spotify", "playlist no spotify", "música spotify", "spotify do curso", "link spotify", "playlist do curso"
-]
-SPOTIFY_LINK = "https://open.spotify.com/playlist/5Vop9zNsLcz0pkpD9aLQML?si=vJDC7OfcQXWpTernDbzwHA&nd=1&dlsi=964d4360d35e4b80"
-
-SECRETARIA_KEYWORDS = [
-    "scripts da secretária", "script da secretária", "roteiro secretária",
-    "pdf scripts secretária", "modelo de secretária", "secretaria", "secretária"
-]
-SECRETARIA_LINK = "https://nandamac-my.sharepoint.com/:b:/p/lmacdowell/EVgtSPvwpw9OhOS4CibHXGYB7KNAolar5o0iY2I2dOKCAw?e=LVZlX3"
-
-HEALTH_PLAN_KEYWORDS = [
-    "modelo no canva", "modelo health plan", "modelo healthplan", "modelo de health plan",
-    "formulário health plan", "modelo editável health plan", "canva health plan"
-]
-HEALTH_PLAN_LINK = "https://www.canva.com/design/DAEteeUPSUQ/0isBewvgUTJF0gZaRYZw2g/view?utm_content=DAEteeUPSUQ&utm_campaign=designshare&utm_medium=link&utm_source=publishsharelink&mode=preview"
-
-# --- FUNÇÕES AUXILIARES ---
 
 def is_greeting(question):
     pergunta = question.strip().lower()
@@ -134,15 +89,105 @@ def search_transcripts_by_theme(theme):
 
 def gerar_quick_replies(question, explicacao, history=None):
     base_replies = ["Novo Tema", "Preciso de exemplo"]
-    replies = base_replies
-    return replies[:3]
+    tema_healthplan = False
+    tema_acne = False
+    tema_plano_acao = False
+    tema_guia_curso = False
+    tema_dossie_007 = False
 
-def resposta_link(titulo, url):
+    PLANO_ACAO_KEYWORDS = [
+        "plano de ação", "pdf plano de ação", "atividade da primeira semana",
+        "material do onboarding", "ação consultório", "plano onboarding",
+        "plano de ação consultório", "atividade plano", "baixar plano de ação"
+    ]
+    GUIA_CURSO_KEYWORDS = [
+        "guia do curso", "guia cht", "guia consultório high ticket",
+        "manual do curso", "manual cht", "material de onboarding",
+        "passos iniciais", "guia onboarding", "baixar guia do curso"
+    ]
+    DOSSIÊ_007_KEYWORDS = [
+        "dossiê 007", "dossie 007", "dossiê captação", "dossie aula 5.8",
+        "captação de pacientes", "estratégias 007", "baixar dossiê 007"
+    ]
+
+    if history and isinstance(history, list) and len(history) > 0:
+        for msg in history:
+            if "user" in msg and isinstance(msg["user"], str):
+                q = msg["user"].lower()
+                if any(x in q for x in ["health plan", "healthplan", "realplan"]):
+                    tema_healthplan = True
+                    break
+                elif "acne" in q:
+                    tema_acne = True
+                    break
+                elif any(x in q for x in PLANO_ACAO_KEYWORDS):
+                    tema_plano_acao = True
+                    break
+                elif any(x in q for x in GUIA_CURSO_KEYWORDS):
+                    tema_guia_curso = True
+                    break
+                elif any(x in q for x in DOSSIÊ_007_KEYWORDS):
+                    tema_dossie_007 = True
+                    break
+    else:
+        q = question.lower()
+        if any(x in q for x in ["health plan", "healthplan", "realplan"]):
+            tema_healthplan = True
+        elif "acne" in q:
+            tema_acne = True
+        elif any(x in q for x in PLANO_ACAO_KEYWORDS):
+            tema_plano_acao = True
+        elif any(x in q for x in GUIA_CURSO_KEYWORDS):
+            tema_guia_curso = True
+        elif any(x in q for x in DOSSIÊ_007_KEYWORDS):
+            tema_dossie_007 = True
+
+    replies = []
+    if tema_healthplan:
+        replies += ["Ver Exemplo de Plano", "Modelo no Canva"]
+    elif tema_acne:
+        replies += ["Exemplo para Acne", "Tratamento Oral", "Cuidados Diários"]
+    if tema_plano_acao:
+        replies += ["Baixar Plano de Ação"]
+    if tema_guia_curso:
+        replies += ["Baixar Guia do Curso"]
+    if tema_dossie_007:
+        replies += ["Baixar Dossiê 007"]
+    if not replies:
+        replies = base_replies
+
+    usados = set()
+    if history and isinstance(history, list):
+        for msg in history:
+            if "chip" in msg and msg["chip"]:
+                usados.add(msg["chip"].strip().lower())
+            if "user" in msg and msg["user"]:
+                u = msg["user"].strip().lower()
+                if u in [x.lower() for x in replies]:
+                    usados.add(u)
+    ESSENCIAIS = ["modelo no canva", "baixar plano de ação", "baixar guia do curso", "baixar dossiê 007"]
+    filtered = []
+    for r in replies:
+        if r.lower() in ESSENCIAIS:
+            if r.lower() not in usados:
+                filtered.append(r)
+        else:
+            if r.lower() not in usados:
+                filtered.append(r)
+    if len(filtered) < 2:
+        filtered += [r for r in base_replies if r not in filtered]
+    return filtered[:3]
+
+def resposta_link(titulo, url, icone="📄"):
+    # icone pode ser: 📄, 📝, 🎵, 📑 etc.
     return (
-        f"<br><a class='chip' href='{url}' target='_blank'>📄 Baixar {titulo}</a><br>"
+        f"<br><a class='chip' href='{url}' target='_blank'>{icone} Baixar {titulo}</a>"
     )
 
-# --- FUNÇÃO PRINCIPAL ---
+def resposta_link_externo(titulo, url, icone="🔗"):
+    return (
+        f"<br><a class='chip' href='{url}' target='_blank'>{icone} Acessar {titulo}</a>"
+    )
 
 def generate_answer(
     question, context="", history=None, tipo_de_prompt=None, is_first_question=True
@@ -150,16 +195,53 @@ def generate_answer(
     cumprimento_detectado = is_greeting(question)
     pergunta_limpa = remove_greeting_from_question(question)
 
-    # Identificação dos temas especiais na pergunta
-    tema_plano_acao = any(x in pergunta_limpa for x in PLANO_ACAO_KEYWORDS)
-    tema_patient_letter = any(x in pergunta_limpa for x in PATIENT_LETTER_KEYWORDS)
-    tema_guia_curso = any(x in pergunta_limpa for x in GUIA_CURSO_KEYWORDS)
-    tema_dossie = any(x in pergunta_limpa for x in DOSSIÊ_007_KEYWORDS)
-    tema_spotify = any(x in pergunta_limpa for x in SPOTIFY_KEYWORDS)
-    tema_secretaria = any(x in pergunta_limpa for x in SECRETARIA_KEYWORDS)
-    tema_health_plan = any(x in pergunta_limpa for x in HEALTH_PLAN_KEYWORDS)
+    # Blocos ESPECIAIS de PDF/links
+    PLANO_ACAO_KEYWORDS = [
+        "plano de ação", "pdf plano de ação", "atividade da primeira semana",
+        "material do onboarding", "ação consultório", "plano onboarding",
+        "plano de ação consultório", "atividade plano", "baixar plano de ação"
+    ]
+    GUIA_CURSO_KEYWORDS = [
+        "guia do curso", "guia cht", "guia consultório high ticket",
+        "manual do curso", "manual cht", "material de onboarding",
+        "passos iniciais", "guia onboarding", "baixar guia do curso"
+    ]
+    DOSSIÊ_007_KEYWORDS = [
+        "dossiê 007", "dossie 007", "dossiê captação", "dossie aula 5.8",
+        "captação de pacientes", "estratégias 007", "baixar dossiê 007"
+    ]
+    PATIENT_LETTER_KEYWORDS = [
+        "patient letter", "carta patient letter", "pdf patient letter", "modelo patient letter",
+        "baixar patient letter", "patient letter do curso"
+    ]
+    SECRETARIA_KEYWORDS = [
+        "scripts da secretária", "script da secretária", "roteiro secretária",
+        "pdf scripts secretária", "modelo de secretária", "secretaria", "secretária"
+    ]
+    HEALTHPLAN_KEYWORDS = [
+        "health plan", "modelo health plan", "modelo no canva", "formulário health plan", "healthplan", "plano de saúde"
+    ]
+    SPOTIFY_KEYWORDS = [
+        "playlist spotify", "playlist no spotify", "música spotify", "spotify do curso", "link spotify", "playlist do curso"
+    ]
 
-    # SEGUE TUDO COMO ANTES para perguntas normais
+    # Prepara variáveis para adicionar botão ao final, mesmo em respostas longas
+    extra_link = ""
+    if any(x in pergunta_limpa for x in PLANO_ACAO_KEYWORDS) or any(x in question.lower() for x in PLANO_ACAO_KEYWORDS):
+        extra_link = resposta_link("Plano de Ação do Consultório High Ticket", "https://nandamac-my.sharepoint.com/:b:/p/lmacdowell/EV6wZ42I9nhHpmnSGa4DHfEBaff0ewZIsmH_4LqLAI46eQ?e=gd5hR0")
+    elif any(x in pergunta_limpa for x in GUIA_CURSO_KEYWORDS) or any(x in question.lower() for x in GUIA_CURSO_KEYWORDS):
+        extra_link = resposta_link("Guia do Curso Consultório High Ticket", "https://nandamac-my.sharepoint.com/:b:/p/lmacdowell/EQZrQJpHXlVCsK1N5YdDIHEBHocn7FR2yQUHhydgN84yOw?e=GAut9r")
+    elif any(x in pergunta_limpa for x in DOSSIÊ_007_KEYWORDS) or any(x in question.lower() for x in DOSSIÊ_007_KEYWORDS):
+        extra_link = resposta_link("Dossiê 007 – Captação de Pacientes High Ticket", "https://nandamac-my.sharepoint.com/:b:/p/lmacdowell/EVdOpjU1frVBhApTKmmYAwgBFkbNggnj2Cp0w9luTajxgg?e=iQOnk0")
+    elif any(x in pergunta_limpa for x in PATIENT_LETTER_KEYWORDS) or any(x in question.lower() for x in PATIENT_LETTER_KEYWORDS):
+        extra_link = resposta_link("Patient Letter – Modelo Oficial", "https://nandamac-my.sharepoint.com/:b:/p/lmacdowell/EbdJ4rqiywhOjG0Yy3cDhjYBf04FMiNmoOXos4M5eZmoaA?e=90kaBp")
+    elif any(x in pergunta_limpa for x in SECRETARIA_KEYWORDS) or any(x in question.lower() for x in SECRETARIA_KEYWORDS):
+        extra_link = resposta_link("Scripts da Secretária – Consultório High Ticket", "https://nandamac-my.sharepoint.com/:b:/p/lmacdowell/EVgtSPvwpw9OhOS4CibHXGYB7KNAolar5o0iY2I2dOKCAw?e=LVZlX3")
+    elif any(x in pergunta_limpa for x in HEALTHPLAN_KEYWORDS) or any(x in question.lower() for x in HEALTHPLAN_KEYWORDS):
+        extra_link = resposta_link_externo("Modelo Editável de Health Plan no Canva", "https://www.canva.com/design/DAEteeUPSUQ/0isBewvgUTJF0gZaRYZw2g/view?utm_content=DAEteeUPSUQ&utm_campaign=designshare&utm_medium=link&utm_source=publishsharelink&mode=preview", icone="📝")
+    elif any(x in pergunta_limpa for x in SPOTIFY_KEYWORDS) or any(x in question.lower() for x in SPOTIFY_KEYWORDS):
+        extra_link = resposta_link_externo("Playlist Oficial do Consultório High Ticket no Spotify", "https://open.spotify.com/playlist/5Vop9zNsLcz0pkpD9aLQML?si=vJDC7OfcQXWpTernDbzwHA&nd=1&dlsi=964d4360d35e4b80", icone="🎵")
+
     is_chip = any(question.strip().lower() == c.lower() for c in CHIP_PERGUNTAS)
     mostrar_saudacao = is_first_question and not is_chip
     mostrar_pergunta_repetida = is_first_question and not is_chip
@@ -222,26 +304,10 @@ def generate_answer(
     explicacao = response.choices[0].message.content.strip()
     quick_replies = gerar_quick_replies(question, explicacao, history)
 
-    # --- Insere o botão/link ao final da resposta (sempre que o tema aparecer na pergunta ou resposta) ---
-
-    # Concatena ao final, se a explicação não já possuir o botão
-    def incluir_bloco_link(explicacao, tema, titulo, url):
-        if (tema and url and titulo and (url not in explicacao)):
-            return explicacao + resposta_link(titulo, url)
-        return explicacao
-
-    explicacao = incluir_bloco_link(explicacao, tema_plano_acao or PLANO_ACAO_LINK in explicacao, "Plano de Ação do Consultório High Ticket", PLANO_ACAO_LINK)
-    explicacao = incluir_bloco_link(explicacao, tema_patient_letter or PATIENT_LETTER_LINK in explicacao, "Patient Letter – Modelo Oficial", PATIENT_LETTER_LINK)
-    explicacao = incluir_bloco_link(explicacao, tema_guia_curso or GUIA_CURSO_LINK in explicacao, "Guia do Curso Consultório High Ticket", GUIA_CURSO_LINK)
-    explicacao = incluir_bloco_link(explicacao, tema_dossie or DOSSIÊ_007_LINK in explicacao, "Dossiê 007 – Captação de Pacientes High Ticket", DOSSIÊ_007_LINK)
-    explicacao = incluir_bloco_link(explicacao, tema_spotify or SPOTIFY_LINK in explicacao, "Playlist Consultório High Ticket (Spotify)", SPOTIFY_LINK)
-    explicacao = incluir_bloco_link(explicacao, tema_secretaria or SECRETARIA_LINK in explicacao, "Scripts da Secretária – Consultório High Ticket", SECRETARIA_LINK)
-    explicacao = incluir_bloco_link(explicacao, tema_health_plan or HEALTH_PLAN_LINK in explicacao, "Modelo de Health Plan no Canva", HEALTH_PLAN_LINK)
-
     resposta = ""
     if mostrar_saudacao:
-        resposta += f"{saudacao}<br><br>{pergunta_repetida}{explicacao}<br><br>{fechamento}"
+        resposta += f"{saudacao}<br><br>{pergunta_repetida}{explicacao}{extra_link}<br><br>{fechamento}"
     else:
-        resposta += f"{explicacao}<br><br>{fechamento}"
+        resposta += f"{explicacao}{extra_link}<br><br>{fechamento}"
 
     return resposta, quick_replies
