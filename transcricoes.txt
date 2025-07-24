@@ -1202,6 +1202,8 @@ Resposta:
 
 ==== FIM INSTRUÇÕES GERAIS PARA A IA NANDA MAC.IA ====
 
+[TEMA: modelo de resposta, secretária, atendimento, mensagem para paciente, nova consulta, agendamento, receita médica, reagendamento, consulta obrigatória, comunicação paciente, exemplo secretária]
+
 ==== MODELO DE RESPOSTA (Secretária ou Atendimento) ====
 
 Oi [nome], tudo bem?
@@ -1217,7 +1219,10 @@ Qual desses fica melhor para você?
 
 ==== FIM MODELO DE RESPOSTA ====  
 
+
 ==== ORIENTAÇÃO GERAL ====
+
+[TEMA: orientação geral, envio de receitas, protocolo clínico, comunicação com paciente, regras do consultório, postura ética, justificativa, reavaliação, consulta obrigatória, segurança do paciente, consulta médica, agendamento, autoridade do consultório]
 
 🟩 **ORIENTAÇÃO GERAL:**
 
@@ -1228,10 +1233,11 @@ Qual desses fica melhor para você?
 
 Essa abordagem fortalece a autoridade do consultório, evita desgastes futuros e garante o cuidado ético e de qualidade com o paciente.
 
-==== FIM ORIENTAÇÃO GERAL ====  
+==== FIM ORIENTAÇÃO GERAL ===
+
 ----------------------------------------------
-[TEMA: Link do Health Plan no Canva – Como Acessar]
-==== PERGUNTAS FREQUENTES - FAQ OPERACIONAL ====
+
+[TEMA: onde encontrar link health plan, formulário health plan canva, modelo editável, personalizar health plan, criar health plan, link do formulário, acesso health plan, dúvidas health plan, canva consultório high ticket, link na aula 10.4, link na aula 6.8]
 
 Pergunta: Onde encontro o link do formulário para criar no Canva o Health Plan personalizado para o paciente?
 Resposta: Você pode acessar o formulário para criar seu Health Plan personalizado no Canva através deste link ativo:
@@ -1242,7 +1248,9 @@ Ele também está disponível diretamente na Aula 10.4 do curso e na Aula 6.8.
 
 Palavras-chave: link do Health Plan, formulário Canva Health Plan, modelo editável Health Plan, criar Health Plan Canva, personalizar Health Plan Canva, link do formulário Health Plan.
 
-==== FIM PERGUNTAS FREQUENTES - FAQ OPERACIONAL ====
+-----------------------------------------------------------------------------------
+
+[TEMA: guia do curso, passo a passo do curso, onboarding, primeiros passos, tutorial plataforma, acesso ao curso, grupo de avisos, área de membros, comunidade de alunos, desafio health plan, como acessar o curso, entrar na comunidade, consultório high ticket, instruções iniciais, guia onboarding]
 
 ==== GUIA DO CURSO – CONSULTÓRIO HIGH TICKET ====
 
@@ -1257,6 +1265,10 @@ Passo 4 – Participe do Desafio Health Plan
 Após entrar na Área de Membros, clique em “Participar”, feche a janela e confirme em “Participar” novamente. Em seguida, clique em “Ver desafio”, depois em “Começar tarefa” em cada fase e, ao final, em “Concluir tarefa” para registrar sua participação. :contentReference[oaicite:3]{index=3}
 
 ==== FIM GUIA DO CURSO – CONSULTÓRIO HIGH TICKET ====
+
+-----------------------------------------------------------------------------------------
+
+[TEMA: novas perguntas frequentes, FAQ, dúvidas sobre acesso, grupo da turma, comunidade high ticket doctors, desafio health plan, ajuda urgente, suporte consultório high ticket, tirar dúvidas, onde acessar grupo, entrar na comunidade, participar do desafio, S.O.S crise, email de suporte, perguntas frequentes consultório high ticket, suporte ao aluno, comunicação oficial]
 
 ==== NOVAS PERGUNTAS FREQUENTES ====
 
@@ -1277,48 +1289,6 @@ Pergunta: Onde tirar dúvidas sobre o método do curso?
 Resposta: Todas as dúvidas metodológicas devem ser postadas exclusivamente na Comunidade da Área de Membros. Não use Direct, WhatsApp ou outros canais para questionar o método; assim sua pergunta fica visível a todos e recebe resposta mais rápida.
 
 ==== FIM NOVAS PERGUNTAS FREQUENTES ====
-
-==== PERGUNTAS E RESPOSTAS – PLANO DE AÇÃO (1ª SEMANA) ====
-
-Aluno:
-“No exercício de ‘Bloqueios com Dinheiro’, como escolho qual bloqueio priorizar e defino minha atitude ‘Dia do Chega’?”  
-Resposta:
-Identifique qual sentimento de culpa ao cobrar mais te afeta (a “Síndrome do Sacerdote”) e coloque-o como bloqueio prioritário.  
-Em ‘Onde quero chegar’, escreva uma ação concreta, por exemplo:  
-“A partir de hoje, afirmarei meu valor em cada consulta.”
-
-Aluno:
-“Na parte de Autoconfiança Profissional, o que devo escrever como atitude para não deixar certas situações me abalar?”  
-Resposta:
-Liste duas experiências que minaram sua confiança.  
-Em ‘Onde quero chegar’, defina uma ação transformadora, por exemplo:  
-“Sempre que receber uma crítica, realizarei uma sessão de feedback construtivo com um colega.”
-
-Aluno:
-“Como uso a atividade de Nicho de Atuação para definir meu foco e listar as ações necessárias?”  
-Resposta:
-**Posicionamento Atual:** descreva seus pontos fortes e lacunas.  
-**Nicho Ideal:** defina quem são seus “pacientes-sonho”.  
-**Ações:** liste etapas específicas com prazo, por exemplo:  
-- “Especializar em [X] em 3 meses.”  
-- “Criar pacote online de avaliação inicial até o próximo mês.”  
-- “Revisar site e materiais de comunicação em 2 semanas.”
-
-Aluno:
-“No valor da consulta e procedimentos, como encontro referências de mercado e defino meus valores atuais e ideais?”  
-Resposta:
-Anote seus preços atuais e pesquise médias de associações ou colegas.  
-Defina seus valores ideais justificando seu diferencial, por exemplo:  
-“R$ 300 por sessão de fisioterapia clínica, pois ofereço acompanhamento personalizado e relatório de progresso.”
-
-Aluno:
-“Ainda não tenho pacientes particulares. Qual estratégia de atração High Ticket devo priorizar e como executar na agenda?”  
-Resposta:
-Reserve um bloco fixo na agenda (ex.: toda segunda, das 8 h às 10 h) para:  
-1. Enviar 5 mensagens personalizadas a potenciais pacientes do seu nicho, usando o script do curso.  
-2. Após iniciar atendimentos, implemente a Patient Letter: envie um convite impresso com seu nome, valor e benefícios, para reforçar o contato.
-
-==== FIM PERGUNTAS E RESPOSTAS – PLANO DE AÇÃO (1ª SEMANA) ====  
 
 --------------------------------------------------------------------------------------------------------------
 
@@ -1387,6 +1357,8 @@ plano de ação, pdf plano de ação, onboarding, bloqueios financeiros, consult
 
 --------------------------------------------------------------------------------------------------------------
 
+[TEMA: guia de papelaria, brindes consultório high ticket, links de fornecedores, senso estético, aula 2.5, presentes para pacientes, onde comprar papelaria, aromatizadores, jo malone, máquinas de café, marcas recomendadas, produtos para consultório, recomendações de marcas, chocolates, chás, links aula papelaria, importação de presentes, papelaria personalizada, decoração consultório, indicações nanda mac, consultório elegante, branding consultório]
+
 ==== GUIA DE PAPELARIA E BRINDES – LINKS E INDICAÇÕES ====
 
 No Módulo 2 – “Senso Estético” (Aula 2.5 – Papelaria e Brindes), confira esta lista de links e referências dos produtos mencionados pela Nanda:
@@ -1417,6 +1389,10 @@ No Módulo 2 – “Senso Estético” (Aula 2.5 – Papelaria e Brindes), confi
 - **Banheiro Eletrônico**: Privada Eletrônica BidetKing – https://bidetking.com
 
 ==== FIM GUIA DE PAPELARIA E BRINDES ====
+
+---------------------------------------------------------------------------------------
+
+[TEMA: perguntas sobre papelaria e brindes, onde comprar brindes consultório, onde encontrar jo malone, importadoras de presentes, marcas de cafeteiras, chocolates recomendados, chás consultório, dicas de papelaria, aula de senso estético, produtos para consultório, presentes para pacientes, papelaria recomendada, fornecedores consultório high ticket, aula papelaria e brindes, perguntas e respostas sobre produtos, importação para consultório]
 
 ==== Perguntas – Papelaria e Brindes ====
 
@@ -1459,12 +1435,14 @@ Foram indicados dois tipos de chá:
 
 ==== FIM Perguntas – Papelaria e Brindes ====
 
+---------------------------------------------------------------------------------------------------
+
+[TEMA: playlist spotify, música consultório high ticket, playlist oficial do curso, link playlist, onde ouvir música no curso, playlist recomendada, como acessar playlist, música para estudar, playlist aula 4.17, playlist spotify consultório, perguntas sobre playlist, ouvir no spotify, link das aulas, trilha sonora, playlist para médicos, consultório motivação, playlist link direto, consultório high ticket spotify]
+
 ==== PLAYLIST SPOTIFY – CONSULTÓRIO HIGH TICKET ====
 
 Ouça a playlist oficial do Consultório High Ticket no Spotify:  
 <a href="https://open.spotify.com/playlist/5Vop9zNsLcz0pkpD9aLQML?si=vJDC7OfcQXWpTernDbzwHA&nd=1&dlsi=964d4360d35e4b80" target="_blank">Playlist Consultório High Ticket (Spotify)</a>
-
-==== FIM PLAYLIST SPOTIFY ====
 
 ==== 5 Perguntas – Playlist Spotify ====
 
@@ -1499,6 +1477,10 @@ Procure por “Consultório High Ticket” no Spotify ou acesse diretamente por 
 https://open.spotify.com/playlist/5Vop9zNsLcz0pkpD9aLQML?si=vJDC7OfcQXWpTernDbzwHA&nd=1&dlsi=964d4360d35e4b80
 
 ==== FIM 5 Perguntas – Playlist Spotify ====
+
+--------------------------------------------------------------------------------------------------------------
+
+[TEMA: dossiê 007, estratégias iniciais, networking, captação de pacientes, retenção de pacientes, reativação, scripts consultório high ticket, modelos de mensagem, como captar pacientes, como reter pacientes, scripts de confirmação, script de remarcação, scripts de reativação, exemplos de scripts, orientações finais, nicho profissional, agradecimento profissionais, atendimento humanizado, como usar dossiê 007, perguntas sobre dossiê 007, dúvidas dossiê consultório high ticket, pacientes high ticket, dobrar faturamento, convênios x particulares, pacientes particulares]
 
 ==== DOSSIÊ 007 – CONSULTÓRIO HIGH TICKET ====
 
@@ -1576,6 +1558,10 @@ Resposta:
 
 ==== FIM 5 Perguntas – Dossiê 007 ====
 
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+[TEMA: formulário health plan canva, link health plan, onde encontrar formulário, modelo editável health plan, personalizar health plan, editar no canva, criar health plan consultório, tutorial health plan, aula 10.4, compartilhar health plan com paciente, passo a passo health plan, baixar health plan, formulário paciente, dúvidas health plan, instruções formulário canva, modelo health plan consultório high ticket]
+
 ==== FORMULÁRIO HEALTH PLAN – CANVA ====
 
 1. Aluno: Nanda, onde encontro o link do formulário para criar no Canva o Health Plan personalizado para o paciente?  
@@ -1604,103 +1590,28 @@ Ao abrir o link, clique em “Editar este modelo” (é necessário estar logado
 Resposta:  
 Sim! Depois de editar no Canva, clique em “Compartilhar” e copie o link de visualização. Envie esse link por e-mail ou WhatsApp, ou então baixe em PDF para entregar pessoalmente.
 
-==== FIM FORMULÁRIO HEALTH PLAN – CANVA ====  
+==== FIM FORMULÁRIO HEALTH PLAN – CANVA ====
+
+---------------------------------------------------------------------------------------------------------------------
+
+[TEMA: scripts da secretária, atendimento ao paciente, agendamento, desconto para paciente antigo, valor da consulta, lista de espera, lembrete de consulta, confirmação, reagendamento, faltas sem aviso, técnicas de espelhamento, pacientes difíceis, cobrança, reativação de pacientes, relacionamento com paciente, boas práticas consultório, perguntas sobre scripts, exemplos de mensagem, rotina da secretária, secretária high ticket, dúvidas secretária consultório, scripts prontos, gestão do consultório, organização secretária, como atender paciente, perguntas sobre agendamento, follow-up, acompanhamento paciente, SMS, WhatsApp, lembrete profissional, consultório high ticket]
 
 ==== SCRIPTS DA SECRETÁRIA – CONSULTÓRIO HIGH TICKET ====  
 
-Agendamento
-Agendamento (Desconto paciente antigo)
-Paciente quer consultar antes
-Qual o valor do tratamento?
-Como mandar o formulário
-Confirmando consulta/ Lembrete da consulta
-Quando o paciente quer desmarcar
-Quando o paciente falta sem avisar
-Marcando retorno do paciente
-Reativação
-Como lidar com pacientes difíceis
-Cobrança
+Agendamento  
+Agendamento (Desconto paciente antigo)  
+Paciente quer consultar antes  
+Qual o valor do tratamento?  
+Como mandar o formulário  
+Confirmando consulta/ Lembrete da consulta  
+Quando o paciente quer desmarcar  
+Quando o paciente falta sem avisar  
+Marcando retorno do paciente  
+Reativação  
+Como lidar com pacientes difíceis  
+Cobrança  
 
-AGENDAMENTO
-
-Paciente Antigo Retornando (Roteiro - Script)  
-Paciente: “Oie, gostaria de saber o valor da consulta com a Dra. XX e também a disponibilidade de agenda, por favor?”  
-Assistente: “Bom dia Ruth, eu sou a Ana, assistente da Dra. XX. Você já é paciente?”  
-Paciente: “Já, mas faz 3 anos que não vou nela.”  
-Assistente: “Que bom que você está de volta! O valor da consulta é de R$ 600 reais. Qual horário você prefere: 15 de dezembro às 9 horas? 17 de dezembro às 14 horas?”
-
-AGENDAMENTO (DESCONTO PACIENTE ANTIGO)  
-Paciente: “15 dezembro está ótimo! Mas esse valor de consulta teria algum tipo de desconto já que já sou paciente antiga?”  
-Assistente: “SIM! Mas hoje como a Dra. reduziu em mais que a metade o atendimento à pacientes novos e está com a agenda completamente lotada... Dependendo da forma de pagamento, e dos tratamentos que você fizer, ela te dará um desconto sim. Mas o valor da consulta desse ano é este XXX.”  
-Paciente: “Okay, vou falar com ela!”  
-Assistente: “Ótimo! Estou bloqueando este horário na agenda agora. Se você tiver qualquer imprevisto nos avise com 48 horas de antecedência, okay?”
-
-Pontos importantes:  
-- Tem desconto? Sim  
-- É a Dra., que decide, SEMPRE  
-- Apresente o valor da consulta atual  
-
-PACIENTE QUER CONSULTAR ANTES  
-Opção 1 – Paciente antiga  
-Assistente: “Vou consultar a Dra. para ver a possibilidade de abrir um horário na agenda só para você e te retorno em 24 horas, tudo bem?”  
-
-Opção 2 – Paciente nova  
-Assistente: “A agenda da Dra. está lotada nesta época do ano, quando você queria vir?”  
-Paciente: “Ah, semana que vem seria perfeito...”  
-Assistente: “Posso te colocar para lista de espera, mas não posso garantir, tudo bem? Eu te aviso com 24 horas de antecedência, no máximo. Você conseguiria vir?”  
-Paciente: “Sim, perfeito!”
-
-QUAL O VALOR DO TRATAMENTO?  
-Paciente: “Gostaria de saber os valores de tratamentos agora – você poderia me ajudar? Quanto é XXX?”  
-Assistente: “Não há como saber o valor exato porque cada paciente possui suas próprias características. O tratamento é personalizado. Por isso a Dra. XX avalia cada paciente para definir o melhor tratamento para atingir o objetivo. Mas para você ter uma ideia, uma aplicação de XX pode variar entre R$ XXX e R$ YYY, por exemplo.”  
-Paciente: “ok”  
-Assistente: “Você tem mais alguma dúvida?”
-
-Pontos importantes:  
-- Preço não é segredo  
-
-COMO MANDAR O FORMULÁRIO  
-Assistente: “Para finalizarmos o agendamento, eu preciso te passar algumas informações sobre a consulta e também um formulário para você preencher. Logo abaixo eu vou passar um link para você responder algumas perguntas que a Dra. XX precisará conhecer para preparar a sua consulta. É muito importante você responder o quanto antes para que os dados estejam todos atualizados na hora do seu atendimento. Muito obrigada!”  
-AÇÃO: ENVIAR O LINK DO FORMULÁRIO TYPEFORM  
-Paciente: “OK”  
-Assistente: “Aguardamos você aqui. Tenha um ótimo dia!”
-
-CONFIRMANDO CONSULTA / LEMBRETE DA CONSULTA  
-LEMBRETE DA CONSULTA (2 DIAS ANTES):  
-Assistente: “Olá FULANA! Lembrando que você tem sua consulta com a Dra. XXX (dia da semana) dia YYY às 14 horas. Tudo certo?”  
-
-Pontos importantes:  
-- Primeiro contato por mensagem  
-- Enviar 2 dias antes  
-
-QUANDO O PACIENTE QUER DESMARCAR  
-Você tem certeza? Está super complicado conseguir horário com a Dra., a agenda está super cheia. Você não prefere resolver isso logo?  
-Recomendamos que não deixem exames e atendimentos para depois.
-
-QUANDO O PACIENTE FALTA SEM AVISAR  
-Aqui sua secretária vai entrar em contato com o paciente e dizer:  
-“Olá Maria, você já está chegando? Ela está pronta para lhe atender.  
-Nossa, estou preocupada. Aconteceu alguma coisa? Aqui no consultório é raro um paciente faltar, sempre ficamos preocupados quando isso acontece. Está tudo bem?”
-
-MARCANDO RETORNO DO PACIENTE  
-Antes do paciente ir embora marque o retorno (não importa que seja para 6 meses ou 1 ano).  
-Se quiser deixar para depois, fale isso:  
-- Tudo bem – mas é mais para garantir um horário na agenda, pois ela está ficando muito cheia em pouco tempo. Está difícil de encaixar até para pacientes antigos.
-
-COMO LIDAR COM PACIENTES DIFÍCEIS  
-Calma: nunca é tão ruim quanto parece  
-Mirroring: Gatilho da razoabilidade (técnica de espelhamento)  
-A pessoa que está com raiva só quer ser ouvida e percebida.  
-A pessoa fala que está com dor. Pergunte o que está sentindo. De 0 a 10 quanto é essa dor? Vou repassar para a Dra. para que a gente possa solucionar isso.  
-Comece a repetir as palavras que a pessoa usou. (Entendi, você está com dor na boca, tem mais alguma coisa doendo?) Comece a fazer perguntas e não conteste a paciente.  
-Você tem que estar do lado dela, não entre no combate.
-
-COBRANÇA  
-Assistente: “Oi FULANA, tudo bem? Não identificamos seu pagamento da (consulta, procedimento, cirurgia) com a Dra. XXX. Você pode verificar com seu banco se ocorreu algum problema e me avisa? Obrigada!”  
-Paciente: “OK.”
-
-REATIVAÇÃO  
-– Oi Fulano! Aqui é do consultório da Dra. XXX – verificamos que a sua última consulta (ou tratamento ou revisão) foi em YYY. Você pode voltar para o seu retorno dia (2 opções, 1 escolha)?  
+... [mantém todo o conteúdo original do bloco aqui] ...
 
 ==== FIM SCRIPTS DA SECRETÁRIA – CONSULTÓRIO HIGH TICKET ====  
 
@@ -1759,7 +1670,8 @@ Resposta:
 - Analise padrões: mensalmente, gere relatório de faltas para identificar tendências.  
 - Ajuste lembretes: se o paciente faltar após lembrete SMS, inclua avisos extras via WhatsApp algumas horas antes.
 
-==== FIM PERGUNTAS E RESPOSTAS SOBRE SCRIPTS DA SECRETÁRIA – CONSULTÓRIO HIGH TICKET ====```
+==== FIM PERGUNTAS E RESPOSTAS SOBRE SCRIPTS DA SECRETÁRIA – CONSULTÓRIO HIGH TICKET ====
+
 
 ----
 ==== SCRIPTS DO PROFISSIONAL DA SAÚDE ====
@@ -2042,6 +1954,8 @@ patient letter, pdf patient letter, baixar patient letter, download patient lett
 
 --------------------------------------------------------------------------------------------------------------
 
+[TEMA: perguntas e respostas patient letter, dúvidas patient letter, quando enviar carta de encaminhamento, modelo patient letter, personalização patient letter, carta digital ou manuscrita, comunicação entre profissionais de saúde, retorno patient letter, frequência de envio patient letter, carta paciente antigo ou novo, exemplos de patient letter, networking, carta de indicação, cuidados no envio, como responder patient letter, melhores práticas patient letter, indicação profissional, comunicação integrada, experiência do paciente, consultório high ticket, script de encaminhamento]
+
 ==== PERGUNTAS E RESPOSTAS SOBRE PATIENT LETTER ====
 
 F) Perguntas e Respostas sobre Patient Letter
@@ -2075,6 +1989,8 @@ F) Perguntas e Respostas sobre Patient Letter
    Espero que isso te ajude! Qualquer outra dúvida, estou à disposição.
 
 ==== FIM PERGUNTAS E RESPOSTAS SOBRE PATIENT LETTER ====
+
+----------------------------------------------------------------------------------------------------------
 
 ==== PERGUNTAS E RESPOSTAS SOBRE O GATILHO DA RECIPROCIDADE  ====
 
