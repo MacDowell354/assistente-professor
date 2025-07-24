@@ -250,9 +250,9 @@ def generate_answer(
     if any(x in pergunta_limpa for x in SECRETARIA_KEYWORDS) or \
         (question and any(x in question.lower() for x in SECRETARIA_KEYWORDS)):
         return (
-            "Olá, Doutor(a)! 😊 Aqui está o link direto para baixar os Scripts da Secretária – Consultório High Ticket:<br>"
-            "<a class='chip' href='https://nandamac-my.sharepoint.com/:b:/p/lmacdowell/EVgtSPvwpw9OhOS4icHkXYGB7KNAlar5o0iY2I2dOKCAw?e=w4i8Gl' target='_blank'>📄 Baixar Scripts da Secretária – Consultório High Ticket</a><br>"
-            "Se precisar de orientação ou quiser adaptar algum script para seu consultório, é só perguntar!"
+           "Olá, Doutor(a)! 😊 Aqui está o link direto para baixar os Scripts da Secretária – Consultório High Ticket:<br>"
+        "<a class='chip' href='https://nandamac-my.sharepoint.com/:b:/p/lmacdowell/EVgtSPvwpw9OhOS4CibHXGYB7KNAolar5o0iY2I2dOKCAw?e=LVZlX3' target='_blank'>📄 Baixar Scripts da Secretária – Consultório High Ticket</a><br>"
+        "Se precisar de orientação ou quiser adaptar algum script para seu consultório, é só perguntar!"
         ), []
 
     # SEGUE TUDO COMO ANTES para perguntas normais
