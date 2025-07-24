@@ -178,20 +178,41 @@ def gerar_quick_replies(question, explicacao, history=None):
         filtered += [r for r in base_replies if r not in filtered]
     return filtered[:3]
 
-def resposta_link_didatica(material, url, explicacao):
+def resposta_link_botao(material, url):
     return (
-        f"{explicacao}<br><br>"
-        f"<a class='chip' href='{url}' target='_blank'>📄 Baixar {material}</a><br>"
-        "Se precisar de orientação ou tiver dúvidas sobre como aplicar, é só perguntar!"
+        f"<br><a class='chip' href='{url}' target='_blank'>📄 Baixar {material}</a>"
     )
+
+def chamar_gpt(prompt):
+    # Você pode ajustar aqui para usar o modelo certo (gpt-4o-mini ou gpt-3.5-turbo)
+    try:
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "system", "content": "Responda SEMPRE em português do Brasil."},
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0.4,
+            max_tokens=500
+        )
+        return response.choices[0].message.content.strip()
+    except OpenAIError:
+        response = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": "Responda SEMPRE em português do Brasil."},
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0.4,
+            max_tokens=500
+        )
+        return response.choices[0].message.content.strip()
 
 def generate_answer(
     question, context="", history=None, tipo_de_prompt=None, is_first_question=True
 ):
     cumprimento_detectado = is_greeting(question)
     pergunta_limpa = remove_greeting_from_question(question)
-
-    # Blocos especiais DIDÁTICOS + LINK
 
     # 1. Plano de Ação
     PLANO_ACAO_KEYWORDS = [
@@ -201,12 +222,16 @@ def generate_answer(
     ]
     if any(x in pergunta_limpa for x in PLANO_ACAO_KEYWORDS) or \
         (question and any(x in question.lower() for x in PLANO_ACAO_KEYWORDS)):
-        explicacao = (
-            "O Plano de Ação é um roteiro prático para organizar seus primeiros passos no curso e iniciar sua transformação no consultório. "
-            "Utilize esse material no onboarding para definir metas, identificar bloqueios e planejar ações concretas semana a semana."
+        snippet = search_transcripts_by_theme("plano de ação")
+        prompt = (
+            f"Com base no conteúdo abaixo do curso Consultório High Ticket, explique de forma didática como o médico pode usar o Plano de Ação para organizar o início da sua jornada, definir metas e planejar ações semanais. Seja prático e objetivo.\n\n"
+            f"Pergunta: {question}\n\n"
+            f"Conteúdo do curso:\n{snippet}\n"
         )
-        return resposta_link_didatica("Plano de Ação do Consultório High Ticket", 
-            "https://nandamac-my.sharepoint.com/:b:/p/lmacdowell/EV6wZ42I9nhHpmnSGa4DHfEBaff0ewZIsmH_4LqLAI46eQ?e=gd5hR0", explicacao), []
+        resposta_ia = chamar_gpt(prompt)
+        link = resposta_link_botao("Plano de Ação do Consultório High Ticket", 
+            "https://nandamac-my.sharepoint.com/:b:/p/lmacdowell/EV6wZ42I9nhHpmnSGa4DHfEBaff0ewZIsmH_4LqLAI46eQ?e=gd5hR0")
+        return f"{resposta_ia}{link}", []
 
     # 2. Patient Letter
     PATIENT_LETTER_KEYWORDS = [
@@ -214,15 +239,18 @@ def generate_answer(
     ]
     if any(x in pergunta_limpa for x in PATIENT_LETTER_KEYWORDS) or \
         (question and any(x in question.lower() for x in PATIENT_LETTER_KEYWORDS)):
-        explicacao = (
-            "A Patient Letter é um modelo de comunicação entre profissionais de saúde. Pode (e deve) ser enviada tanto para pacientes novos quanto antigos, sempre que houver encaminhamento, comunicação de acompanhamento ou atualizações relevantes. "
-            "Você pode enviar a cada novo tratamento, retorno importante ou atualização clínica do paciente."
+        snippet = search_transcripts_by_theme("patient letter")
+        prompt = (
+            f"Com base no conteúdo do curso Consultório High Ticket abaixo, explique de forma prática e didática como, quando e para quem o médico deve enviar a Patient Letter. Responda considerando as melhores práticas ensinadas nas aulas. Cite exemplos e seja direto.\n\n"
+            f"Pergunta: {question}\n\n"
+            f"Conteúdo do curso:\n{snippet}\n"
         )
-        return resposta_link_didatica(
+        resposta_ia = chamar_gpt(prompt)
+        link = resposta_link_botao(
             "Patient Letter – Modelo Oficial",
-            "https://nandamac-my.sharepoint.com/:b:/p/lmacdowell/EbdJ4rqiywhOjG0Yy3cDhjYBf04FMiNmoOXos4M5eZmoaA?e=90kaBp",
-            explicacao
-        ), []
+            "https://nandamac-my.sharepoint.com/:b:/p/lmacdowell/EbdJ4rqiywhOjG0Yy3cDhjYBf04FMiNmoOXos4M5eZmoaA?e=90kaBp"
+        )
+        return f"{resposta_ia}{link}", []
 
     # 3. Guia do Curso
     GUIA_CURSO_KEYWORDS = [
@@ -232,14 +260,18 @@ def generate_answer(
     ]
     if any(x in pergunta_limpa for x in GUIA_CURSO_KEYWORDS) or \
         (question and any(x in question.lower() for x in GUIA_CURSO_KEYWORDS)):
-        explicacao = (
-            "O Guia do Curso Consultório High Ticket orienta você nos primeiros passos após o onboarding, explicando como acessar materiais, participar da comunidade e organizar sua rotina de estudos para extrair o máximo do método."
+        snippet = search_transcripts_by_theme("guia do curso")
+        prompt = (
+            f"Com base no curso Consultório High Ticket, explique para que serve o Guia do Curso, como utilizá-lo no onboarding e o que não pode deixar de ser feito nos primeiros passos. Seja didático e prático.\n\n"
+            f"Pergunta: {question}\n\n"
+            f"Conteúdo do curso:\n{snippet}\n"
         )
-        return resposta_link_didatica(
+        resposta_ia = chamar_gpt(prompt)
+        link = resposta_link_botao(
             "Guia do Curso Consultório High Ticket",
-            "https://nandamac-my.sharepoint.com/:b:/p/lmacdowell/EQZrQJpHXlVCsK1N5YdDIHEBHocn7FR2yQUHhydgN84yOw?e=GAut9r",
-            explicacao
-        ), []
+            "https://nandamac-my.sharepoint.com/:b:/p/lmacdowell/EQZrQJpHXlVCsK1N5YdDIHEBHocn7FR2yQUHhydgN84yOw?e=GAut9r"
+        )
+        return f"{resposta_ia}{link}", []
 
     # 4. Dossiê 007
     DOSSIÊ_007_KEYWORDS = [
@@ -248,25 +280,33 @@ def generate_answer(
     ]
     if any(x in pergunta_limpa for x in DOSSIÊ_007_KEYWORDS) or \
         (question and any(x in question.lower() for x in DOSSIÊ_007_KEYWORDS)):
-        explicacao = (
-            "O Dossiê 007 reúne estratégias exclusivas para captação e fidelização de pacientes High Ticket, com roteiros, scripts e táticas para aplicar imediatamente no seu consultório."
+        snippet = search_transcripts_by_theme("dossiê 007")
+        prompt = (
+            f"Com base no conteúdo do curso Consultório High Ticket, explique de forma prática para que serve o Dossiê 007, como utilizá-lo na captação de pacientes e os benefícios de aplicar as estratégias sugeridas. Seja direto.\n\n"
+            f"Pergunta: {question}\n\n"
+            f"Conteúdo do curso:\n{snippet}\n"
         )
-        return resposta_link_didatica(
+        resposta_ia = chamar_gpt(prompt)
+        link = resposta_link_botao(
             "Dossiê 007 – Captação de Pacientes High Ticket",
-            "https://nandamac-my.sharepoint.com/:b:/p/lmacdowell/EVdOpjU1frVBhApTKmmYAwgBFkbNggnj2Cp0w9luTajxgg?e=iQOnk0",
-            explicacao
-        ), []
+            "https://nandamac-my.sharepoint.com/:b:/p/lmacdowell/EVdOpjU1frVBhApTKmmYAwgBFkbNggnj2Cp0w9luTajxgg?e=iQOnk0"
+        )
+        return f"{resposta_ia}{link}", []
 
     # 5. Health Plan (Canva)
     if "modelo no canva" in pergunta_limpa or "modelo health plan" in pergunta_limpa or "modelo healthplan" in pergunta_limpa or "modelo de health plan" in pergunta_limpa:
-        explicacao = (
-            "O modelo de Health Plan no Canva é totalmente editável e pode ser personalizado para cada paciente e especialidade. Utilize esse material para estruturar planos de acompanhamento e entregar ao paciente em cada etapa do tratamento."
+        snippet = search_transcripts_by_theme("health plan")
+        prompt = (
+            f"Com base no curso Consultório High Ticket, explique de forma didática como usar o modelo de Health Plan editável do Canva para estruturar o plano de tratamento do paciente. Dê dicas práticas de uso para médicos.\n\n"
+            f"Pergunta: {question}\n\n"
+            f"Conteúdo do curso:\n{snippet}\n"
         )
-        return resposta_link_didatica(
+        resposta_ia = chamar_gpt(prompt)
+        link = resposta_link_botao(
             "Modelo de Health Plan no Canva",
-            "https://www.canva.com/design/DAEteeUPSUQ/0isBewvgUTJF0gZaRYZw2g/view?utm_content=DAEteeUPSUQ&utm_campaign=designshare&utm_medium=link&utm_source=publishsharelink&mode=preview",
-            explicacao
-        ), []
+            "https://www.canva.com/design/DAEteeUPSUQ/0isBewvgUTJF0gZaRYZw2g/view?utm_content=DAEteeUPSUQ&utm_campaign=designshare&utm_medium=link&utm_source=publishsharelink&mode=preview"
+        )
+        return f"{resposta_ia}{link}", []
 
     # 6. Playlist Spotify
     SPOTIFY_KEYWORDS = [
@@ -274,14 +314,17 @@ def generate_answer(
     ]
     if any(x in pergunta_limpa for x in SPOTIFY_KEYWORDS) or \
         (question and any(x in question.lower() for x in SPOTIFY_KEYWORDS)):
-        explicacao = (
-            "Ouça a Playlist Oficial do Consultório High Ticket no Spotify para potencializar sua concentração, motivação e foco nos estudos e no consultório."
+        snippet = search_transcripts_by_theme("playlist")
+        prompt = (
+            f"Com base no curso Consultório High Ticket, explique a importância da playlist do Spotify para concentração, motivação e foco nos estudos do médico. Dê sugestões de uso.\n\n"
+            f"Pergunta: {question}\n\n"
+            f"Conteúdo do curso:\n{snippet}\n"
         )
-        return (
-            f"{explicacao}<br><br>"
-            "<a class='chip' href='https://open.spotify.com/playlist/5Vop9zNsLcz0pkpD9aLQML?si=vJDC7OfcQXWpTernDbzwHA&nd=1&dlsi=964d4360d35e4b80' target='_blank'>🎵 Ouvir Playlist no Spotify</a><br>"
-            "Se quiser recomendações de músicas para concentração ou foco nos estudos, é só pedir!"
-        ), []
+        resposta_ia = chamar_gpt(prompt)
+        link = (
+            "<br><a class='chip' href='https://open.spotify.com/playlist/5Vop9zNsLcz0pkpD9aLQML?si=vJDC7OfcQXWpTernDbzwHA&nd=1&dlsi=964d4360d35e4b80' target='_blank'>🎵 Ouvir Playlist no Spotify</a>"
+        )
+        return f"{resposta_ia}{link}", []
 
     # 7. Scripts da Secretária
     SECRETARIA_KEYWORDS = [
@@ -290,18 +333,20 @@ def generate_answer(
     ]
     if any(x in pergunta_limpa for x in SECRETARIA_KEYWORDS) or \
         (question and any(x in question.lower() for x in SECRETARIA_KEYWORDS)):
-        explicacao = (
-            "Os scripts da secretária são fundamentais para garantir um atendimento organizado, profissional e que gere segurança ao paciente desde o primeiro contato. Use esses roteiros para padronizar agendamentos, confirmações, orientações pré-consulta e reagendamentos. "
-            "Você pode adaptar os scripts para a realidade do seu consultório e treinar sua secretária para aplicar cada situação."
+        snippet = search_transcripts_by_theme("scripts secretária")
+        prompt = (
+            f"Com base no curso Consultório High Ticket, explique de forma didática como os scripts da secretária ajudam na padronização do atendimento e na experiência do paciente, e como aplicar esses modelos no consultório médico. Seja prático.\n\n"
+            f"Pergunta: {question}\n\n"
+            f"Conteúdo do curso:\n{snippet}\n"
         )
-        return resposta_link_didatica(
+        resposta_ia = chamar_gpt(prompt)
+        link = resposta_link_botao(
             "Scripts da Secretária – Consultório High Ticket",
-            "https://nandamac-my.sharepoint.com/:b:/p/lmacdowell/EVgtSPvwpw9OhOS4CibHXGYB7KNAolar5o0iY2I2dOKCAw?e=LVZlX3",
-            explicacao
-        ), []
+            "https://nandamac-my.sharepoint.com/:b:/p/lmacdowell/EVgtSPvwpw9OhOS4CibHXGYB7KNAolar5o0iY2I2dOKCAw?e=LVZlX3"
+        )
+        return f"{resposta_ia}{link}", []
 
-    # (restante da função continua igual...)
-
+    # SEGUE fluxo normal se não for nenhum dos materiais especiais
     is_chip = any(question.strip().lower() == c.lower() for c in CHIP_PERGUNTAS)
     mostrar_saudacao = is_first_question and not is_chip
     mostrar_pergunta_repetida = is_first_question and not is_chip
@@ -314,54 +359,19 @@ def generate_answer(
         f"<strong>Sua pergunta:</strong> \"{question}\"<br><br>" if mostrar_pergunta_repetida else ""
     )
 
-    if history:
-        prompt = (
-            f"Você é Nanda Mac.ia, professora do curso Consultório High Ticket.\n"
-            f"Abaixo está a conversa até agora entre o aluno e a professora:\n\n"
-            f"{history}\n\n"
-            f"O aluno enviou agora:\n"
-            f"'{question}'\n\n"
-            "Continue a conversa considerando o contexto anterior. Se o aluno pedir mais detalhes, exemplos, ou disser 'mais específico', aprofunde sobre o assunto que estavam conversando, sem mudar de tema e sem repetir tudo do zero."
-            "\nSe for uma dúvida nova, responda normalmente."
-            "\n[IMPORTANTE] Seja didática, acolhedora e responda exatamente ao que o aluno pediu."
-            "\nUtilize o conteúdo abaixo como base para a resposta:\n"
-            f"{snippet}\n"
-        )
-    else:
-        prompt = (
-            f"Você é Nanda Mac.ia, professora do curso Consultório High Ticket.\n"
-            f"O aluno fez a seguinte pergunta:\n\n"
-            f"'{question}'\n\n"
-            "Responda de forma extremamente objetiva e didática, exatamente como faria numa aula particular.\n"
-            "Forneça uma resposta estruturada em tópicos numerados, utilizando exemplos práticos e claros.\n"
-            "Use APENAS o conteúdo fornecido abaixo como referência e responda diretamente à pergunta feita,\n"
-            "sem introduções ou divagações gerais:\n\n"
-            f"{snippet}\n\n"
-            "[IMPORTANTE] Seja objetiva, acolhedora e responda EXCLUSIVAMENTE ao tema solicitado."
-        )
+    prompt = (
+        f"Você é Nanda Mac.ia, professora do curso Consultório High Ticket.\n"
+        f"O aluno fez a seguinte pergunta:\n\n"
+        f"'{question}'\n\n"
+        "Responda de forma extremamente objetiva e didática, exatamente como faria numa aula particular.\n"
+        "Forneça uma resposta estruturada em tópicos numerados, utilizando exemplos práticos e claros.\n"
+        "Use APENAS o conteúdo fornecido abaixo como referência e responda diretamente à pergunta feita,\n"
+        "sem introduções ou divagações gerais:\n\n"
+        f"{snippet}\n\n"
+        "[IMPORTANTE] Seja objetiva, acolhedora e responda EXCLUSIVAMENTE ao tema solicitado."
+    )
 
-    try:
-        response = client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[
-                {"role": "system", "content": "Responda SEMPRE em português do Brasil."},
-                {"role": "user", "content": prompt}
-            ],
-            temperature=0.4,
-            max_tokens=500
-        )
-    except OpenAIError:
-        response = client.chat.completions.create(
-            model="gpt-3.5-turbo",
-            messages=[
-                {"role": "system", "content": "Responda SEMPRE em português do Brasil."},
-                {"role": "user", "content": prompt}
-            ],
-            temperature=0.4,
-            max_tokens=500
-        )
-
-    explicacao = response.choices[0].message.content.strip()
+    explicacao = chamar_gpt(prompt)
     quick_replies = gerar_quick_replies(question, explicacao, history)
 
     resposta = ""
