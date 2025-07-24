@@ -178,10 +178,10 @@ def gerar_quick_replies(question, explicacao, history=None):
         filtered += [r for r in base_replies if r not in filtered]
     return filtered[:3]
 
-def resposta_link(titulo, url):
+def resposta_link_didatica(material, url, explicacao):
     return (
-        f"Olá, Doutor(a)! 😊 Aqui está o link direto para baixar o {titulo}:<br>"
-        f"<a class='chip' href='{url}' target='_blank'>📄 Baixar {titulo}</a><br>"
+        f"{explicacao}<br><br>"
+        f"<a class='chip' href='{url}' target='_blank'>📄 Baixar {material}</a><br>"
         "Se precisar de orientação ou tiver dúvidas sobre como aplicar, é só perguntar!"
     )
 
@@ -191,7 +191,9 @@ def generate_answer(
     cumprimento_detectado = is_greeting(question)
     pergunta_limpa = remove_greeting_from_question(question)
 
-    # Blocos ESPECIAIS de PDF/links
+    # Blocos especiais DIDÁTICOS + LINK
+
+    # 1. Plano de Ação
     PLANO_ACAO_KEYWORDS = [
         "plano de ação", "pdf plano de ação", "atividade da primeira semana",
         "material do onboarding", "ação consultório", "plano onboarding",
@@ -199,18 +201,30 @@ def generate_answer(
     ]
     if any(x in pergunta_limpa for x in PLANO_ACAO_KEYWORDS) or \
         (question and any(x in question.lower() for x in PLANO_ACAO_KEYWORDS)):
-        return resposta_link("Plano de Ação do Consultório High Ticket", "https://nandamac-my.sharepoint.com/:b:/p/lmacdowell/EV6wZ42I9nhHpmnSGa4DHfEBaff0ewZIsmH_4LqLAI46eQ?e=gd5hR0"), []
+        explicacao = (
+            "O Plano de Ação é um roteiro prático para organizar seus primeiros passos no curso e iniciar sua transformação no consultório. "
+            "Utilize esse material no onboarding para definir metas, identificar bloqueios e planejar ações concretas semana a semana."
+        )
+        return resposta_link_didatica("Plano de Ação do Consultório High Ticket", 
+            "https://nandamac-my.sharepoint.com/:b:/p/lmacdowell/EV6wZ42I9nhHpmnSGa4DHfEBaff0ewZIsmH_4LqLAI46eQ?e=gd5hR0", explicacao), []
 
+    # 2. Patient Letter
     PATIENT_LETTER_KEYWORDS = [
         "patient letter", "carta patient letter", "pdf patient letter", "modelo patient letter", "baixar patient letter", "patient letter do curso"
     ]
     if any(x in pergunta_limpa for x in PATIENT_LETTER_KEYWORDS) or \
         (question and any(x in question.lower() for x in PATIENT_LETTER_KEYWORDS)):
-        return resposta_link(
+        explicacao = (
+            "A Patient Letter é um modelo de comunicação entre profissionais de saúde. Pode (e deve) ser enviada tanto para pacientes novos quanto antigos, sempre que houver encaminhamento, comunicação de acompanhamento ou atualizações relevantes. "
+            "Você pode enviar a cada novo tratamento, retorno importante ou atualização clínica do paciente."
+        )
+        return resposta_link_didatica(
             "Patient Letter – Modelo Oficial",
-            "https://nandamac-my.sharepoint.com/:b:/p/lmacdowell/EbdJ4rqiywhOjG0Yy3cDhjYBf04FMiNmoOXos4M5eZmoaA?e=90kaBp"
+            "https://nandamac-my.sharepoint.com/:b:/p/lmacdowell/EbdJ4rqiywhOjG0Yy3cDhjYBf04FMiNmoOXos4M5eZmoaA?e=90kaBp",
+            explicacao
         ), []
 
+    # 3. Guia do Curso
     GUIA_CURSO_KEYWORDS = [
         "guia do curso", "guia cht", "guia consultório high ticket",
         "manual do curso", "manual cht", "material de onboarding",
@@ -218,44 +232,76 @@ def generate_answer(
     ]
     if any(x in pergunta_limpa for x in GUIA_CURSO_KEYWORDS) or \
         (question and any(x in question.lower() for x in GUIA_CURSO_KEYWORDS)):
-        return resposta_link("Guia do Curso Consultório High Ticket", "https://nandamac-my.sharepoint.com/:b:/p/lmacdowell/EQZrQJpHXlVCsK1N5YdDIHEBHocn7FR2yQUHhydgN84yOw?e=GAut9r"), []
+        explicacao = (
+            "O Guia do Curso Consultório High Ticket orienta você nos primeiros passos após o onboarding, explicando como acessar materiais, participar da comunidade e organizar sua rotina de estudos para extrair o máximo do método."
+        )
+        return resposta_link_didatica(
+            "Guia do Curso Consultório High Ticket",
+            "https://nandamac-my.sharepoint.com/:b:/p/lmacdowell/EQZrQJpHXlVCsK1N5YdDIHEBHocn7FR2yQUHhydgN84yOw?e=GAut9r",
+            explicacao
+        ), []
 
+    # 4. Dossiê 007
     DOSSIÊ_007_KEYWORDS = [
         "dossiê 007", "dossie 007", "dossiê captação", "dossie aula 5.8",
         "captação de pacientes", "estratégias 007", "baixar dossiê 007"
     ]
     if any(x in pergunta_limpa for x in DOSSIÊ_007_KEYWORDS) or \
         (question and any(x in question.lower() for x in DOSSIÊ_007_KEYWORDS)):
-        return resposta_link("Dossiê 007 – Captação de Pacientes High Ticket", "https://nandamac-my.sharepoint.com/:b:/p/lmacdowell/EVdOpjU1frVBhApTKmmYAwgBFkbNggnj2Cp0w9luTajxgg?e=iQOnk0"), []
+        explicacao = (
+            "O Dossiê 007 reúne estratégias exclusivas para captação e fidelização de pacientes High Ticket, com roteiros, scripts e táticas para aplicar imediatamente no seu consultório."
+        )
+        return resposta_link_didatica(
+            "Dossiê 007 – Captação de Pacientes High Ticket",
+            "https://nandamac-my.sharepoint.com/:b:/p/lmacdowell/EVdOpjU1frVBhApTKmmYAwgBFkbNggnj2Cp0w9luTajxgg?e=iQOnk0",
+            explicacao
+        ), []
 
+    # 5. Health Plan (Canva)
     if "modelo no canva" in pergunta_limpa or "modelo health plan" in pergunta_limpa or "modelo healthplan" in pergunta_limpa or "modelo de health plan" in pergunta_limpa:
-        return resposta_link("Modelo de Health Plan no Canva", "https://www.canva.com/design/DAEteeUPSUQ/0isBewvgUTJF0gZaRYZw2g/view?utm_content=DAEteeUPSUQ&utm_campaign=designshare&utm_medium=link&utm_source=publishsharelink&mode=preview"), []
+        explicacao = (
+            "O modelo de Health Plan no Canva é totalmente editável e pode ser personalizado para cada paciente e especialidade. Utilize esse material para estruturar planos de acompanhamento e entregar ao paciente em cada etapa do tratamento."
+        )
+        return resposta_link_didatica(
+            "Modelo de Health Plan no Canva",
+            "https://www.canva.com/design/DAEteeUPSUQ/0isBewvgUTJF0gZaRYZw2g/view?utm_content=DAEteeUPSUQ&utm_campaign=designshare&utm_medium=link&utm_source=publishsharelink&mode=preview",
+            explicacao
+        ), []
 
+    # 6. Playlist Spotify
     SPOTIFY_KEYWORDS = [
         "playlist spotify", "playlist no spotify", "música spotify", "spotify do curso", "link spotify", "playlist do curso"
     ]
     if any(x in pergunta_limpa for x in SPOTIFY_KEYWORDS) or \
         (question and any(x in question.lower() for x in SPOTIFY_KEYWORDS)):
+        explicacao = (
+            "Ouça a Playlist Oficial do Consultório High Ticket no Spotify para potencializar sua concentração, motivação e foco nos estudos e no consultório."
+        )
         return (
-            "Olá, Doutor(a)! 😊 Aqui está o link para acessar a Playlist Oficial do Consultório High Ticket no Spotify:<br>"
+            f"{explicacao}<br><br>"
             "<a class='chip' href='https://open.spotify.com/playlist/5Vop9zNsLcz0pkpD9aLQML?si=vJDC7OfcQXWpTernDbzwHA&nd=1&dlsi=964d4360d35e4b80' target='_blank'>🎵 Ouvir Playlist no Spotify</a><br>"
             "Se quiser recomendações de músicas para concentração ou foco nos estudos, é só pedir!"
         ), []
 
-    # NOVO BLOCO: SCRIPTS DA SECRETÁRIA
+    # 7. Scripts da Secretária
     SECRETARIA_KEYWORDS = [
         "scripts da secretária", "script da secretária", "roteiro secretária",
         "pdf scripts secretária", "modelo de secretária", "secretaria", "secretária"
     ]
     if any(x in pergunta_limpa for x in SECRETARIA_KEYWORDS) or \
         (question and any(x in question.lower() for x in SECRETARIA_KEYWORDS)):
-        return (
-           "Olá, Doutor(a)! 😊 Aqui está o link direto para baixar os Scripts da Secretária – Consultório High Ticket:<br>"
-        "<a class='chip' href='https://nandamac-my.sharepoint.com/:b:/p/lmacdowell/EVgtSPvwpw9OhOS4CibHXGYB7KNAolar5o0iY2I2dOKCAw?e=LVZlX3' target='_blank'>📄 Baixar Scripts da Secretária – Consultório High Ticket</a><br>"
-        "Se precisar de orientação ou quiser adaptar algum script para seu consultório, é só perguntar!"
+        explicacao = (
+            "Os scripts da secretária são fundamentais para garantir um atendimento organizado, profissional e que gere segurança ao paciente desde o primeiro contato. Use esses roteiros para padronizar agendamentos, confirmações, orientações pré-consulta e reagendamentos. "
+            "Você pode adaptar os scripts para a realidade do seu consultório e treinar sua secretária para aplicar cada situação."
+        )
+        return resposta_link_didatica(
+            "Scripts da Secretária – Consultório High Ticket",
+            "https://nandamac-my.sharepoint.com/:b:/p/lmacdowell/EVgtSPvwpw9OhOS4CibHXGYB7KNAolar5o0iY2I2dOKCAw?e=LVZlX3",
+            explicacao
         ), []
 
-    # SEGUE TUDO COMO ANTES para perguntas normais
+    # (restante da função continua igual...)
+
     is_chip = any(question.strip().lower() == c.lower() for c in CHIP_PERGUNTAS)
     mostrar_saudacao = is_first_question and not is_chip
     mostrar_pergunta_repetida = is_first_question and not is_chip
