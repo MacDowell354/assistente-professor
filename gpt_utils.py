@@ -181,12 +181,12 @@ def gerar_quick_replies(question, explicacao, history=None):
 def resposta_link(titulo, url, icone="📄"):
     # icone pode ser: 📄, 📝, 🎵, 📑 etc.
     return (
-        f"<br><a class='chip' href='{url}' target='_blank'>{icone} Baixar {titulo}</a>"
+        f"<br><a class='chip' href='{url}' target='_blank'>{icone} {titulo}</a>"
     )
 
 def resposta_link_externo(titulo, url, icone="🔗"):
     return (
-        f"<br><a class='chip' href='{url}' target='_blank'>{icone} Acessar {titulo}</a>"
+        f"<br><a class='chip' href='{url}' target='_blank'>{icone} {titulo}</a>"
     )
 
 def generate_answer(
@@ -228,19 +228,19 @@ def generate_answer(
     # Prepara variáveis para adicionar botão ao final, mesmo em respostas longas
     extra_link = ""
     if any(x in pergunta_limpa for x in PLANO_ACAO_KEYWORDS) or any(x in question.lower() for x in PLANO_ACAO_KEYWORDS):
-        extra_link = resposta_link("Plano de Ação do Consultório High Ticket", "https://nandamac-my.sharepoint.com/:b:/p/lmacdowell/EV6wZ42I9nhHpmnSGa4DHfEBaff0ewZIsmH_4LqLAI46eQ?e=gd5hR0")
+        extra_link = resposta_link("Baixar Plano de Ação do Consultório High Ticket", "https://nandamac-my.sharepoint.com/:b:/p/lmacdowell/EV6wZ42I9nhHpmnSGa4DHfEBaff0ewZIsmH_4LqLAI46eQ?e=gd5hR0")
     elif any(x in pergunta_limpa for x in GUIA_CURSO_KEYWORDS) or any(x in question.lower() for x in GUIA_CURSO_KEYWORDS):
-        extra_link = resposta_link("Guia do Curso Consultório High Ticket", "https://nandamac-my.sharepoint.com/:b:/p/lmacdowell/EQZrQJpHXlVCsK1N5YdDIHEBHocn7FR2yQUHhydgN84yOw?e=GAut9r")
+        extra_link = resposta_link("Baixar Guia do Curso Consultório High Ticket", "https://nandamac-my.sharepoint.com/:b:/p/lmacdowell/EQZrQJpHXlVCsK1N5YdDIHEBHocn7FR2yQUHhydgN84yOw?e=GAut9r")
     elif any(x in pergunta_limpa for x in DOSSIÊ_007_KEYWORDS) or any(x in question.lower() for x in DOSSIÊ_007_KEYWORDS):
-        extra_link = resposta_link("Dossiê 007 – Captação de Pacientes High Ticket", "https://nandamac-my.sharepoint.com/:b:/p/lmacdowell/EVdOpjU1frVBhApTKmmYAwgBFkbNggnj2Cp0w9luTajxgg?e=iQOnk0")
+        extra_link = resposta_link("Baixar Dossiê 007 – Captação de Pacientes High Ticket", "https://nandamac-my.sharepoint.com/:b:/p/lmacdowell/EVdOpjU1frVBhApTKmmYAwgBFkbNggnj2Cp0w9luTajxgg?e=iQOnk0")
     elif any(x in pergunta_limpa for x in PATIENT_LETTER_KEYWORDS) or any(x in question.lower() for x in PATIENT_LETTER_KEYWORDS):
-        extra_link = resposta_link("Patient Letter – Modelo Oficial", "https://nandamac-my.sharepoint.com/:b:/p/lmacdowell/EbdJ4rqiywhOjG0Yy3cDhjYBf04FMiNmoOXos4M5eZmoaA?e=90kaBp")
+        extra_link = resposta_link("Baixar Patient Letter – Modelo Oficial", "https://nandamac-my.sharepoint.com/:b:/p/lmacdowell/EbdJ4rqiywhOjG0Yy3cDhjYBf04FMiNmoOXos4M5eZmoaA?e=90kaBp")
     elif any(x in pergunta_limpa for x in SECRETARIA_KEYWORDS) or any(x in question.lower() for x in SECRETARIA_KEYWORDS):
-        extra_link = resposta_link("Scripts da Secretária – Consultório High Ticket", "https://nandamac-my.sharepoint.com/:b:/p/lmacdowell/EVgtSPvwpw9OhOS4CibHXGYB7KNAolar5o0iY2I2dOKCAw?e=LVZlX3")
+        extra_link = resposta_link("Baixar Scripts da Secretária – Consultório High Ticket", "https://nandamac-my.sharepoint.com/:b:/p/lmacdowell/EVgtSPvwpw9OhOS4CibHXGYB7KNAolar5o0iY2I2dOKCAw?e=LVZlX3")
     elif any(x in pergunta_limpa for x in HEALTHPLAN_KEYWORDS) or any(x in question.lower() for x in HEALTHPLAN_KEYWORDS):
-        extra_link = resposta_link_externo("Modelo Editável de Health Plan no Canva", "https://www.canva.com/design/DAEteeUPSUQ/0isBewvgUTJF0gZaRYZw2g/view?utm_content=DAEteeUPSUQ&utm_campaign=designshare&utm_medium=link&utm_source=publishsharelink&mode=preview", icone="📝")
+        extra_link = resposta_link_externo("Acessar Modelo Editável de Health Plan no Canva", "https://www.canva.com/design/DAEteeUPSUQ/0isBewvgUTJF0gZaRYZw2g/view?utm_content=DAEteeUPSUQ&utm_campaign=designshare&utm_medium=link&utm_source=publishsharelink&mode=preview", icone="📝")
     elif any(x in pergunta_limpa for x in SPOTIFY_KEYWORDS) or any(x in question.lower() for x in SPOTIFY_KEYWORDS):
-        extra_link = resposta_link_externo("Playlist Oficial do Consultório High Ticket no Spotify", "https://open.spotify.com/playlist/5Vop9zNsLcz0pkpD9aLQML?si=vJDC7OfcQXWpTernDbzwHA&nd=1&dlsi=964d4360d35e4b80", icone="🎵")
+        extra_link = resposta_link_externo("Acessar Playlist Oficial do Consultório High Ticket no Spotify", "https://open.spotify.com/playlist/5Vop9zNsLcz0pkpD9aLQML?si=vJDC7OfcQXWpTernDbzwHA&nd=1&dlsi=964d4360d35e4b80", icone="🎵")
 
     is_chip = any(question.strip().lower() == c.lower() for c in CHIP_PERGUNTAS)
     mostrar_saudacao = is_first_question and not is_chip
