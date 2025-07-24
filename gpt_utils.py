@@ -222,6 +222,17 @@ def generate_answer(
     if "modelo no canva" in pergunta_limpa or "modelo health plan" in pergunta_limpa or "modelo healthplan" in pergunta_limpa or "modelo de health plan" in pergunta_limpa:
         return resposta_link("Modelo de Health Plan no Canva", "https://www.canva.com/design/DAEteeUPSUQ/0isBewvgUTJF0gZaRYZw2g/view?utm_content=DAEteeUPSUQ&utm_campaign=designshare&utm_medium=link&utm_source=publishsharelink&mode=preview"), []
 
+SPOTIFY_KEYWORDS = [
+    "playlist spotify", "playlist no spotify", "música spotify", "spotify do curso", "link spotify", "playlist do curso"
+]
+if any(x in pergunta_limpa for x in SPOTIFY_KEYWORDS) or \
+    (question and any(x in question.lower() for x in SPOTIFY_KEYWORDS)):
+    return (
+        "Olá, Doutor(a)! 😊 Aqui está o link para acessar a Playlist Oficial do Consultório High Ticket no Spotify:<br>"
+        "<a class='chip' href='https://open.spotify.com/playlist/5Vop9zNsLcz0pkpD9aLQML?si=vJDC7OfcQXWpTernDbzwHA&nd=1&dlsi=964d4360d35e4b80' target='_blank'>🎵 Ouvir Playlist no Spotify</a><br>"
+        "Se quiser recomendações de músicas para concentração ou foco nos estudos, é só pedir!"
+    ), []
+
     # SEGUE TUDO COMO ANTES para perguntas normais
     is_chip = any(question.strip().lower() == c.lower() for c in CHIP_PERGUNTAS)
     mostrar_saudacao = is_first_question and not is_chip
