@@ -88,95 +88,12 @@ def search_transcripts_by_theme(theme):
     return snippet.strip()
 
 def gerar_quick_replies(question, explicacao, history=None):
-    base_replies = ["Novo Tema", "Preciso de exemplo"]
-    tema_healthplan = False
-    tema_acne = False
-    tema_plano_acao = False
-    tema_guia_curso = False
-    tema_dossie_007 = False
-
-    PLANO_ACAO_KEYWORDS = [
-        "plano de ação", "pdf plano de ação", "atividade da primeira semana",
-        "material do onboarding", "ação consultório", "plano onboarding",
-        "plano de ação consultório", "atividade plano", "baixar plano de ação"
+    # Botões rápidos didáticos e aplicáveis para médicos
+    return [
+        "Quero um exemplo prático",
+        "Me explique passo a passo",
+        "Tenho uma dúvida sobre esse tema"
     ]
-    GUIA_CURSO_KEYWORDS = [
-        "guia do curso", "guia cht", "guia consultório high ticket",
-        "manual do curso", "manual cht", "material de onboarding",
-        "passos iniciais", "guia onboarding", "baixar guia do curso"
-    ]
-    DOSSIÊ_007_KEYWORDS = [
-        "dossiê 007", "dossie 007", "dossiê captação", "dossie aula 5.8",
-        "captação de pacientes", "estratégias 007", "baixar dossiê 007"
-    ]
-
-    if history and isinstance(history, list) and len(history) > 0:
-        for msg in history:
-            if "user" in msg and isinstance(msg["user"], str):
-                q = msg["user"].lower()
-                if any(x in q for x in ["health plan", "healthplan", "realplan"]):
-                    tema_healthplan = True
-                    break
-                elif "acne" in q:
-                    tema_acne = True
-                    break
-                elif any(x in q for x in PLANO_ACAO_KEYWORDS):
-                    tema_plano_acao = True
-                    break
-                elif any(x in q for x in GUIA_CURSO_KEYWORDS):
-                    tema_guia_curso = True
-                    break
-                elif any(x in q for x in DOSSIÊ_007_KEYWORDS):
-                    tema_dossie_007 = True
-                    break
-    else:
-        q = question.lower()
-        if any(x in q for x in ["health plan", "healthplan", "realplan"]):
-            tema_healthplan = True
-        elif "acne" in q:
-            tema_acne = True
-        elif any(x in q for x in PLANO_ACAO_KEYWORDS):
-            tema_plano_acao = True
-        elif any(x in q for x in GUIA_CURSO_KEYWORDS):
-            tema_guia_curso = True
-        elif any(x in q for x in DOSSIÊ_007_KEYWORDS):
-            tema_dossie_007 = True
-
-    replies = []
-    if tema_healthplan:
-        replies += ["Ver Exemplo de Plano", "Modelo no Canva"]
-    elif tema_acne:
-        replies += ["Exemplo para Acne", "Tratamento Oral", "Cuidados Diários"]
-    if tema_plano_acao:
-        replies += ["Baixar Plano de Ação"]
-    if tema_guia_curso:
-        replies += ["Baixar Guia do Curso"]
-    if tema_dossie_007:
-        replies += ["Baixar Dossiê 007"]
-    if not replies:
-        replies = base_replies
-
-    usados = set()
-    if history and isinstance(history, list):
-        for msg in history:
-            if "chip" in msg and msg["chip"]:
-                usados.add(msg["chip"].strip().lower())
-            if "user" in msg and msg["user"]:
-                u = msg["user"].strip().lower()
-                if u in [x.lower() for x in replies]:
-                    usados.add(u)
-    ESSENCIAIS = ["modelo no canva", "baixar plano de ação", "baixar guia do curso", "baixar dossiê 007"]
-    filtered = []
-    for r in replies:
-        if r.lower() in ESSENCIAIS:
-            if r.lower() not in usados:
-                filtered.append(r)
-        else:
-            if r.lower() not in usados:
-                filtered.append(r)
-    if len(filtered) < 2:
-        filtered += [r for r in base_replies if r not in filtered]
-    return filtered[:3]
 
 def resposta_link(titulo, url, icone="📄"):
     # icone pode ser: 📄, 📝, 🎵, 📑 etc.
