@@ -52,9 +52,6 @@ def detectar_cenario(pergunta: str) -> str:
     else:
         return "geral"
 
-# Estrutura global para rastrear progresso didático do usuário
-progresso = {}
-
 def atualizar_progresso(pergunta: str, progresso: dict) -> dict:
     if not progresso:
         return {'modulo': 1, 'aula': '1.1', 'etapa': 1}
@@ -72,7 +69,15 @@ def atualizar_progresso(pergunta: str, progresso: dict) -> dict:
     return progresso
 
 def generate_answer(question, context="", history=None, tipo_de_prompt=None, is_first_question=True):
-    global progresso
+    # RECUPERA PROGRESSO DO HISTÓRICO
+    if history and isinstance(history, list) and len(history) > 0:
+        ultimo_item = history[-1]
+        progresso = ultimo_item.get('progresso', None)
+        if not progresso:
+            progresso = {'modulo': 1, 'aula': '1.1', 'etapa': 1}
+    else:
+        progresso = {'modulo': 1, 'aula': '1.1', 'etapa': 1}
+
     progresso = atualizar_progresso(question, progresso)
     modulo = progresso.get('modulo', 1)
     aula = progresso.get('aula', '1.1')
@@ -81,7 +86,15 @@ def generate_answer(question, context="", history=None, tipo_de_prompt=None, is_
     saudacao = random.choice(GREETINGS) if is_first_question else ""
     fechamento = random.choice(CLOSINGS)
 
-    prompt = f"""
+    if etapa == 1:
+        instruction = f"Você está iniciando a aula {aula} do módulo {modulo}. Apresente o objetivo da aula, como uma introdução didática clara e bem estruturada. Explique por que o conteúdo é importante para o médico e qual será o impacto na prática clínica."
+    elif etapa == 2:
+        instruction = f"Você está na parte intermediária da aula {aula} do módulo {modulo}. Aprofunde o conteúdo com exemplos práticos, aplicações clínicas e orientações detalhadas para médicos. Use linguagem objetiva e densa."
+    else:
+        instruction = f"Você está encerrando a aula {aula} do módulo {modulo}. Recapitule os principais aprendizados e prepare o aluno para a próxima aula. Pergunte se ele deseja seguir para a aula seguinte."
+
+    prompt = f"""{instruction}
+
 Você é a professora Nanda Mac.ia, uma inteligência artificial altamente didática, criada especificamente para ensinar e tirar dúvidas de médicos que estudam o Curso Online Consultório High Ticket, ministrado por Nanda Mac Dowell.
 
 Leia atentamente o histórico da conversa antes de responder, compreendendo o contexto exato da interação atual para garantir precisão na sua resposta.
@@ -190,8 +203,6 @@ Histórico da conversa anterior:
 Pergunta atual do aluno:
 '{question}'
 
-Analise cuidadosamente o contexto antes de responder, garantindo respostas didáticas, práticas e eficazes, especialmente elaboradas para médicos aplicarem diretamente em seus consultórios.
-
 Utilize o conteúdo adicional abaixo, se relevante:
 {context}
     """
@@ -225,4 +236,5 @@ Utilize o conteúdo adicional abaixo, se relevante:
     else:
         resposta = f"{explicacao}<br><br>{fechamento}"
 
-    return resposta, quick_replies
+    # Retorna resposta, quick_replies e o progresso para salvar no histórico!
+    return resposta, quick_replies, progresso
