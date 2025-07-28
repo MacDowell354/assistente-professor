@@ -12,21 +12,75 @@ OUT_OF_SCOPE_MSG = (
 )
 
 GREETINGS = [
-    "Olá, Profissional da Saúde, seja muito bem-vindo(a)!",
-    "Oi, Profissional da Saúde, tudo bem? Como posso ajudar?",
-    "Bem-vindo(a) de volta! Pronto(a) para evoluir no consultório?",
-    "Olá! Estou aqui para apoiar você na sua evolução como profissional da saúde."
+    "Olá, Doutor(a), seja muito bem-vindo(a)!",
+    "Oi, Doutor(a), tudo bem? Como posso ajudar?",
+    "Bem-vindo(a) de volta, Doutor(a)! Pronto(a) para evoluir seu consultório?",
+    "Olá, Doutor(a)! Estou aqui para apoiar você no seu crescimento."
 ]
 
 CLOSINGS = [
-    "Se quiser um exemplo prático ou modelo, clique nos botões abaixo.",
-    "Tem outro desafio no seu consultório? Me conte ou clique em Novo Tema.",
-    "Se quiser aprofundar, escolha uma opção rápida ou pergunte de novo!",
-    "Quer mudar de assunto? Só digitar ‘novo tema’.",
-    "Essa resposta te ajudou? Clique em 👍 ou 👎."
+    "Ficou com alguma dúvida sobre esta aula, Doutor(a)?",
+    "Deseja aprofundar algum ponto, seguir para a próxima aula, ou perguntar sobre outro tema?",
+    "Se quiser, escolha uma opção rápida abaixo ou pergunte de novo!",
+    "Se quiser ir para outra aula ou tema, é só pedir, Doutor(a).",
+    "Essa resposta foi útil? Clique em 👍 ou 👎."
 ]
 
-# Bloco dos módulos e aulas EXATAMENTE como seu original
+# Chips (Quick Replies) otimizados para jornada do Doutor(a)
+def gerar_quick_replies(question, explicacao, history=None):
+    return [
+        "Aprofundar esta aula",
+        "Próxima aula",
+        "Quero ver outra aula",
+        "Tenho outra dúvida"
+    ]
+
+def resposta_link(titulo, url, icone="📄"):
+    return f"<br><a class='chip' href='{url}' target='_blank'>{icone} {titulo}</a>"
+
+def resposta_link_externo(titulo, url, icone="🔗"):
+    return f"<br><a class='chip' href='{url}' target='_blank'>{icone} {titulo}</a>"
+
+def detectar_cenario(pergunta: str) -> str:
+    pergunta = pergunta.lower()
+    if any(p in pergunta for p in ["quero fazer o curso completo", "começar do início", "me ensina tudo", "fazer o curso com você"]):
+        return "curso_completo"
+    elif any(p in pergunta for p in ["quero começar pelo módulo", "me mostra o módulo", "ver o módulo", "começar módulo"]):
+        return "modulo_especifico"
+    elif any(p in pergunta for p in ["assisti", "já vi a aula", "tenho uma dúvida", "não entendi", "poderia explicar melhor"]):
+        return "duvida_pontual"
+    elif any(p in pergunta for p in ["exemplo prático", "me dá um exemplo", "passo a passo", "como fazer isso"]):
+        return "exemplo_pratico"
+    else:
+        return "geral"
+
+def atualizar_progresso(pergunta: str, progresso: dict) -> dict:
+    if not progresso:
+        return {'modulo': 1, 'aula': '1.1', 'etapa': 1, 'aguardando_duvida': False, 'visao_geral': True}
+    if progresso.get('visao_geral', False):
+        if pergunta.strip().lower() in ["sim", "sim desejo", "quero sim", "vamos", "ok"]:
+            progresso['visao_geral'] = False
+            progresso['modulo'] = 1
+            progresso['aula'] = '1.1'
+            progresso['etapa'] = 1
+    elif progresso.get('aguardando_duvida'):
+        if pergunta.lower().strip() in ["não", "nao", "não tenho dúvida", "nao tenho duvida", "pode avançar", "avançar", "continuar"]:
+            progresso['aguardando_duvida'] = False
+            modulo = progresso['modulo']
+            num_atual = float(progresso['aula'])
+            num_proxima = round(num_atual + 0.1, 1)
+            progresso['aula'] = f"{modulo}.{int(num_proxima * 10) % 10}"
+            progresso['etapa'] = 1
+    elif pergunta.lower().strip() in ["sim", "sim desejo", "quero sim", "vamos", "ok"]:
+        if progresso['etapa'] == 1:
+            progresso['etapa'] = 2
+        elif progresso['etapa'] == 2:
+            progresso['etapa'] = 3
+        else:
+            progresso['aguardando_duvida'] = True
+    return progresso
+
+# BLOCO DE MÓDULOS E AULAS - NUNCA EXIBIR O [TEMA], APENAS TÍTULOS
 BLOCO_MODULOS = """
 módulo 01 – mentalidade high ticket: como desenvolver uma mente preparada para atrair pacientes high ticket
 1.1. introdução – a mentalidade do especialista high ticket: o primeiro passo para dobrar o faturamento do consultório
@@ -86,59 +140,6 @@ módulo 07 – estratégias por especialidade
 7.9. nutricionistas – estratégias high ticket para emagrecimento, nutrologia e endocrinologia
 """
 
-def gerar_quick_replies(question, explicacao, history=None):
-    return [
-        "Quero um exemplo prático",
-        "Me explique passo a passo",
-        "Tenho uma dúvida sobre esse tema"
-    ]
-
-def resposta_link(titulo, url, icone="📄"):
-    return f"<br><a class='chip' href='{url}' target='_blank'>{icone} {titulo}</a>"
-
-def resposta_link_externo(titulo, url, icone="🔗"):
-    return f"<br><a class='chip' href='{url}' target='_blank'>{icone} {titulo}</a>"
-
-def detectar_cenario(pergunta: str) -> str:
-    pergunta = pergunta.lower()
-    if any(p in pergunta for p in ["quero fazer o curso completo", "começar do início", "me ensina tudo", "fazer o curso com você"]):
-        return "curso_completo"
-    elif any(p in pergunta for p in ["quero começar pelo módulo", "me mostra o módulo", "ver o módulo", "começar módulo"]):
-        return "modulo_especifico"
-    elif any(p in pergunta for p in ["assisti", "já vi a aula", "tenho uma dúvida", "não entendi", "poderia explicar melhor"]):
-        return "duvida_pontual"
-    elif any(p in pergunta for p in ["exemplo prático", "me dá um exemplo", "passo a passo", "como fazer isso"]):
-        return "exemplo_pratico"
-    else:
-        return "geral"
-
-def atualizar_progresso(pergunta: str, progresso: dict) -> dict:
-    if not progresso:
-        return {'modulo': 1, 'aula': '1.1', 'etapa': 1, 'aguardando_duvida': False, 'visao_geral': True}
-    # VISÃO GERAL: só avança para aula 1.1 após “sim”
-    if progresso.get('visao_geral', False):
-        if pergunta.strip().lower() in ["sim", "sim desejo", "quero sim", "vamos", "ok"]:
-            progresso['visao_geral'] = False
-            progresso['modulo'] = 1
-            progresso['aula'] = '1.1'
-            progresso['etapa'] = 1
-    elif progresso.get('aguardando_duvida'):
-        if pergunta.lower().strip() in ["não", "nao", "não tenho dúvida", "nao tenho duvida", "pode avançar", "avançar", "continuar"]:
-            progresso['aguardando_duvida'] = False
-            modulo = progresso['modulo']
-            num_atual = float(progresso['aula'])
-            num_proxima = round(num_atual + 0.1, 1)
-            progresso['aula'] = f"{modulo}.{int(num_proxima * 10) % 10}"
-            progresso['etapa'] = 1
-    elif pergunta.lower().strip() in ["sim", "sim desejo", "quero sim", "vamos", "ok"]:
-        if progresso['etapa'] == 1:
-            progresso['etapa'] = 2
-        elif progresso['etapa'] == 2:
-            progresso['etapa'] = 3
-        else:
-            progresso['aguardando_duvida'] = True
-    return progresso
-
 def generate_answer(question, context="", history=None, tipo_de_prompt=None, is_first_question=True):
     if history and isinstance(history, list) and len(history) > 0:
         ultimo_item = history[-1]
@@ -159,11 +160,11 @@ def generate_answer(question, context="", history=None, tipo_de_prompt=None, is_
     fechamento = random.choice(CLOSINGS)
     cenario = detectar_cenario(question)
 
-    # Apresenta a visão geral ANTES de iniciar qualquer aula
+    # VISÃO GERAL: sempre apresenta os módulos antes de iniciar qualquer aula
     if visao_geral:
         explicacao = (
             f"{saudacao}<br><br>"
-            "O curso Consultório High Ticket é composto por 7 módulos, cada um trazendo competências-chave para o crescimento do seu consultório e sua carreira como profissional da saúde.<br><br>"
+            "O curso Consultório High Ticket é composto por 7 módulos, cada um trazendo competências-chave para o crescimento do seu consultório e sua carreira como Doutor(a).<br><br>"
             "<b>Confira os módulos:</b><br>"
             "<b>Módulo 01 – mentalidade high ticket: como desenvolver uma mente preparada para atrair pacientes high ticket</b><br>"
             "<b>Módulo 02 – senso estético high ticket: como transformar sua imagem e ambiente para atrair pacientes que valorizam</b><br>"
@@ -179,36 +180,35 @@ def generate_answer(question, context="", history=None, tipo_de_prompt=None, is_
             "1.3. como desenvolver autoconfiança profissional e se tornar autoridade no consultório high ticket<br>"
             "1.4. concorrência: como se diferenciar e construir valorização profissional<br>"
             "1.5. boas práticas no atendimento: o caminho mais rápido para o consultório high ticket<br><br>"
-            "Deseja iniciar agora a aula 1.1? (Responda 'sim' para começar ou escolha outro módulo.)"
+            "Deseja iniciar agora a aula 1.1, Doutor(a)? (Responda 'sim' para começar ou escolha outro módulo.)"
         )
         quick_replies = gerar_quick_replies(question, explicacao, history)
         return explicacao, quick_replies, progresso
 
-    # Aguardando dúvida de aula antes de avançar
+    # Checagem de dúvida antes de avançar para próxima aula
     if aguardando_duvida:
         explicacao = (
-            "Antes de concluir esta aula, ficou alguma dúvida sobre o conteúdo apresentado? "
-            "Se precisar de explicação adicional, é só perguntar! "
-            "Se estiver tudo claro, responda 'não' para avançarmos para a próxima aula."
+            "Antes de concluir esta aula, Doutor(a), ficou alguma dúvida sobre o conteúdo apresentado? "
+            "Se quiser aprofundar algum ponto, é só pedir. Se estiver tudo claro, responda 'não' para avançarmos para a próxima aula."
         )
         quick_replies = gerar_quick_replies(question, explicacao, history)
         return explicacao, quick_replies, progresso
 
     if etapa == 1:
-        instruction = f"Você está iniciando a aula {aula} do módulo {modulo}. Apresente o objetivo da aula, de forma didática e acolhedora, usando SEMPRE o título da aula exatamente como está no bloco oficial, e tratando o usuário como profissional da saúde."
+        instruction = f"Você está iniciando a aula {aula} do módulo {modulo}. Apresente o objetivo da aula, de forma didática, acolhedora e personalizada, usando SEMPRE o título da aula exatamente como está no bloco oficial. Fale sempre no singular e trate o usuário como Doutor(a)."
     elif etapa == 2:
-        instruction = f"Você está na parte intermediária da aula {aula} do módulo {modulo}. Aprofunde o conteúdo com exemplos práticos, aplicações clínicas e orientações detalhadas para profissionais da saúde. Use o título da aula exatamente como está no bloco oficial."
+        instruction = f"Você está na parte intermediária da aula {aula} do módulo {modulo}. Aprofunde o conteúdo com exemplos práticos, aplicações clínicas e orientações detalhadas para Doutor(a), e use sempre o título da aula exatamente como está no bloco oficial. Se o usuário mencionar especialidade (ex: sou pediatra), adapte os exemplos."
     else:
         instruction = (
             f"Você está concluindo a aula {aula} do módulo {modulo}. Recapitule os principais aprendizados de forma sucinta. "
-            "Pergunte se ficou alguma dúvida ou se o profissional da saúde quer uma explicação extra ANTES de considerar a aula concluída. "
-            "Só avance para a próxima aula se o aluno responder 'não'."
+            "Pergunte se ficou alguma dúvida ou se o Doutor(a) quer uma explicação extra ANTES de considerar a aula concluída. "
+            "Só avance para a próxima aula se o usuário responder 'não'."
         )
         progresso['aguardando_duvida'] = True
 
     prompt = f"""{instruction}
 
-Você é a professora Nanda Mac.ia, uma inteligência artificial altamente didática, criada especificamente para ensinar e tirar dúvidas de profissionais da saúde que estudam o Curso Online Consultório High Ticket, ministrado por Nanda Mac Dowell.
+Você é a professora Nanda Mac.ia, uma inteligência artificial altamente didática, criada especificamente para ensinar e tirar dúvidas de Doutores(as) que estudam o Curso Online Consultório High Ticket, ministrado por Nanda Mac Dowell.
 
 Leia atentamente o histórico da conversa antes de responder, compreendendo o contexto exato da interação atual para garantir precisão na sua resposta.
 
@@ -221,7 +221,7 @@ ESTRUTURA COMPLETA DO CURSO – MÓDULOS E AULAS:
 Histórico da conversa anterior:
 {history}
 
-Pergunta atual do profissional da saúde:
+Pergunta atual do Doutor(a):
 '{question}'
 
 Utilize o conteúdo adicional abaixo, se relevante:
