@@ -26,7 +26,6 @@ CLOSINGS = [
     "Essa resposta foi útil? Clique em 👍 ou 👎."
 ]
 
-# Chips (Quick Replies) otimizados para jornada do Doutor(a)
 def gerar_quick_replies(question, explicacao, history=None):
     return [
         "Aprofundar esta aula",
@@ -49,7 +48,7 @@ def detectar_cenario(pergunta: str) -> str:
         return "modulo_especifico"
     elif any(p in pergunta for p in ["assisti", "já vi a aula", "tenho uma dúvida", "não entendi", "poderia explicar melhor"]):
         return "duvida_pontual"
-    elif any(p in pergunta for p in ["exemplo prático", "me dá um exemplo", "passo a passo", "como fazer isso"]):
+    elif any(p in pergunta for p in ["exemplo prático", "me dá um exemplo", "passo a passo", "como fazer isso", "como faço", "me ensina", "ensinar", "me mostre como"]):
         return "exemplo_pratico"
     else:
         return "geral"
@@ -194,7 +193,13 @@ def generate_answer(question, context="", history=None, tipo_de_prompt=None, is_
         quick_replies = gerar_quick_replies(question, explicacao, history)
         return explicacao, quick_replies, progresso
 
-    if etapa == 1:
+    # Prompt para ENSINAR DE VERDADE, buscando o COMO FAZER no bloco da aula
+    if cenario == "exemplo_pratico":
+        instruction = (
+            f"Sempre explique de forma didática, detalhada e com passo a passo prático, como uma professora que ENSINA de verdade, usando o conteúdo real do curso abaixo. "
+            f"Baseie sua resposta na aula {aula} do módulo {modulo}. Extraia do bloco abaixo todos os métodos, protocolos, scripts e exemplos relevantes. Mostre COMO FAZER na prática, para que o Doutor(a) aplique no consultório."
+        )
+    elif etapa == 1:
         instruction = f"Você está iniciando a aula {aula} do módulo {modulo}. Apresente o objetivo da aula, de forma didática, acolhedora e personalizada, usando SEMPRE o título da aula exatamente como está no bloco oficial. Fale sempre no singular e trate o usuário como Doutor(a)."
     elif etapa == 2:
         instruction = f"Você está na parte intermediária da aula {aula} do módulo {modulo}. Aprofunde o conteúdo com exemplos práticos, aplicações clínicas e orientações detalhadas para Doutor(a), e use sempre o título da aula exatamente como está no bloco oficial. Se o usuário mencionar especialidade (ex: sou pediatra), adapte os exemplos."
@@ -236,7 +241,7 @@ Utilize o conteúdo adicional abaixo, se relevante:
                 {"role": "user", "content": prompt}
             ],
             temperature=0.4,
-            max_tokens=700
+            max_tokens=900
         )
     except OpenAIError:
         response = client.chat.completions.create(
@@ -246,7 +251,7 @@ Utilize o conteúdo adicional abaixo, se relevante:
                 {"role": "user", "content": prompt}
             ],
             temperature=0.4,
-            max_tokens=700
+            max_tokens=900
         )
 
     explicacao = response.choices[0].message.content.strip()
