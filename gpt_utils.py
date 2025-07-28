@@ -26,7 +26,7 @@ CLOSINGS = [
     "Essa resposta te ajudou? Clique em 👍 ou 👎."
 ]
 
-# BLOCO DE MÓDULOS (exatamente igual ao seu, só para busca e referência)
+# Bloco dos módulos e aulas EXATAMENTE como seu original
 BLOCO_MODULOS = """
 módulo 01 – mentalidade high ticket: como desenvolver uma mente preparada para atrair pacientes high ticket
 1.1. introdução – a mentalidade do especialista high ticket: o primeiro passo para dobrar o faturamento do consultório
@@ -114,8 +114,15 @@ def detectar_cenario(pergunta: str) -> str:
 
 def atualizar_progresso(pergunta: str, progresso: dict) -> dict:
     if not progresso:
-        return {'modulo': 1, 'aula': '1.1', 'etapa': 1, 'aguardando_duvida': False}
-    if progresso.get('aguardando_duvida'):
+        return {'modulo': 1, 'aula': '1.1', 'etapa': 1, 'aguardando_duvida': False, 'visao_geral': True}
+    # VISÃO GERAL: só avança para aula 1.1 após “sim”
+    if progresso.get('visao_geral', False):
+        if pergunta.strip().lower() in ["sim", "sim desejo", "quero sim", "vamos", "ok"]:
+            progresso['visao_geral'] = False
+            progresso['modulo'] = 1
+            progresso['aula'] = '1.1'
+            progresso['etapa'] = 1
+    elif progresso.get('aguardando_duvida'):
         if pergunta.lower().strip() in ["não", "nao", "não tenho dúvida", "nao tenho duvida", "pode avançar", "avançar", "continuar"]:
             progresso['aguardando_duvida'] = False
             modulo = progresso['modulo']
@@ -123,7 +130,6 @@ def atualizar_progresso(pergunta: str, progresso: dict) -> dict:
             num_proxima = round(num_atual + 0.1, 1)
             progresso['aula'] = f"{modulo}.{int(num_proxima * 10) % 10}"
             progresso['etapa'] = 1
-        # Se disser "sim" ou perguntar, a IA continua na mesma aula, mesma etapa
     elif pergunta.lower().strip() in ["sim", "sim desejo", "quero sim", "vamos", "ok"]:
         if progresso['etapa'] == 1:
             progresso['etapa'] = 2
@@ -134,26 +140,27 @@ def atualizar_progresso(pergunta: str, progresso: dict) -> dict:
     return progresso
 
 def generate_answer(question, context="", history=None, tipo_de_prompt=None, is_first_question=True):
-    # RECUPERA PROGRESSO DO HISTÓRICO
     if history and isinstance(history, list) and len(history) > 0:
         ultimo_item = history[-1]
         progresso = ultimo_item.get('progresso', None)
         if not progresso:
-            progresso = {'modulo': 1, 'aula': '1.1', 'etapa': 1, 'aguardando_duvida': False}
+            progresso = {'modulo': 1, 'aula': '1.1', 'etapa': 1, 'aguardando_duvida': False, 'visao_geral': True}
     else:
-        progresso = {'modulo': 1, 'aula': '1.1', 'etapa': 1, 'aguardando_duvida': False}
+        progresso = {'modulo': 1, 'aula': '1.1', 'etapa': 1, 'aguardando_duvida': False, 'visao_geral': True}
 
     progresso = atualizar_progresso(question, progresso)
     modulo = progresso.get('modulo', 1)
     aula = progresso.get('aula', '1.1')
     etapa = progresso.get('etapa', 1)
     aguardando_duvida = progresso.get('aguardando_duvida', False)
+    visao_geral = progresso.get('visao_geral', False)
 
     saudacao = random.choice(GREETINGS) if is_first_question else ""
     fechamento = random.choice(CLOSINGS)
     cenario = detectar_cenario(question)
 
-    if cenario == "curso_completo":
+    # Apresenta a visão geral ANTES de iniciar qualquer aula
+    if visao_geral:
         explicacao = (
             f"{saudacao}<br><br>"
             "O curso Consultório High Ticket é composto por 7 módulos, cada um trazendo competências-chave para o crescimento do seu consultório e sua carreira como profissional da saúde.<br><br>"
@@ -187,7 +194,6 @@ def generate_answer(question, context="", history=None, tipo_de_prompt=None, is_
         quick_replies = gerar_quick_replies(question, explicacao, history)
         return explicacao, quick_replies, progresso
 
-    # Fluxo padrão para as aulas
     if etapa == 1:
         instruction = f"Você está iniciando a aula {aula} do módulo {modulo}. Apresente o objetivo da aula, de forma didática e acolhedora, usando SEMPRE o título da aula exatamente como está no bloco oficial, e tratando o usuário como profissional da saúde."
     elif etapa == 2:
