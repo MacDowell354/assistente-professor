@@ -39,9 +39,45 @@ def resposta_link(titulo, url, icone="📄"):
 def resposta_link_externo(titulo, url, icone="🔗"):
     return f"<br><a class='chip' href='{url}' target='_blank'>{icone} {titulo}</a>"
 
+def detectar_cenario(pergunta: str) -> str:
+    pergunta = pergunta.lower()
+    if any(p in pergunta for p in ["quero fazer o curso completo", "começar do início", "me ensina tudo", "fazer o curso com você"]):
+        return "curso_completo"
+    elif any(p in pergunta for p in ["quero começar pelo módulo", "me mostra o módulo", "ver o módulo", "começar módulo"]):
+        return "modulo_especifico"
+    elif any(p in pergunta for p in ["assisti", "já vi a aula", "tenho uma dúvida", "não entendi", "poderia explicar melhor"]):
+        return "duvida_pontual"
+    elif any(p in pergunta for p in ["exemplo prático", "me dá um exemplo", "passo a passo", "como fazer isso"]):
+        return "exemplo_pratico"
+    else:
+        return "geral"
+
+# Estrutura global para rastrear progresso didático do usuário
+progresso = {}
+
+def atualizar_progresso(pergunta: str, progresso: dict) -> dict:
+    if not progresso:
+        return {'modulo': 1, 'aula': '1.1', 'etapa': 1}
+    if pergunta.lower().strip() in ["sim", "sim desejo", "quero sim", "vamos", "ok"]:
+        if progresso['etapa'] == 1:
+            progresso['etapa'] = 2
+        elif progresso['etapa'] == 2:
+            progresso['etapa'] = 3
+        else:
+            modulo = progresso['modulo']
+            num_atual = float(progresso['aula'])
+            num_proxima = round(num_atual + 0.1, 1)
+            progresso['aula'] = f"{modulo}.{int(num_proxima * 10) % 10}"
+            progresso['etapa'] = 1
+    return progresso
+
 def generate_answer(question, context="", history=None, tipo_de_prompt=None, is_first_question=True):
-    snippet = ""
-    
+    global progresso
+    progresso = atualizar_progresso(question, progresso)
+    modulo = progresso.get('modulo', 1)
+    aula = progresso.get('aula', '1.1')
+    etapa = progresso.get('etapa', 1)
+
     saudacao = random.choice(GREETINGS) if is_first_question else ""
     fechamento = random.choice(CLOSINGS)
 
@@ -116,7 +152,6 @@ módulo 07 – estratégias por especialidade
 7.8. profissionais da estética – estratégias para consultórios estéticos e de autocuidado
 7.9. nutricionistas – estratégias high ticket para emagrecimento, nutrologia e endocrinologia
 
-
 COMO RESPONDER AOS ALUNOS MÉDICOS DE FORMA CLARA E PRECISA:
 
 CENÁRIO 1 – ALUNO DESEJA INICIAR O CURSO COMPLETO DIRETAMENTE COM VOCÊ:
@@ -158,8 +193,8 @@ Pergunta atual do aluno:
 Analise cuidadosamente o contexto antes de responder, garantindo respostas didáticas, práticas e eficazes, especialmente elaboradas para médicos aplicarem diretamente em seus consultórios.
 
 Utilize o conteúdo adicional abaixo, se relevante:
-{snippet}
-"""
+{context}
+    """
 
     try:
         response = client.chat.completions.create(
@@ -191,99 +226,3 @@ Utilize o conteúdo adicional abaixo, se relevante:
         resposta = f"{explicacao}<br><br>{fechamento}"
 
     return resposta, quick_replies
-
-
-    try:
-        response = client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[
-                {"role": "system", "content": "Responda SEMPRE em português do Brasil."},
-                {"role": "user", "content": prompt}
-            ],
-            temperature=0.4,
-            max_tokens=700
-        )
-    except OpenAIError:
-        response = client.chat.completions.create(
-            model="gpt-3.5-turbo",
-            messages=[
-                {"role": "system", "content": "Responda SEMPRE em português do Brasil."},
-                {"role": "user", "content": prompt}
-            ],
-            temperature=0.4,
-            max_tokens=700
-        )
-
-    explicacao = response.choices[0].message.content.strip()
-    quick_replies = gerar_quick_replies(question, explicacao, history)
-    resposta = f"{saudacao}<br><br>{explicacao}<br><br>{fechamento}"
-
-    return resposta, quick_replies
-
-
-
-def detectar_cenario(pergunta: str) -> str:
-    pergunta = pergunta.lower()
-    if any(p in pergunta for p in ["quero fazer o curso completo", "começar do início", "me ensina tudo", "fazer o curso com você"]):
-        return "curso_completo"
-    elif any(p in pergunta for p in ["quero começar pelo módulo", "me mostra o módulo", "ver o módulo", "começar módulo"]):
-        return "modulo_especifico"
-    elif any(p in pergunta for p in ["assisti", "já vi a aula", "tenho uma dúvida", "não entendi", "poderia explicar melhor"]):
-        return "duvida_pontual"
-    elif any(p in pergunta for p in ["exemplo prático", "me dá um exemplo", "passo a passo", "como fazer isso"]):
-        return "exemplo_pratico"
-    else:
-        return "geral"
-
-
-
-# Estrutura para rastrear progresso atual da conversa
-# Exemplo: progresso = {'modulo': 1, 'aula': '1.1', 'etapa': 1}
-# Etapa 1: introdução da aula, Etapa 2: aprofundamento, Etapa 3: encerramento
-progresso = {}
-
-
-def atualizar_progresso(pergunta: str, progresso: dict) -> dict:
-    if not progresso:
-        return {'modulo': 1, 'aula': '1.1', 'etapa': 1}
-    if pergunta.lower().strip() in ["sim", "sim desejo", "quero sim", "vamos", "ok"]:
-        if progresso['etapa'] == 1:
-            progresso['etapa'] = 2
-        elif progresso['etapa'] == 2:
-            progresso['etapa'] = 3
-        else:
-            # avançar para próxima aula (simplificado para exemplo)
-            modulo = progresso['modulo']
-            num_atual = float(progresso['aula'])
-            num_proxima = round(num_atual + 0.1, 1)
-            progresso['aula'] = f"{modulo}.{int(num_proxima * 10) % 10}"
-            progresso['etapa'] = 1
-    return progresso
-
-
-def generate_answer(question, history, snippet=None):
-    global progresso
-    progresso = atualizar_progresso(question, progresso)
-
-    modulo = progresso.get('modulo', 1)
-    aula = progresso.get('aula', '1.1')
-    etapa = progresso.get('etapa', 1)
-
-    if etapa == 1:
-        instruction = f"Você está iniciando a aula {aula} do módulo {modulo}. Apresente o objetivo da aula, como uma introdução didática clara e bem estruturada. Explique por que o conteúdo é importante para o médico e qual será o impacto na prática clínica."
-    elif etapa == 2:
-        instruction = f"Você está na parte intermediária da aula {aula} do módulo {modulo}. Aprofunde o conteúdo com exemplos práticos, aplicações clínicas e orientações detalhadas para médicos. Use linguagem objetiva e densa."
-    else:
-        instruction = f"Você está encerrando a aula {aula} do módulo {modulo}. Recapitule os principais aprendizados e prepare o aluno para a próxima aula. Pergunte se ele deseja seguir para a aula seguinte."
-
-    prompt = f"""{instruction}
-
-{prompt_completo}"""
-
-    response = chat_completion(
-        system=prompt,
-        user=question,
-        history=history,
-        snippet=snippet
-    )
-    return response
