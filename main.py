@@ -94,8 +94,8 @@ async def ask(
     is_chip = str(question).strip() in chip_perguntas
     is_first_question = (len(history) == 0) and (not is_chip)
 
-    # 🧠 Gera resposta (agora com controle premium)
-    answer_markdown, quick_replies = generate_answer(
+    # 🧠 Gera resposta (AGORA SALVA PROGRESSO!)
+    answer_markdown, quick_replies, progresso = generate_answer(
         question=question,
         context=context,
         history=history,
@@ -115,7 +115,7 @@ async def ask(
         tipo_prompt=tipo_de_prompt
     )
 
-    # Adiciona quick replies ao histórico da resposta
+    # Adiciona quick replies e PROGRESSO ao histórico da resposta
     chip = None
     if str(question).strip() in chip_perguntas:
         chip = str(question).strip()
@@ -124,7 +124,8 @@ async def ask(
         "user": question,
         "ai": answer_html,
         "quick_replies": quick_replies,
-        "chip": chip  # Fica None se não for clique de chip, ou o nome do chip se for.
+        "chip": chip,
+        "progresso": progresso   # <- ESSENCIAL: progresso salvo a cada interação!
     }]
 
     return templates.TemplateResponse("chat.html", {
