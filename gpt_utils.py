@@ -234,3 +234,56 @@ def detectar_cenario(pergunta: str) -> str:
         return "exemplo_pratico"
     else:
         return "geral"
+
+
+
+# Estrutura para rastrear progresso atual da conversa
+# Exemplo: progresso = {'modulo': 1, 'aula': '1.1', 'etapa': 1}
+# Etapa 1: introdução da aula, Etapa 2: aprofundamento, Etapa 3: encerramento
+progresso = {}
+
+
+def atualizar_progresso(pergunta: str, progresso: dict) -> dict:
+    if not progresso:
+        return {'modulo': 1, 'aula': '1.1', 'etapa': 1}
+    if pergunta.lower().strip() in ["sim", "sim desejo", "quero sim", "vamos", "ok"]:
+        if progresso['etapa'] == 1:
+            progresso['etapa'] = 2
+        elif progresso['etapa'] == 2:
+            progresso['etapa'] = 3
+        else:
+            # avançar para próxima aula (simplificado para exemplo)
+            modulo = progresso['modulo']
+            num_atual = float(progresso['aula'])
+            num_proxima = round(num_atual + 0.1, 1)
+            progresso['aula'] = f"{modulo}.{int(num_proxima * 10) % 10}"
+            progresso['etapa'] = 1
+    return progresso
+
+
+def generate_answer(question, history, snippet=None):
+    global progresso
+    progresso = atualizar_progresso(question, progresso)
+
+    modulo = progresso.get('modulo', 1)
+    aula = progresso.get('aula', '1.1')
+    etapa = progresso.get('etapa', 1)
+
+    if etapa == 1:
+        instruction = f"Você está iniciando a aula {aula} do módulo {modulo}. Apresente o objetivo da aula, como uma introdução didática clara e bem estruturada. Explique por que o conteúdo é importante para o médico e qual será o impacto na prática clínica."
+    elif etapa == 2:
+        instruction = f"Você está na parte intermediária da aula {aula} do módulo {modulo}. Aprofunde o conteúdo com exemplos práticos, aplicações clínicas e orientações detalhadas para médicos. Use linguagem objetiva e densa."
+    else:
+        instruction = f"Você está encerrando a aula {aula} do módulo {modulo}. Recapitule os principais aprendizados e prepare o aluno para a próxima aula. Pergunte se ele deseja seguir para a aula seguinte."
+
+    prompt = f"""{instruction}
+
+{prompt_completo}"""
+
+    response = chat_completion(
+        system=prompt,
+        user=question,
+        history=history,
+        snippet=snippet
+    )
+    return response
