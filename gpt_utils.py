@@ -155,21 +155,21 @@ def generate_answer(question, context="", history=None, tipo_de_prompt=None, is_
 
     cenario = detectar_cenario(question)
 
-    # REGRA FUNDAMENTAL: Para início do curso, sempre mostrar o bloco fiel
     if cenario == "curso_completo":
+        # Resposta 100% fiel ao bloco do curso, com tema, título do módulo e todas as aulas
         explicacao = (
             f"{saudacao}<br><br>"
-            "Ótima decisão! Vamos iniciar juntos pelo módulo 01.<br><br>"
-            "<b>Veja exatamente como está na estrutura oficial:</b><br>"
-            "<pre style='font-size:1em'>"  # Preserva formatação
-            "### [TEMA: mentalidade, autovalor, posicionamento, valorização profissional, diferenciação, atendimento ético, concorrência, segurança emocional, vendas, autoridade]\n"
-            "módulo 01 – mentalidade high ticket: como desenvolver uma mente preparada para atrair pacientes high ticket\n"
-            "1.1. introdução – a mentalidade do especialista high ticket: o primeiro passo para dobrar o faturamento do consultório\n"
-            "1.2. como quebrar bloqueios com dinheiro e valorizar seu trabalho no consultório high ticket\n"
-            "1.3. como desenvolver autoconfiança profissional e se tornar autoridade no consultório high ticket\n"
-            "1.4. concorrência: como se diferenciar e construir valorização profissional\n"
-            "1.5. boas práticas no atendimento: o caminho mais rápido para o consultório high ticket"
-            "</pre><br>"
+            "Vamos começar o curso juntos pelo bloco oficial:<br><br>"
+            "-----------------------------------------<br>"
+            "<b>[TEMA: mentalidade, autovalor, posicionamento, valorização profissional, diferenciação, atendimento ético, concorrência, segurança emocional, vendas, autoridade]</b><br>"
+            "<b>módulo 01 – mentalidade high ticket: como desenvolver uma mente preparada para atrair pacientes high ticket</b><br><br>"
+            "<b>Aulas deste módulo:</b><br>"
+            "1.1. introdução – a mentalidade do especialista high ticket: o primeiro passo para dobrar o faturamento do consultório<br>"
+            "1.2. como quebrar bloqueios com dinheiro e valorizar seu trabalho no consultório high ticket<br>"
+            "1.3. como desenvolver autoconfiança profissional e se tornar autoridade no consultório high ticket<br>"
+            "1.4. concorrência: como se diferenciar e construir valorização profissional<br>"
+            "1.5. boas práticas no atendimento: o caminho mais rápido para o consultório high ticket<br>"
+            "-----------------------------------------<br><br>"
             "Pronto para iniciar a primeira aula <b>1.1. introdução – a mentalidade do especialista high ticket: o primeiro passo para dobrar o faturamento do consultório</b>?<br>"
             "Se quiser ver todos os módulos e aulas, é só pedir.<br><br>"
             f"{fechamento}"
@@ -177,21 +177,19 @@ def generate_answer(question, context="", history=None, tipo_de_prompt=None, is_
         quick_replies = gerar_quick_replies(question, explicacao, history)
         return explicacao, quick_replies, progresso
 
-    # Continua normal para demais fluxos (dúvidas, aulas, exemplos, etc)
+    # O restante do código segue como já estava para os outros cenários (modulo_especifico, dúvidas, etc)
     if etapa == 1:
-        instruction = f"Você está iniciando a aula {aula} do módulo {modulo}. Apresente o objetivo da aula, como uma introdução didática clara e bem estruturada. Explique por que o conteúdo é importante para o médico e qual será o impacto na prática clínica. Use SEMPRE o título da aula exatamente como está no bloco oficial."
+        instruction = f"Você está iniciando a aula {aula} do módulo {modulo}. Apresente o objetivo da aula, como uma introdução didática clara e bem estruturada. Explique por que o conteúdo é importante para o médico e qual será o impacto na prática clínica."
     elif etapa == 2:
-        instruction = f"Você está na parte intermediária da aula {aula} do módulo {modulo}. Aprofunde o conteúdo com exemplos práticos, aplicações clínicas e orientações detalhadas para médicos. Use linguagem objetiva e densa. Use SEMPRE o título da aula exatamente como está no bloco oficial."
+        instruction = f"Você está na parte intermediária da aula {aula} do módulo {modulo}. Aprofunde o conteúdo com exemplos práticos, aplicações clínicas e orientações detalhadas para médicos. Use linguagem objetiva e densa."
     else:
-        instruction = f"Você está encerrando a aula {aula} do módulo {modulo}. Recapitule os principais aprendizados e prepare o aluno para a próxima aula. Pergunte se ele deseja seguir para a aula seguinte. Use SEMPRE o título da aula exatamente como está no bloco oficial."
+        instruction = f"Você está encerrando a aula {aula} do módulo {modulo}. Recapitule os principais aprendizados e prepare o aluno para a próxima aula. Pergunte se ele deseja seguir para a aula seguinte."
 
     prompt = f"""{instruction}
 
 Você é a professora Nanda Mac.ia, uma inteligência artificial altamente didática, criada especificamente para ensinar e tirar dúvidas de médicos que estudam o Curso Online Consultório High Ticket, ministrado por Nanda Mac Dowell.
 
 Leia atentamente o histórico da conversa antes de responder, compreendendo o contexto exato da interação atual para garantir precisão na sua resposta.
-
-IMPORTANTE: Sempre que citar o nome de módulo ou título de aula, use exatamente como está na estrutura abaixo. Não adapte, não resuma e não traduza — cite literal.
 
 ESTRUTURA COMPLETA DO CURSO – MÓDULOS E AULAS:
 
@@ -237,3 +235,4 @@ Utilize o conteúdo adicional abaixo, se relevante:
         resposta = f"{explicacao}<br><br>{fechamento}"
 
     return resposta, quick_replies, progresso
+
