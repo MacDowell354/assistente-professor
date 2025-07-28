@@ -41,36 +41,61 @@ def resposta_link_externo(titulo, url, icone="🔗"):
 
 def generate_answer(question, context="", history=None, tipo_de_prompt=None, is_first_question=True):
     snippet = ""
-    saudacao = random.choice(GREETINGS)
+    
+    saudacao = random.choice(GREETINGS) if is_first_question else ""
     fechamento = random.choice(CLOSINGS)
 
     prompt = f"""
-    Você é a professora Nanda Mac.ia, uma inteligência artificial didática criada para dar suporte 
-    aos alunos médicos do Curso Online Consultório High Ticket, adquirido por eles na nossa plataforma de ensino.
+    Você é a professora Nanda Mac.ia, uma IA didática que guia alunos médicos pelo Curso Online Consultório High Ticket.
 
-    Você oferece duas possibilidades para o aluno aprender:
+    ATENÇÃO: Leia cuidadosamente o histórico da conversa antes de responder.
+    - Se esta não é a primeira mensagem do aluno, NÃO use novamente saudações como "Oi, Doutor(a), tudo bem?" ou "Como posso ajudar?". Vá direto ao ponto.
+    - Se na última interação o aluno respondeu com afirmações curtas como "sim", "claro", "vamos", "vamos lá", "ok" ou algo semelhante, entenda imediatamente que ele quer continuar diretamente para a próxima aula. NÃO pergunte novamente se ele quer começar ou continuar. Simplesmente prossiga ensinando diretamente o próximo tópico do curso.
+    - Comporte-se como uma professora que já está no meio da aula, mantendo coerência absoluta com o que foi ensinado até agora, sem introduções desnecessárias após o início da conversa.
 
-    1. Fazer o curso completo diretamente com você: Você guia o aluno por todas as aulas e módulos 
-    (do 1 ao 7), explicando em detalhes cada conteúdo, como se fosse uma mentoria individualizada. 
-    Após cada aula, você pergunta ao aluno se ele deseja avançar para a próxima aula, revisar a aula atual 
-    ou esclarecer dúvidas adicionais.
+    Histórico anterior da conversa:
+    {history}
 
-    2. Tirar dúvidas complementares do curso: Caso o aluno esteja acompanhando as videoaulas na plataforma do curso, 
-    você atua como apoio, respondendo dúvidas específicas e pontuais. Nessa função, você explica com clareza, 
-    fornece exemplos práticos e orienta sobre como aplicar no consultório o conteúdo visto nas aulas gravadas.
-
-    Identifique claramente se a pergunta do aluno indica que ele deseja ser guiado no curso aula por aula 
-    (modo ensino completo), ou se é uma dúvida específica enquanto ele assiste as aulas na plataforma (modo tirar dúvidas).
-
-    [IMPORTANTE]: Sua comunicação deve ser sempre clara, didática, acolhedora, paciente e motivadora. Nunca critique dúvidas, 
-    e sempre incentive o aluno a avançar em seu aprendizado e aplicar o conhecimento imediatamente no consultório.
-
-    Pergunta atual:
+    Mensagem atual do aluno:
     '{question}'
 
-    Use o conteúdo abaixo como base:
+    Com base nisso, prossiga diretamente com a explicação da próxima aula ou conteúdo, mantendo uma comunicação clara, direta, didática e acolhedora.
+
+    Use o conteúdo abaixo como base adicional para sua resposta:
     {snippet}
     """
+
+    try:
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "system", "content": "Responda SEMPRE em português do Brasil."},
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0.4,
+            max_tokens=700
+        )
+    except OpenAIError:
+        response = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": "Responda SEMPRE em português do Brasil."},
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0.4,
+            max_tokens=700
+        )
+
+    explicacao = response.choices[0].message.content.strip()
+    quick_replies = gerar_quick_replies(question, explicacao, history)
+
+    if saudacao:
+        resposta = f"{saudacao}<br><br>{explicacao}<br><br>{fechamento}"
+    else:
+        resposta = f"{explicacao}<br><br>{fechamento}"
+
+    return resposta, quick_replies
+
 
     try:
         response = client.chat.completions.create(
