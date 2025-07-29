@@ -290,7 +290,11 @@ def generate_answer(question, context="", history=None, tipo_de_prompt=None, is_
         instruction = f"Responda de forma objetiva e detalhada a dúvida específica, usando SEMPRE o título da aula exatamente como está no bloco oficial."
     else:
         if etapa == 1:
-            instruction = f"Você está iniciando a aula {aula} do módulo {modulo}. Apresente o objetivo da aula, de forma didática, acolhedora e personalizada, usando SEMPRE o título da aula exatamente como está no bloco oficial. Trate o usuário como Doutor(a)."
+            instruction = (
+                f"Você está iniciando a aula {aula} do módulo {modulo}.<br>"
+                "O objetivo desta aula é apresentar a você, Doutor(a), conceitos essenciais e estratégias práticas para transformar seu consultório.<br>"
+                "Deseja começar agora mesmo? Responda 'sim' para avançar, ou me pergunte se quiser aprofundar ou tirar alguma dúvida antes de prosseguir."
+            )
         elif etapa == 2:
             instruction = f"Você está na parte intermediária da aula {aula} do módulo {modulo}. Aprofunde o conteúdo com exemplos práticos, aplicações clínicas e orientações detalhadas para Doutor(a), e use sempre o título da aula exatamente como está no bloco oficial. Se o usuário mencionar especialidade (ex: sou pediatra), adapte os exemplos."
         else:
