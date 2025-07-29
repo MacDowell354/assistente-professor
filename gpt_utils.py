@@ -64,7 +64,7 @@ def detectar_cenario(pergunta: str) -> str:
     elif any(p in pergunta for p in ["voltar", "retornar", "anterior", "repetir aula"]):
         return "voltar"
     # MELHORIA: considera qualquer frase de pergunta direta como dúvida pontual
-    elif any(p in pergunta for p in ["tenho uma dúvida", "tenho outra dúvida", "minha dúvida", "não entendi", "duvida", "dúvida", "me explica", "poderia explicar", "por que", "como", "o que", "quais", "qual", "explique", "me fale", "exemplo", "caso prático", "me mostre", "me explique"]):
+    elif any(p in pergunta for p in ["tenho uma dúvida", "tenho outra dúvida", "minha dúvida", "não entendi", "duvida", "dúvida", "me explica", "poderia explicar", "por que", "como", "o que", "quais", "qual", "explique", "me fale", "exemplo", "caso prático", "me mostre", "me explique", "?"]):
         return "duvida_pontual"
     elif any(p in pergunta for p in ["exemplo prático", "me dá um exemplo", "passo a passo", "como fazer isso", "como faço", "me ensina", "ensinar", "me mostre como"]):
         return "exemplo_pratico"
@@ -256,7 +256,65 @@ def generate_answer(question, context="", history=None, tipo_de_prompt=None, is_
     fechamento = random.choice(CLOSINGS)
     cenario = detectar_cenario(question)
 
-    # VISÃO GERAL
+    # MELHORIA: dúvida pontual SEMPRE ignora visão geral, responde imediatamente à dúvida
+    if cenario == "duvida_pontual":
+        instruction = (
+            "Ótima pergunta, Doutor(a)!<br>"
+            "Aqui está uma explicação detalhada sobre esse ponto do curso, seguida de um exemplo prático para aplicar no seu consultório, se possível.<br>"
+            "Se quiser aprofundar ou pedir mais exemplos clínicos, é só pedir!<br>"
+            "Fique à vontade para perguntar qualquer coisa relacionada ao método."
+        )
+
+        prompt = f"""{instruction}
+
+Você é a professora Nanda Mac.ia, uma inteligência artificial altamente didática, criada especificamente para ensinar e tirar dúvidas de Doutores(as) que estudam o Curso Online Consultório High Ticket, ministrado por Nanda Mac Dowell.
+
+Leia atentamente o histórico da conversa antes de responder, compreendendo o contexto exato da interação atual para garantir precisão na sua resposta.
+
+IMPORTANTE: Sempre cite o nome do módulo e título da aula exatamente como está na estrutura abaixo. Não adapte, não resuma, não traduza.
+
+ESTRUTURA COMPLETA DO CURSO – MÓDULOS E AULAS:
+
+{BLOCO_MODULOS}
+
+Histórico da conversa anterior:
+{history}
+
+Pergunta atual do Doutor(a):
+'{question}'
+
+Utilize o conteúdo adicional abaixo, se relevante:
+{context}
+        """
+        try:
+            response = client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[
+                    {"role": "system", "content": "Responda SEMPRE em português do Brasil."},
+                    {"role": "user", "content": prompt}
+                ],
+                temperature=0.4,
+                max_tokens=900
+            )
+            explicacao = response.choices[0].message.content.strip()
+            quick_replies = gerar_quick_replies(question, explicacao, history, progresso)
+        except OpenAIError:
+            explicacao = OUT_OF_SCOPE_MSG
+            quick_replies = []
+            return explicacao, quick_replies, progresso
+        except Exception:
+            explicacao = OUT_OF_SCOPE_MSG
+            quick_replies = []
+            return explicacao, quick_replies, progresso
+
+        if saudacao:
+            resposta = f"{saudacao}<br><br>{explicacao}<br><br>{fechamento}"
+        else:
+            resposta = f"{explicacao}<br><br>{fechamento}"
+
+        return resposta, quick_replies, progresso
+
+    # Blocos originais - não alterado!
     if visao_geral:
         explicacao = (
             f"{saudacao}<br><br>"
@@ -282,15 +340,7 @@ def generate_answer(question, context="", history=None, tipo_de_prompt=None, is_
         quick_replies = gerar_quick_replies(question, explicacao, history, progresso)
         return explicacao, quick_replies, progresso
 
-    # DÚVIDA PONTUAL - responde apenas a dúvida, não volta para o curso
-    if cenario == "duvida_pontual":
-        instruction = (
-            "Ótima pergunta, Doutor(a)!<br>"
-            "Aqui está uma explicação detalhada sobre esse ponto do curso, seguida de um exemplo prático para aplicar no seu consultório, se possível.<br>"
-            "Se quiser aprofundar ou pedir mais exemplos clínicos, é só pedir!<br>"
-            "Fique à vontade para perguntar qualquer coisa relacionada ao método."
-        )
-    elif cenario == "exemplo_pratico":
+    if cenario == "exemplo_pratico":
         instruction = (
             f"Vamos aplicar na prática o que está sendo ensinado na aula {aula} do módulo {modulo}, Doutor(a)!<br>"
             "<b>Exemplo prático:</b><br>"
