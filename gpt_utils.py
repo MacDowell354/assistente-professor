@@ -1,8 +1,5 @@
-Aqui está o **arquivo completo e funcional**, corrigido para tratar corretamente o cenário de **dúvida específica** do aluno, SEM perder a estrutura, SEM retrocesso, e sem voltar para o menu do curso após uma dúvida direta:
+python
 
----
-
-```python
 import os
 import re
 import random
@@ -439,12 +436,6 @@ else:
     resposta = f"{explicacao}<br><br>{fechamento}"
 
 return resposta, quick_replies, progresso
-```
 
-```
-
----
-
-**Está pronto para copiar e colar!**  
 Agora, dúvidas pontuais **não voltam mais ao menu geral do curso**, e a IA responde com exemplos práticos, explicação densa e orientação clara, sempre focada no que foi perguntado pelo aluno. Se quiser mais ajustes, só avisar!
 ```
