@@ -63,7 +63,8 @@ def detectar_cenario(pergunta: str) -> str:
         return "navegacao_especifica"
     elif any(p in pergunta for p in ["voltar", "retornar", "anterior", "repetir aula"]):
         return "voltar"
-    elif any(p in pergunta for p in ["assisti", "já vi a aula", "tenho uma dúvida", "não entendi", "poderia explicar melhor"]):
+    # MELHORIA: considera qualquer frase de pergunta direta como dúvida pontual
+    elif any(p in pergunta for p in ["tenho uma dúvida", "tenho outra dúvida", "minha dúvida", "não entendi", "duvida", "dúvida", "me explica", "poderia explicar", "por que", "como", "o que", "quais", "qual", "explique", "me fale", "exemplo", "caso prático", "me mostre", "me explique"]):
         return "duvida_pontual"
     elif any(p in pergunta for p in ["exemplo prático", "me dá um exemplo", "passo a passo", "como fazer isso", "como faço", "me ensina", "ensinar", "me mostre como"]):
         return "exemplo_pratico"
@@ -176,7 +177,6 @@ def atualizar_progresso(pergunta: str, progresso: dict) -> dict:
     return progresso
 
 # BLOCO DE MÓDULOS E AULAS (sem alterações)
-
 BLOCO_MODULOS = """
 módulo 01 – mentalidade high ticket: como desenvolver uma mente preparada para atrair pacientes high ticket
 1.1. introdução – a mentalidade do especialista high ticket: o primeiro passo para dobrar o faturamento do consultório
@@ -282,7 +282,15 @@ def generate_answer(question, context="", history=None, tipo_de_prompt=None, is_
         quick_replies = gerar_quick_replies(question, explicacao, history, progresso)
         return explicacao, quick_replies, progresso
 
-    if cenario == "exemplo_pratico":
+    # DÚVIDA PONTUAL - responde apenas a dúvida, não volta para o curso
+    if cenario == "duvida_pontual":
+        instruction = (
+            "Ótima pergunta, Doutor(a)!<br>"
+            "Aqui está uma explicação detalhada sobre esse ponto do curso, seguida de um exemplo prático para aplicar no seu consultório, se possível.<br>"
+            "Se quiser aprofundar ou pedir mais exemplos clínicos, é só pedir!<br>"
+            "Fique à vontade para perguntar qualquer coisa relacionada ao método."
+        )
+    elif cenario == "exemplo_pratico":
         instruction = (
             f"Vamos aplicar na prática o que está sendo ensinado na aula {aula} do módulo {modulo}, Doutor(a)!<br>"
             "<b>Exemplo prático:</b><br>"
@@ -290,13 +298,6 @@ def generate_answer(question, context="", history=None, tipo_de_prompt=None, is_
             "'No meu consultório, dedico tempo para investigar todas as suas queixas e construir um plano realmente individualizado. Muitos pacientes relatam que, só com esse cuidado, já perceberam diferença no resultado.'<br>"
             "Mostre um caso clínico real (sem identificar o paciente) de transformação obtida por valorizar o próprio atendimento.<br><br>"
             "Se quiser exemplos para outra especialidade, só pedir!"
-        )
-    elif cenario == "duvida_pontual":
-        instruction = (
-            "Ótima pergunta, Doutor(a)!<br>"
-            "Aqui está uma explicação detalhada sobre esse ponto, e um exemplo prático de como aplicar:<br>"
-            "- [Inserir exemplo clínico adaptado ao tema da dúvida, se possível].<br>"
-            "Se quiser aprofundar ainda mais ou ver outra situação real, só pedir!"
         )
     else:
         if etapa == 1:
