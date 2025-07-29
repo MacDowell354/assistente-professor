@@ -256,6 +256,36 @@ def generate_answer(question, context="", history=None, tipo_de_prompt=None, is_
     fechamento = random.choice(CLOSINGS)
     cenario = detectar_cenario(question)
 
+    # UX conversacional: responde acolhendo saudações, apresentações e perguntas vagas de forma humanizada
+    mensagem_generica = question.strip().lower()
+    saudacoes_vagas = [
+        "olá", "ola", "oi", "bom dia", "boa tarde", "boa noite", "pode me ajudar?", "oi, tudo bem?",
+        "olá bom dia", "tudo bem?", "tudo certo?", "como vai?", "você pode me ajudar?"
+    ]
+    apresentacoes_vagas = ["meu nome é", "sou ", "me apresentando", "me apresento", "me chamo"]
+
+    if (
+        mensagem_generica in saudacoes_vagas
+        or any(mensagem_generica.startswith(apr) for apr in apresentacoes_vagas)
+    ):
+        explicacao = (
+            "Olá, Doutor(a)! Que bom ter você por aqui. 😊<br><br>"
+            "Me conte qual sua dúvida, desafio ou objetivo no consultório. Se quiser, pode dizer também o módulo ou aula que está estudando, ou sua especialidade. Assim, consigo personalizar a resposta para sua realidade.<br><br>"
+            "Se preferir, posso sugerir exemplos práticos, roteiros de comunicação com pacientes, dicas de experiência ou Health Plan.<br><br>"
+            "<b>Como posso ajudar você hoje?</b>"
+        )
+        quick_replies = [
+            "Tenho uma dúvida sobre o curso",
+            "Quero um exemplo prático",
+            "Como aplicar o método na minha especialidade",
+            "Indique por onde começar"
+        ]
+        if saudacao:
+            resposta = f"{saudacao}<br><br>{explicacao}<br><br>{fechamento}"
+        else:
+            resposta = f"{explicacao}<br><br>{fechamento}"
+        return resposta, quick_replies, progresso
+
 # REFINAMENTO: Saudações e perguntas vagas NÃO voltam para o menu do curso
     saudacoes_vagas = [
         "olá", "ola", "oi", "bom dia", "boa tarde", "boa noite", "pode me ajudar?", "oi, tudo bem?",
