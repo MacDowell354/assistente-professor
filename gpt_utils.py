@@ -256,6 +256,23 @@ def generate_answer(question, context="", history=None, tipo_de_prompt=None, is_
     fechamento = random.choice(CLOSINGS)
     cenario = detectar_cenario(question)
 
+# REFINAMENTO: Saudações e perguntas vagas NÃO voltam para o menu do curso
+    saudacoes_vagas = [
+        "olá", "ola", "oi", "bom dia", "boa tarde", "boa noite", "pode me ajudar?", "oi, tudo bem?",
+        "olá bom dia", "tudo bem?", "tudo certo?", "como vai?", "você pode me ajudar?"
+    ]
+    if question.strip().lower() in saudacoes_vagas:
+        explicacao = (
+            "Olá, Doutor(a)! Estou aqui para ajudar. Por favor, envie sua dúvida específica sobre o curso ou indique qual módulo ou aula deseja aprofundar. "
+            "Se quiser, posso sugerir exemplos práticos ou indicar o tema certo na estrutura do curso. Fique à vontade para perguntar!"
+        )
+        quick_replies = gerar_quick_replies(question, explicacao, history, progresso)
+        if saudacao:
+            resposta = f"{saudacao}<br><br>{explicacao}<br><br>{fechamento}"
+        else:
+            resposta = f"{explicacao}<br><br>{fechamento}"
+        return resposta, quick_replies, progresso
+
      # MELHORIA: dúvida pontual SEMPRE ignora visão geral, responde imediatamente à dúvida
     if cenario == "duvida_pontual":
         # REFINAMENTO: Saudações e perguntas vagas NÃO voltam para o menu do curso
