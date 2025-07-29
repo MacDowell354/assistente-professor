@@ -63,8 +63,11 @@ def detectar_cenario(pergunta: str) -> str:
         return "navegacao_especifica"
     elif any(p in pergunta for p in ["voltar", "retornar", "anterior", "repetir aula"]):
         return "voltar"
-    # MELHORIA: considera qualquer frase de pergunta direta como dúvida pontual
-    elif any(p in pergunta for p in ["tenho uma dúvida", "tenho outra dúvida", "minha dúvida", "não entendi", "duvida", "dúvida", "me explica", "poderia explicar", "por que", "como", "o que", "quais", "qual", "explique", "me fale", "exemplo", "caso prático", "me mostre", "me explique", "?"]):
+    elif any(p in pergunta for p in [
+        "tenho uma dúvida", "tenho outra dúvida", "minha dúvida", "não entendi", "duvida", "dúvida", "me explica",
+        "poderia explicar", "por que", "como", "o que", "quais", "qual", "explique", "me fale", "exemplo",
+        "caso prático", "me mostre", "me explique", "saúde", "paciente", "consultório", "tratamento", "curso"
+    ]) or "?" in pergunta:
         return "duvida_pontual"
     elif any(p in pergunta for p in ["exemplo prático", "me dá um exemplo", "passo a passo", "como fazer isso", "como faço", "me ensina", "ensinar", "me mostre como"]):
         return "exemplo_pratico"
@@ -178,7 +181,7 @@ def atualizar_progresso(pergunta: str, progresso: dict) -> dict:
 
 # BLOCO DE MÓDULOS E AULAS (sem alterações)
 BLOCO_MODULOS = """
-[... igual ao seu arquivo, não removi nada aqui ...]
+[COLE AQUI SUA LISTA DE MÓDULOS E AULAS COMPLETA, igual está no seu arquivo.]
 """
 
 def generate_answer(question, context="", history=None, tipo_de_prompt=None, is_first_question=True):
@@ -201,7 +204,7 @@ def generate_answer(question, context="", history=None, tipo_de_prompt=None, is_
     fechamento = random.choice(CLOSINGS)
     cenario = detectar_cenario(question)
 
-    # --- REFINO DEFINITIVO DE UX --- #
+    # REFINO DE UX: cobre QUALQUER saudação, apresentação ou frase composta
     mensagem_generica = question.strip().lower()
     saudacoes_vagas = [
         "olá", "ola", "oi", "bom dia", "boa tarde", "boa noite", "pode me ajudar?", "oi, tudo bem?",
@@ -209,7 +212,7 @@ def generate_answer(question, context="", history=None, tipo_de_prompt=None, is_
     ]
     apresentacoes_vagas = ["meu nome é", "sou ", "me apresentando", "me apresento", "me chamo"]
 
-    # Trata QUALQUER frase que contenha saudação ou apresentação como mensagem genérica, mesmo que composta
+    # Se a mensagem contém qualquer saudação/apresentação
     if (
         any(saud in mensagem_generica for saud in saudacoes_vagas)
         or any(apr in mensagem_generica for apr in apresentacoes_vagas)
@@ -232,31 +235,14 @@ def generate_answer(question, context="", history=None, tipo_de_prompt=None, is_
             resposta = f"{explicacao}<br><br>{fechamento}"
         return resposta, quick_replies, progresso
 
-    # --- resto do seu generate_answer segue igual ---
+    # Dúvida pontual: responde IMEDIATAMENTE, sem resetar progresso nem mostrar menu
     if cenario == "duvida_pontual":
-        saudacoes_vagas = [
-            "olá", "ola", "oi", "bom dia", "boa tarde", "boa noite", "pode me ajudar?", "oi, tudo bem?",
-            "olá bom dia", "tudo bem?", "tudo certo?", "como vai?", "você pode me ajudar?"
-        ]
-        if question.strip().lower() in saudacoes_vagas:
-            explicacao = (
-                "Olá, Doutor(a)! Estou aqui para ajudar. Por favor, envie sua dúvida específica sobre o curso ou indique qual módulo ou aula deseja aprofundar. "
-                "Se quiser, posso sugerir exemplos práticos ou indicar o tema certo na estrutura do curso. Fique à vontade para perguntar!"
-            )
-            quick_replies = gerar_quick_replies(question, explicacao, history, progresso)
-            if saudacao:
-                resposta = f"{saudacao}<br><br>{explicacao}<br><br>{fechamento}"
-            else:
-                resposta = f"{explicacao}<br><br>{fechamento}"
-            return resposta, quick_replies, progresso
-
         instruction = (
             "Ótima pergunta, Doutor(a)!<br>"
             "Aqui está uma explicação detalhada sobre esse ponto do curso, seguida de um exemplo prático para aplicar no seu consultório, se possível.<br>"
             "Se quiser aprofundar ou pedir mais exemplos clínicos, é só pedir!<br>"
             "Fique à vontade para perguntar qualquer coisa relacionada ao método."
         )
-
         prompt = f"""{instruction}
 
 Você é a professora Nanda Mac.ia, uma inteligência artificial altamente didática, criada especificamente para ensinar e tirar dúvidas de Doutores(as) que estudam o Curso Online Consultório High Ticket, ministrado por Nanda Mac Dowell.
@@ -306,6 +292,7 @@ Utilize o conteúdo adicional abaixo, se relevante:
 
         return resposta, quick_replies, progresso
 
+    # MODO CURSO: responde conforme etapa/fluxo do curso, menu de módulos etc.
     if visao_geral:
         explicacao = (
             f"{saudacao}<br><br>"
