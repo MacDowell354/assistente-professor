@@ -57,17 +57,15 @@ def resposta_link_externo(titulo, url, icone="🔗"):
 
 def detectar_cenario(pergunta: str) -> str:
     pergunta = pergunta.lower()
-    if any(p in pergunta for p in ["quero fazer o curso completo", "começar do início", "me ensina tudo", "fazer o curso com você"]):
+    # Fluxo 1: aluno quer o curso completo ou navegar por módulos
+    if any(p in pergunta for p in ["quero fazer o curso completo", "começar do início", "me ensina tudo", "fazer o curso com você", "menu", "ver módulos", "ver o curso", "ver estrutura"]):
         return "curso_completo"
     elif re.search(r'\bm[oó]dulo\s*\d+\b', pergunta) or re.search(r'\baula\s*\d+\.\d+\b', pergunta):
         return "navegacao_especifica"
     elif any(p in pergunta for p in ["voltar", "retornar", "anterior", "repetir aula"]):
         return "voltar"
-    elif any(p in pergunta for p in [
-        "tenho uma dúvida", "tenho outra dúvida", "minha dúvida", "não entendi", "duvida", "dúvida", "me explica",
-        "poderia explicar", "por que", "como", "o que", "quais", "qual", "explique", "me fale", "exemplo",
-        "caso prático", "me mostre", "me explique", "saúde", "paciente", "consultório", "tratamento", "curso"
-    ]) or "?" in pergunta:
+    # Fluxo 2: dúvidas diretas, exemplos, conversa
+    elif any(p in pergunta for p in ["tenho uma dúvida", "tenho outra dúvida", "minha dúvida", "não entendi", "duvida", "dúvida", "me explica", "poderia explicar", "por que", "como", "o que", "quais", "qual", "explique", "me fale", "exemplo", "caso prático", "me mostre", "me explique", "?"]):
         return "duvida_pontual"
     elif any(p in pergunta for p in ["exemplo prático", "me dá um exemplo", "passo a passo", "como fazer isso", "como faço", "me ensina", "ensinar", "me mostre como"]):
         return "exemplo_pratico"
@@ -181,7 +179,62 @@ def atualizar_progresso(pergunta: str, progresso: dict) -> dict:
 
 # BLOCO DE MÓDULOS E AULAS (sem alterações)
 BLOCO_MODULOS = """
-[COLE AQUI SUA LISTA DE MÓDULOS E AULAS COMPLETA, igual está no seu arquivo.]
+módulo 01 – mentalidade high ticket: como desenvolver uma mente preparada para atrair pacientes high ticket
+1.1. introdução – a mentalidade do especialista high ticket: o primeiro passo para dobrar o faturamento do consultório
+1.2. como quebrar bloqueios com dinheiro e valorizar seu trabalho no consultório high ticket
+1.3. como desenvolver autoconfiança profissional e se tornar autoridade no consultório high ticket
+1.4. concorrência: como se diferenciar e construir valorização profissional
+1.5. boas práticas no atendimento: o caminho mais rápido para o consultório high ticket
+
+módulo 02 – senso estético high ticket: como transformar sua imagem e ambiente para atrair pacientes que valorizam
+2.1. o senso estético high ticket
+2.2. mulheres: senso estético high ticket x cafona
+2.3. homens no consultório high ticket: senso estético, imagem e escolhas que atraem ou afastam pacientes
+2.4. senso estético high ticket na decoração: o que priorizar e o que evitar no consultório
+2.5. papelaria e brindes
+2.6. como fazer o paciente se sentir especial e gerar mais valor na percepção dele
+2.7. checklist: o que você precisa mudar hoje no seu consultório para dobrar o faturamento com o senso estético
+2.8. como tornar a primeira impressão do paciente inesquecível
+2.9. o que é cafona no consultório e afasta paciente high ticket
+
+módulo 03 – posicionamento presencial high ticket: como construir autoridade sem redes sociais
+3.1. posicionamento presencial high ticket: estratégias para construir autoridade e valor no consultório
+3.2. você é um cnpj: riscos, proteção jurídica e postura profissional no consultório high ticket
+3.3. como causar uma boa primeira impressão no consultório high ticket
+3.4. como causar uma boa impressão pessoal no consultório high ticket: educação, pontualidade e respeito
+3.5. posicionamento em eventos sociais e exposição na mídia: comportamento e limites para fortalecer sua autoridade e atrair pacientes high ticket
+
+módulo 04 – a jornada do paciente high ticket: como transformar atendimento em encantamento e fidelização
+4.1. a jornada do paciente high ticket: conceito e regras de ouro para o consultório
+4.2. o que o paciente nunca te falará: detalhes essenciais para encantar pacientes high ticket
+4.3. secretária e assistente virtual high ticket: funções, riscos e boas práticas para consultórios lucrativos
+4.4. o primeiro contato: como organizar e profissionalizar a marcação de consultas desde o início
+4.5. marcação de consulta high ticket: como organizar horários, valor e scripts para reduzir faltas e valorizar seu atendimento
+
+módulo 05 – estratégias de captação e fidelização: como atrair pacientes high ticket sem tráfego ou redes sociais
+5.1. passo a passo completo para atrair e reter pacientes high ticket com o método consultório high ticket
+5.2. o impacto do lifetime value do paciente high ticket no crescimento do consultório
+5.3. como nichar o consultório para atrair pacientes high ticket
+5.4. estratégias práticas de networking para atração de pacientes high ticket
+5.5. estratégias para atrair pacientes high ticket ao começar do absoluto zero
+
+módulo 06 – estratégias de vendas high ticket: como apresentar e fechar tratamentos de alto valor com ética
+6.1. os passos fundamentais para dobrar o faturamento do consultório com vendas high ticket
+6.2. como migrar dos convênios para o atendimento particular de forma segura e organizada
+6.3. como aumentar o valor da sua consulta de forma estratégica e segura
+6.4. como e quando dar descontos para pacientes high ticket: estratégia ética e eficaz
+6.5. técnica alanis – como usar apresentação visual para vencer objeções e fechar tratamentos high ticket
+
+módulo 07 – estratégias por especialidade
+7.1. saúde das crianças – estratégias para consultórios pediátricos high ticket
+7.2. saúde feminina – estratégias high ticket para ginecologia, obstetrícia e saúde da mulher
+7.3. saúde do idoso – estratégias high ticket para geriatria e atenção ao idoso
+7.4. cirurgiões – como apresentar valor, orçamento e experiência high ticket
+7.5. doenças sérias – como conduzir pacientes em situações críticas no consultório high ticket
+7.6. profissionais com atendimento misto – estratégias para consultórios com diferentes públicos
+7.7. profissionais com baixa rotatividade – estratégias para retorno e fidelização
+7.8. profissionais da estética – estratégias para consultórios estéticos e de autocuidado
+7.9. nutricionistas – estratégias high ticket para emagrecimento, nutrologia e endocrinologia
 """
 
 def generate_answer(question, context="", history=None, tipo_de_prompt=None, is_first_question=True):
@@ -204,7 +257,7 @@ def generate_answer(question, context="", history=None, tipo_de_prompt=None, is_
     fechamento = random.choice(CLOSINGS)
     cenario = detectar_cenario(question)
 
-    # REFINO DE UX: cobre QUALQUER saudação, apresentação ou frase composta
+    # UX: ENTRADA DE CONVERSA NATURAL (SEM FORÇAR MENU DE CURSO)
     mensagem_generica = question.strip().lower()
     saudacoes_vagas = [
         "olá", "ola", "oi", "bom dia", "boa tarde", "boa noite", "pode me ajudar?", "oi, tudo bem?",
@@ -212,15 +265,16 @@ def generate_answer(question, context="", history=None, tipo_de_prompt=None, is_
     ]
     apresentacoes_vagas = ["meu nome é", "sou ", "me apresentando", "me apresento", "me chamo"]
 
-    # Se a mensagem contém qualquer saudação/apresentação
+    # ENTRADA DE CONVERSA: HUMANA E LIVRE, SÓ ENTRA NO FLUXO DO CURSO QUANDO O USUÁRIO PEDIR
     if (
-        any(saud in mensagem_generica for saud in saudacoes_vagas)
-        or any(apr in mensagem_generica for apr in apresentacoes_vagas)
+        mensagem_generica in saudacoes_vagas
+        or any(mensagem_generica.startswith(apr) for apr in apresentacoes_vagas)
+        or cenario == "geral"
     ):
         explicacao = (
             "Olá, Doutor(a)! Que bom te ver por aqui. 😊<br><br>"
-            "Pode perguntar qualquer coisa sobre o curso ou me contar sua realidade no consultório. Se quiser, também pode dizer o módulo ou aula que está estudando, ou sua especialidade, para eu adaptar a resposta pra você.<br><br>"
-            "Se preferir, posso sugerir exemplos práticos, simulações de conversa, dicas de experiência ou Health Plan para a sua área.<br><br>"
+            "Pode perguntar qualquer coisa sobre o curso, sobre aulas, módulos, ou me contar sua realidade no consultório. Se quiser, pode dizer o módulo ou aula que está estudando, ou sua especialidade, que eu adapto a resposta para você.<br><br>"
+            "Se preferir, posso sugerir exemplos práticos, simulações, dicas de experiência ou Health Plan para a sua área.<br><br>"
             "<b>No que posso te ajudar agora?</b>"
         )
         quick_replies = [
@@ -235,7 +289,25 @@ def generate_answer(question, context="", history=None, tipo_de_prompt=None, is_
             resposta = f"{explicacao}<br><br>{fechamento}"
         return resposta, quick_replies, progresso
 
-    # Dúvida pontual: responde IMEDIATAMENTE, sem resetar progresso nem mostrar menu
+    # FLUXO 1: Curso completo/menu/aula/módulo
+    if cenario in ["curso_completo", "navegacao_especifica"]:
+        explicacao = (
+            f"{saudacao}<br><br>"
+            "O curso Consultório High Ticket é composto por 7 módulos, cada um trazendo competências-chave para o crescimento do seu consultório e sua carreira como Doutor(a).<br><br>"
+            "<b>Confira os módulos:</b><br>"
+            "<b>Módulo 01 – mentalidade high ticket: como desenvolver uma mente preparada para atrair pacientes high ticket</b><br>"
+            "<b>Módulo 02 – senso estético high ticket: como transformar sua imagem e ambiente para atrair pacientes que valorizam</b><br>"
+            "<b>Módulo 03 – posicionamento presencial high ticket: como construir autoridade sem redes sociais</b><br>"
+            "<b>Módulo 04 – a jornada do paciente high ticket: como transformar atendimento em encantamento e fidelização</b><br>"
+            "<b>Módulo 05 – estratégias de captação e fidelização: como atrair pacientes high ticket sem tráfego ou redes sociais</b><br>"
+            "<b>Módulo 06 – estratégias de vendas high ticket: como apresentar e fechar tratamentos de alto valor com ética</b><br>"
+            "<b>Módulo 07 – estratégias por especialidade</b><br><br>"
+            "Para começar, diga o número do módulo e da aula (ex: 'módulo 2, aula 2.3') ou responda 'sim' para começar do início."
+        )
+        quick_replies = gerar_quick_replies(question, explicacao, history, progresso)
+        return explicacao, quick_replies, progresso
+
+    # FLUXO 2: Dúvida, exemplos, etc.
     if cenario == "duvida_pontual":
         instruction = (
             "Ótima pergunta, Doutor(a)!<br>"
@@ -243,6 +315,7 @@ def generate_answer(question, context="", history=None, tipo_de_prompt=None, is_
             "Se quiser aprofundar ou pedir mais exemplos clínicos, é só pedir!<br>"
             "Fique à vontade para perguntar qualquer coisa relacionada ao método."
         )
+
         prompt = f"""{instruction}
 
 Você é a professora Nanda Mac.ia, uma inteligência artificial altamente didática, criada especificamente para ensinar e tirar dúvidas de Doutores(as) que estudam o Curso Online Consultório High Ticket, ministrado por Nanda Mac Dowell.
@@ -292,7 +365,66 @@ Utilize o conteúdo adicional abaixo, se relevante:
 
         return resposta, quick_replies, progresso
 
-    # MODO CURSO: responde conforme etapa/fluxo do curso, menu de módulos etc.
+    # Fluxo de exemplos práticos
+    if cenario == "exemplo_pratico":
+        instruction = (
+            f"Vamos aplicar na prática o que está sendo ensinado na aula {aula} do módulo {modulo}, Doutor(a)!<br>"
+            "<b>Exemplo prático:</b><br>"
+            "Ao receber um paciente que veio de convênios, explique calmamente o diferencial do seu acompanhamento. Diga: "
+            "'No meu consultório, dedico tempo para investigar todas as suas queixas e construir um plano realmente individualizado. Muitos pacientes relatam que, só com esse cuidado, já perceberam diferença no resultado.'<br>"
+            "Mostre um caso clínico real (sem identificar o paciente) de transformação obtida por valorizar o próprio atendimento.<br><br>"
+            "Se quiser exemplos para outra especialidade, só pedir!"
+        )
+        prompt = f"""{instruction}
+        
+Você é a professora Nanda Mac.ia, uma inteligência artificial altamente didática, criada especificamente para ensinar e tirar dúvidas de Doutores(as) que estudam o Curso Online Consultório High Ticket, ministrado por Nanda Mac Dowell.
+
+Leia atentamente o histórico da conversa antes de responder, compreendendo o contexto exato da interação atual para garantir precisão na sua resposta.
+
+IMPORTANTE: Sempre cite o nome do módulo e título da aula exatamente como está na estrutura abaixo. Não adapte, não resuma, não traduza.
+
+ESTRUTURA COMPLETA DO CURSO – MÓDULOS E AULAS:
+
+{BLOCO_MODULOS}
+
+Histórico da conversa anterior:
+{history}
+
+Pergunta atual do Doutor(a):
+'{question}'
+
+Utilize o conteúdo adicional abaixo, se relevante:
+{context}
+        """
+        try:
+            response = client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[
+                    {"role": "system", "content": "Responda SEMPRE em português do Brasil."},
+                    {"role": "user", "content": prompt}
+                ],
+                temperature=0.4,
+                max_tokens=900
+            )
+            explicacao = response.choices[0].message.content.strip()
+            quick_replies = gerar_quick_replies(question, explicacao, history, progresso)
+        except OpenAIError:
+            explicacao = OUT_OF_SCOPE_MSG
+            quick_replies = []
+            return explicacao, quick_replies, progresso
+        except Exception:
+            explicacao = OUT_OF_SCOPE_MSG
+            quick_replies = []
+            return explicacao, quick_replies, progresso
+
+        if saudacao:
+            resposta = f"{saudacao}<br><br>{explicacao}<br><br>{fechamento}"
+        else:
+            resposta = f"{explicacao}<br><br>{fechamento}"
+
+        return resposta, quick_replies, progresso
+
+    # Bloco padrão para etapa/visão geral/aguardando_duvida
     if visao_geral:
         explicacao = (
             f"{saudacao}<br><br>"
@@ -305,7 +437,7 @@ Utilize o conteúdo adicional abaixo, se relevante:
             "<b>Módulo 05 – estratégias de captação e fidelização: como atrair pacientes high ticket sem tráfego ou redes sociais</b><br>"
             "<b>Módulo 06 – estratégias de vendas high ticket: como apresentar e fechar tratamentos de alto valor com ética</b><br>"
             "<b>Módulo 07 – estratégias por especialidade</b><br><br>"
-            "Para começar, basta dizer o número do módulo e da aula que deseja (ex: 'módulo 2, aula 2.3') ou responda 'sim' para começar do início."
+            "Para começar, diga o número do módulo e da aula (ex: 'módulo 2, aula 2.3') ou responda 'sim' para começar do início."
         )
         quick_replies = gerar_quick_replies(question, explicacao, history, progresso)
         return explicacao, quick_replies, progresso
@@ -318,38 +450,29 @@ Utilize o conteúdo adicional abaixo, se relevante:
         quick_replies = gerar_quick_replies(question, explicacao, history, progresso)
         return explicacao, quick_replies, progresso
 
-    if cenario == "exemplo_pratico":
+    # Fallback para etapas normais do curso
+    if etapa == 1:
         instruction = (
-            f"Vamos aplicar na prática o que está sendo ensinado na aula {aula} do módulo {modulo}, Doutor(a)!<br>"
-            "<b>Exemplo prático:</b><br>"
-            "Ao receber um paciente que veio de convênios, explique calmamente o diferencial do seu acompanhamento. Diga: "
-            "'No meu consultório, dedico tempo para investigar todas as suas queixas e construir um plano realmente individualizado. Muitos pacientes relatam que, só com esse cuidado, já perceberam diferença no resultado.'<br>"
-            "Mostre um caso clínico real (sem identificar o paciente) de transformação obtida por valorizar o próprio atendimento.<br><br>"
-            "Se quiser exemplos para outra especialidade, só pedir!"
+            f"Você está iniciando a aula {aula} do módulo {modulo}.<br>"
+            "O objetivo desta aula é apresentar a você, Doutor(a), conceitos essenciais e estratégias práticas para transformar seu consultório.<br>"
+            "Durante o conteúdo, posso trazer exemplos reais, simulações de conversa e até um mini-roteiro prático para facilitar a aplicação.<br><br>"
+            "Deseja começar agora mesmo? Responda 'sim' para avançar, ou me pergunte se quiser um exemplo prático logo no início."
+        )
+    elif etapa == 2:
+        instruction = (
+            f"Agora vamos tornar o conteúdo da aula {aula} do módulo {modulo} mais prático para a sua realidade clínica.<br>"
+            "<b>Exemplo prático de aplicação:</b><br>"
+            "- Imagine que você atende um paciente novo e, antes de falar de valores, destaca a importância do vínculo e do acompanhamento contínuo.<br>"
+            "Frase que pode usar: 'Meu objetivo é que cada paciente se sinta seguro e confiante, pois assim conseguimos melhores resultados a longo prazo.'<br>"
+            "- Se quiser um roteiro de abordagem ou um diálogo simulado, é só pedir!"
         )
     else:
-        if etapa == 1:
-            instruction = (
-                f"Você está iniciando a aula {aula} do módulo {modulo}.<br>"
-                "O objetivo desta aula é apresentar a você, Doutor(a), conceitos essenciais e estratégias práticas para transformar seu consultório.<br>"
-                "Durante o conteúdo, posso trazer exemplos reais, simulações de conversa e até um mini-roteiro prático para facilitar a aplicação.<br><br>"
-                "Deseja começar agora mesmo? Responda 'sim' para avançar, ou me pergunte se quiser um exemplo prático logo no início."
-            )
-        elif etapa == 2:
-            instruction = (
-                f"Agora vamos tornar o conteúdo da aula {aula} do módulo {modulo} mais prático para a sua realidade clínica.<br>"
-                "<b>Exemplo prático de aplicação:</b><br>"
-                "- Imagine que você atende um paciente novo e, antes de falar de valores, destaca a importância do vínculo e do acompanhamento contínuo.<br>"
-                "Frase que pode usar: 'Meu objetivo é que cada paciente se sinta seguro e confiante, pois assim conseguimos melhores resultados a longo prazo.'<br>"
-                "- Se quiser um roteiro de abordagem ou um diálogo simulado, é só pedir!"
-            )
-        else:
-            instruction = (
-                f"Você está concluindo a aula {aula} do módulo {modulo}. Recapitule os principais aprendizados de forma sucinta. "
-                "Se quiser, posso fechar com um exemplo prático do que foi ensinado, ou aprofundar algum ponto específico.<br>"
-                "Pergunte se ficou alguma dúvida, ou se o Doutor(a) quer uma explicação extra, voltar, pular ou escolher outro módulo antes de considerar a aula concluída."
-            )
-            progresso['aguardando_duvida'] = True
+        instruction = (
+            f"Você está concluindo a aula {aula} do módulo {modulo}. Recapitule os principais aprendizados de forma sucinta. "
+            "Se quiser, posso fechar com um exemplo prático do que foi ensinado, ou aprofundar algum ponto específico.<br>"
+            "Pergunte se ficou alguma dúvida, ou se o Doutor(a) quer uma explicação extra, voltar, pular ou escolher outro módulo antes de considerar a aula concluída."
+        )
+        progresso['aguardando_duvida'] = True
 
     prompt = f"""{instruction}
 
