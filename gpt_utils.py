@@ -175,7 +175,8 @@ def atualizar_progresso(pergunta: str, progresso: dict) -> dict:
             progresso['visao_geral'] = False
     return progresso
 
-# BLOCO DE MÓDULOS E AULAS
+# BLOCO DE MÓDULOS E AULAS (sem alterações)
+
 BLOCO_MODULOS = """
 módulo 01 – mentalidade high ticket: como desenvolver uma mente preparada para atrair pacientes high ticket
 1.1. introdução – a mentalidade do especialista high ticket: o primeiro passo para dobrar o faturamento do consultório
@@ -276,30 +277,47 @@ def generate_answer(question, context="", history=None, tipo_de_prompt=None, is_
     if aguardando_duvida:
         explicacao = (
             "Antes de concluir esta aula, Doutor(a), ficou alguma dúvida sobre o conteúdo apresentado? "
-            "Se quiser aprofundar algum ponto, é só pedir. Se estiver tudo claro, responda 'não' para avançarmos para a próxima aula, ou escolha outra aula/módulo."
+            "Se quiser aprofundar algum ponto ou pedir um exemplo prático aplicado ao consultório, é só pedir. Se estiver tudo claro, responda 'não' para avançarmos para a próxima aula, ou escolha outra aula/módulo."
         )
         quick_replies = gerar_quick_replies(question, explicacao, history, progresso)
         return explicacao, quick_replies, progresso
 
     if cenario == "exemplo_pratico":
         instruction = (
-            f"Sempre explique de forma didática, detalhada e com passo a passo prático, como uma professora que ENSINA de verdade, usando o conteúdo real do curso abaixo. "
-            f"Baseie sua resposta na aula {aula} do módulo {modulo}. Extraia do bloco abaixo todos os métodos, protocolos, scripts e exemplos relevantes. Mostre COMO FAZER na prática, para que o Doutor(a) aplique no consultório."
+            f"Vamos aplicar na prática o que está sendo ensinado na aula {aula} do módulo {modulo}, Doutor(a)!<br>"
+            "<b>Exemplo prático:</b><br>"
+            "Ao receber um paciente que veio de convênios, explique calmamente o diferencial do seu acompanhamento. Diga: "
+            "'No meu consultório, dedico tempo para investigar todas as suas queixas e construir um plano realmente individualizado. Muitos pacientes relatam que, só com esse cuidado, já perceberam diferença no resultado.'<br>"
+            "Mostre um caso clínico real (sem identificar o paciente) de transformação obtida por valorizar o próprio atendimento.<br><br>"
+            "Se quiser exemplos para outra especialidade, só pedir!"
         )
     elif cenario == "duvida_pontual":
-        instruction = f"Responda de forma objetiva e detalhada a dúvida específica, usando SEMPRE o título da aula exatamente como está no bloco oficial."
+        instruction = (
+            "Ótima pergunta, Doutor(a)!<br>"
+            "Aqui está uma explicação detalhada sobre esse ponto, e um exemplo prático de como aplicar:<br>"
+            "- [Inserir exemplo clínico adaptado ao tema da dúvida, se possível].<br>"
+            "Se quiser aprofundar ainda mais ou ver outra situação real, só pedir!"
+        )
     else:
         if etapa == 1:
             instruction = (
                 f"Você está iniciando a aula {aula} do módulo {modulo}.<br>"
                 "O objetivo desta aula é apresentar a você, Doutor(a), conceitos essenciais e estratégias práticas para transformar seu consultório.<br>"
-                "Deseja começar agora mesmo? Responda 'sim' para avançar, ou me pergunte se quiser aprofundar ou tirar alguma dúvida antes de prosseguir."
+                "Durante o conteúdo, posso trazer exemplos reais, simulações de conversa e até um mini-roteiro prático para facilitar a aplicação.<br><br>"
+                "Deseja começar agora mesmo? Responda 'sim' para avançar, ou me pergunte se quiser um exemplo prático logo no início."
             )
         elif etapa == 2:
-            instruction = f"Você está na parte intermediária da aula {aula} do módulo {modulo}. Aprofunde o conteúdo com exemplos práticos, aplicações clínicas e orientações detalhadas para Doutor(a), e use sempre o título da aula exatamente como está no bloco oficial. Se o usuário mencionar especialidade (ex: sou pediatra), adapte os exemplos."
+            instruction = (
+                f"Agora vamos tornar o conteúdo da aula {aula} do módulo {modulo} mais prático para a sua realidade clínica.<br>"
+                "<b>Exemplo prático de aplicação:</b><br>"
+                "- Imagine que você atende um paciente novo e, antes de falar de valores, destaca a importância do vínculo e do acompanhamento contínuo.<br>"
+                "Frase que pode usar: 'Meu objetivo é que cada paciente se sinta seguro e confiante, pois assim conseguimos melhores resultados a longo prazo.'<br>"
+                "- Se quiser um roteiro de abordagem ou um diálogo simulado, é só pedir!"
+            )
         else:
             instruction = (
                 f"Você está concluindo a aula {aula} do módulo {modulo}. Recapitule os principais aprendizados de forma sucinta. "
+                "Se quiser, posso fechar com um exemplo prático do que foi ensinado, ou aprofundar algum ponto específico.<br>"
                 "Pergunte se ficou alguma dúvida, ou se o Doutor(a) quer uma explicação extra, voltar, pular ou escolher outro módulo antes de considerar a aula concluída."
             )
             progresso['aguardando_duvida'] = True
