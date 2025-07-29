@@ -278,4 +278,4 @@ def generate_answer(question, context="", history=None, tipo_de_prompt=None, is_
             "Para começar, basta dizer o número do módulo e da aula que deseja (ex: 'módulo 2, aula 2.3') ou responda 'sim' para começar do início."
         )
         quick_replies = gerar_quick_replies(question, explicacao, history, progresso)
-        return explicacao,
+        return explicacao, quick_replies, progresso
