@@ -256,7 +256,7 @@ def generate_answer(question, context="", history=None, tipo_de_prompt=None, is_
     fechamento = random.choice(CLOSINGS)
     cenario = detectar_cenario(question)
 
-    # Conversa acolhedora: se for saudação ou apresentação, mantenha o tom humano e incentive a dúvida
+    # --- REFINO DE UX: APENAS UM BLOCO, ABORDAGEM MAIS HUMANA E FLUIDA ---
     mensagem_generica = question.strip().lower()
     saudacoes_vagas = [
         "olá", "ola", "oi", "bom dia", "boa tarde", "boa noite", "pode me ajudar?", "oi, tudo bem?",
@@ -264,7 +264,6 @@ def generate_answer(question, context="", history=None, tipo_de_prompt=None, is_
     ]
     apresentacoes_vagas = ["meu nome é", "sou ", "me apresentando", "me apresento", "me chamo"]
 
-    # --- REFINO DE UX: APENAS UM BLOCO, ABORDAGEM MAIS HUMANA E FLUIDA ---
     if (
         mensagem_generica in saudacoes_vagas
         or any(mensagem_generica.startswith(apr) for apr in apresentacoes_vagas)
