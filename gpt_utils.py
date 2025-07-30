@@ -36,17 +36,26 @@ AULAS_POR_MODULO = {
     7: ['7.1', '7.2', '7.3', '7.4', '7.5', '7.6', '7.7', '7.8', '7.9'],
 }
 
-def gerar_quick_replies(question, explicacao, history=None, progresso=None):
-    opcoes = ["Aprofundar esta aula", "Próxima aula", "Tenho outra dúvida"]
-    if progresso:
-        modulo = progresso.get('modulo', 1)
-        opcoes.append("Voltar para aula anterior")
-        opcoes.append("Repetir esta aula")
-        opcoes.append("Escolher módulo ou aula específica")
-        if modulo < 7:
-            opcoes.append("Ir para o próximo módulo")
-        if modulo > 1:
-            opcoes.append("Ir para o módulo anterior")
+def gerar_quick_replies(question, explicacao, history=None, progresso=None, contexto_extra=False):
+    opcoes = []
+    if contexto_extra:
+        opcoes = [
+            "Quero iniciar o curso do início",
+            "Voltar para o menu do curso",
+            "Ir para a aula 7.1 sobre Health Plan",
+            "Tenho outra dúvida"
+        ]
+    else:
+        opcoes = ["Aprofundar esta aula", "Próxima aula", "Tenho outra dúvida"]
+        if progresso:
+            modulo = progresso.get('modulo', 1)
+            opcoes.append("Voltar para aula anterior")
+            opcoes.append("Repetir esta aula")
+            opcoes.append("Escolher módulo ou aula específica")
+            if modulo < 7:
+                opcoes.append("Ir para o próximo módulo")
+            if modulo > 1:
+                opcoes.append("Ir para o módulo anterior")
     return opcoes
 
 def resposta_link(titulo, url, icone="📄"):
@@ -57,14 +66,12 @@ def resposta_link_externo(titulo, url, icone="🔗"):
 
 def detectar_cenario(pergunta: str) -> str:
     pergunta = pergunta.lower()
-    # Fluxo 1: aluno quer o curso completo ou navegar por módulos
     if any(p in pergunta for p in ["quero fazer o curso completo", "começar do início", "me ensina tudo", "fazer o curso com você", "menu", "ver módulos", "ver o curso", "ver estrutura"]):
         return "curso_completo"
     elif re.search(r'\bm[oó]dulo\s*\d+\b', pergunta) or re.search(r'\baula\s*\d+\.\d+\b', pergunta):
         return "navegacao_especifica"
     elif any(p in pergunta for p in ["voltar", "retornar", "anterior", "repetir aula"]):
         return "voltar"
-    # Fluxo 2: dúvidas diretas, exemplos, conversa
     elif any(p in pergunta for p in ["tenho uma dúvida", "tenho outra dúvida", "minha dúvida", "não entendi", "duvida", "dúvida", "me explica", "poderia explicar", "por que", "como", "o que", "quais", "qual", "explique", "me fale", "exemplo", "caso prático", "me mostre", "me explique", "?"]):
         return "duvida_pontual"
     elif any(p in pergunta for p in ["exemplo prático", "me dá um exemplo", "passo a passo", "como fazer isso", "como faço", "me ensina", "ensinar", "me mostre como"]):
@@ -257,7 +264,7 @@ def generate_answer(question, context="", history=None, tipo_de_prompt=None, is_
     fechamento = random.choice(CLOSINGS)
     cenario = detectar_cenario(question)
 
-    # UX: ENTRADA DE CONVERSA NATURAL (SEM FORÇAR MENU DE CURSO)
+    # ENTRADA DE CONVERSA LIVRE, ACOLHEDORA: Só mostra menu se a pessoa pedir (UX HUMANO)
     mensagem_generica = question.strip().lower()
     saudacoes_vagas = [
         "olá", "ola", "oi", "bom dia", "boa tarde", "boa noite", "pode me ajudar?", "oi, tudo bem?",
@@ -265,7 +272,7 @@ def generate_answer(question, context="", history=None, tipo_de_prompt=None, is_
     ]
     apresentacoes_vagas = ["meu nome é", "sou ", "me apresentando", "me apresento", "me chamo"]
 
-    # ENTRADA DE CONVERSA: HUMANA E LIVRE, SÓ ENTRA NO FLUXO DO CURSO QUANDO O USUÁRIO PEDIR
+    # Conversa aberta: não força menu
     if (
         mensagem_generica in saudacoes_vagas
         or any(mensagem_generica.startswith(apr) for apr in apresentacoes_vagas)
@@ -307,8 +314,11 @@ def generate_answer(question, context="", history=None, tipo_de_prompt=None, is_
         quick_replies = gerar_quick_replies(question, explicacao, history, progresso)
         return explicacao, quick_replies, progresso
 
-    # FLUXO 2: Dúvida, exemplos, etc.
+    # FLUXO 2: Dúvida, exemplos, etc (sempre com opção de ir para uma aula/menu)
     if cenario == "duvida_pontual":
+        # Caso seja uma dúvida que pode ser aula, exemplo prático ou menu:
+        contexto_extra = True if ("health plan" in question.lower() or "heath plan" in question.lower()) else False
+
         instruction = (
             "Ótima pergunta, Doutor(a)!<br>"
             "Aqui está uma explicação detalhada sobre esse ponto do curso, seguida de um exemplo prático para aplicar no seu consultório, se possível.<br>"
@@ -348,7 +358,7 @@ Utilize o conteúdo adicional abaixo, se relevante:
                 max_tokens=900
             )
             explicacao = response.choices[0].message.content.strip()
-            quick_replies = gerar_quick_replies(question, explicacao, history, progresso)
+            quick_replies = gerar_quick_replies(question, explicacao, history, progresso, contexto_extra)
         except OpenAIError:
             explicacao = OUT_OF_SCOPE_MSG
             quick_replies = []
@@ -365,7 +375,7 @@ Utilize o conteúdo adicional abaixo, se relevante:
 
         return resposta, quick_replies, progresso
 
-    # Fluxo de exemplos práticos
+    # FLUXO DE EXEMPLO PRÁTICO
     if cenario == "exemplo_pratico":
         instruction = (
             f"Vamos aplicar na prática o que está sendo ensinado na aula {aula} do módulo {modulo}, Doutor(a)!<br>"
