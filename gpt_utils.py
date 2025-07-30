@@ -27,7 +27,7 @@ CLOSINGS = [
 ]
 
 AULAS_POR_MODULO = {
-    0: ['0.1'],  # Módulo 00 (pode adicionar outras aulas se quiser)
+    0: ['0.1'],  # Módulo 00 (adicione mais aulas se desejar)
     1: ['1.1', '1.2', '1.3', '1.4', '1.5'],
     2: ['2.1', '2.2', '2.3', '2.4', '2.5', '2.6', '2.7', '2.8', '2.9'],
     3: ['3.1', '3.2', '3.3', '3.4', '3.5'],
@@ -58,14 +58,12 @@ def resposta_link_externo(titulo, url, icone="🔗"):
 
 def detectar_cenario(pergunta: str) -> str:
     pergunta = pergunta.lower()
-    # Fluxo 1: aluno quer o curso completo ou navegar por módulos
     if any(p in pergunta for p in ["quero fazer o curso completo", "começar do início", "me ensina tudo", "fazer o curso com você", "menu", "ver módulos", "ver o curso", "ver estrutura"]):
         return "curso_completo"
     elif re.search(r'\bm[oó]dulo\s*\d+\b', pergunta) or re.search(r'\baula\s*\d+\.\d+\b', pergunta):
         return "navegacao_especifica"
     elif any(p in pergunta for p in ["voltar", "retornar", "anterior", "repetir aula"]):
         return "voltar"
-    # Fluxo 2: dúvidas diretas, exemplos, conversa
     elif any(p in pergunta for p in ["tenho uma dúvida", "tenho outra dúvida", "minha dúvida", "não entendi", "duvida", "dúvida", "me explica", "poderia explicar", "por que", "como", "o que", "quais", "qual", "explique", "me fale", "exemplo", "caso prático", "me mostre", "me explique", "?"]):
         return "duvida_pontual"
     elif any(p in pergunta for p in ["exemplo prático", "me dá um exemplo", "passo a passo", "como fazer isso", "como faço", "me ensina", "ensinar", "me mostre como"]):
