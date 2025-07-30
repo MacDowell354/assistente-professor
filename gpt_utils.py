@@ -178,20 +178,14 @@ def atualizar_progresso(pergunta: str, progresso: dict) -> dict:
 
 # BLOCO DE MÓDULOS E AULAS – AGORA COM MÓDULO 00 COMPLETO!
 BLOCO_MODULOS = """
-módulo 00 (módulo 0) - COMECE POR AQUI
 
-[TEMA: boas-vindas, motivação, mentalidade, comprometimento, resultados, networking, postura de aprendiz, método, diversidade de especialidades, confiança, transformação]
-A) Bem-vindo ao Consultório High Ticket.
-
-B) O olhar do Paciente High Ticket
-
-C) Três tipos de alunos
-
-D) Liberação de aulas, materiais e prazos do curso
-
-E) Plantão de Dúvidas e aulas ao vivo
-
-F) Desafio dos Super comprometidos: Como executar
+módulo 00 – comece por aqui: boas-vindas, mentalidade, organização e jornada do aluno consultório high ticket
+0.1. bem-vindo ao consultório high ticket
+0.2. o olhar do paciente high ticket
+0.3. três tipos de alunos
+0.4. liberação de aulas, materiais e prazos do curso
+0.5. plantão de dúvidas e aulas ao vivo
+0.6. desafio dos super comprometidos: como executar
 
 módulo 01 – mentalidade high ticket: como desenvolver uma mente preparada para atrair pacientes high ticket
 1.1. introdução – a mentalidade do especialista high ticket: o primeiro passo para dobrar o faturamento do consultório
