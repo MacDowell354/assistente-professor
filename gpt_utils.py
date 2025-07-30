@@ -27,7 +27,7 @@ CLOSINGS = [
 ]
 
 AULAS_POR_MODULO = {
-    0: ['0.1'],  # Módulo 00 (adicione mais aulas se desejar)
+    0: ['0.1', '0.2', '0.3', '0.4', '0.5', '0.6'],
     1: ['1.1', '1.2', '1.3', '1.4', '1.5'],
     2: ['2.1', '2.2', '2.3', '2.4', '2.5', '2.6', '2.7', '2.8', '2.9'],
     3: ['3.1', '3.2', '3.3', '3.4', '3.5'],
@@ -58,15 +58,24 @@ def resposta_link_externo(titulo, url, icone="🔗"):
 
 def detectar_cenario(pergunta: str) -> str:
     pergunta = pergunta.lower()
-    if any(p in pergunta for p in ["quero fazer o curso completo", "começar do início", "me ensina tudo", "fazer o curso com você", "menu", "ver módulos", "ver o curso", "ver estrutura"]):
+    if any(p in pergunta for p in [
+        "quero fazer o curso completo", "começar do início", "me ensina tudo",
+        "fazer o curso com você", "menu", "ver módulos", "ver o curso", "ver estrutura", "iniciar o curso", "quero começar o curso"
+    ]):
         return "curso_completo"
     elif re.search(r'\bm[oó]dulo\s*\d+\b', pergunta) or re.search(r'\baula\s*\d+\.\d+\b', pergunta):
         return "navegacao_especifica"
     elif any(p in pergunta for p in ["voltar", "retornar", "anterior", "repetir aula"]):
         return "voltar"
-    elif any(p in pergunta for p in ["tenho uma dúvida", "tenho outra dúvida", "minha dúvida", "não entendi", "duvida", "dúvida", "me explica", "poderia explicar", "por que", "como", "o que", "quais", "qual", "explique", "me fale", "exemplo", "caso prático", "me mostre", "me explique", "?"]):
+    elif any(p in pergunta for p in [
+        "tenho uma dúvida", "tenho outra dúvida", "minha dúvida", "não entendi", "duvida", "dúvida", "me explica",
+        "poderia explicar", "por que", "como", "o que", "quais", "qual", "explique", "me fale", "exemplo", "caso prático",
+        "me mostre", "me explique", "?"
+    ]):
         return "duvida_pontual"
-    elif any(p in pergunta for p in ["exemplo prático", "me dá um exemplo", "passo a passo", "como fazer isso", "como faço", "me ensina", "ensinar", "me mostre como"]):
+    elif any(p in pergunta for p in [
+        "exemplo prático", "me dá um exemplo", "passo a passo", "como fazer isso", "como faço", "me ensina", "ensinar", "me mostre como"
+    ]):
         return "exemplo_pratico"
     else:
         return "geral"
@@ -89,6 +98,12 @@ def atualizar_progresso(pergunta: str, progresso: dict) -> dict:
 
     pergunta_lower = pergunta.strip().lower()
     modulo_nav, aula_nav = encontrar_modulo_aula(pergunta)
+    cenario = detectar_cenario(pergunta)
+
+    # Se pedir para começar do início, iniciar no módulo 0
+    if cenario == "curso_completo":
+        return {'modulo': 0, 'aula': '0.1', 'etapa': 1, 'aguardando_duvida': False, 'visao_geral': False}
+
     if modulo_nav is not None:
         progresso['modulo'] = modulo_nav
         if aula_nav and aula_nav in AULAS_POR_MODULO.get(modulo_nav, []):
@@ -272,6 +287,7 @@ def generate_answer(question, context="", history=None, tipo_de_prompt=None, is_
     ]
     apresentacoes_vagas = ["meu nome é", "sou ", "me apresentando", "me apresento", "me chamo"]
 
+    # Recepção, apresentação, ou mensagem vaga
     if (
         mensagem_generica in saudacoes_vagas
         or any(mensagem_generica.startswith(apr) for apr in apresentacoes_vagas)
