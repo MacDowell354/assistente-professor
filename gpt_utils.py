@@ -92,7 +92,7 @@ def encontrar_modulo_aula(pergunta):
     return modulo, aula
 
 def atualizar_progresso(pergunta: str, progresso: dict) -> dict:
-    # Ajuste para começar do módulo 1, aula 1.1
+    # Sempre começa pelo módulo 1
     if not progresso:
         return {'modulo': 1, 'aula': '1.1', 'etapa': 1, 'aguardando_duvida': False, 'visao_geral': True}
 
@@ -196,7 +196,7 @@ def atualizar_progresso(pergunta: str, progresso: dict) -> dict:
             progresso['visao_geral'] = False
     return progresso
 
-# BLOCO DE MÓDULOS E AULAS – AGORA COMEÇA NO MÓDULO 01!
+# BLOCO DE MÓDULOS E AULAS – COMEÇA NO MÓDULO 01
 BLOCO_MODULOS = """
 módulo 01 – mentalidade high ticket: como desenvolver uma mente preparada para atrair pacientes high ticket
 1.1. introdução – a mentalidade do especialista high ticket: o primeiro passo para dobrar o faturamento do consultório
@@ -256,6 +256,226 @@ módulo 07 – estratégias por especialidade
 7.9. nutricionistas – estratégias high ticket para emagrecimento, nutrologia e endocrinologia
 """
 
-# O restante da função generate_answer segue normalmente (sem alterações, já adaptada).
-# (Mantém todo o fluxo didático, só inicia a jornada real em módulo 1/aula 1.1.)
+def generate_answer(question, context="", history=None, tipo_de_prompt=None, is_first_question=True):
+    if history and isinstance(history, list) and len(history) > 0:
+        ultimo_item = history[-1]
+        progresso = ultimo_item.get('progresso', None)
+        if not progresso:
+            progresso = {'modulo': 1, 'aula': '1.1', 'etapa': 1, 'aguardando_duvida': False, 'visao_geral': True}
+    else:
+        progresso = {'modulo': 1, 'aula': '1.1', 'etapa': 1, 'aguardando_duvida': False, 'visao_geral': True}
 
+    progresso = atualizar_progresso(question, progresso)
+    modulo = progresso.get('modulo', 1)
+    aula = progresso.get('aula', '1.1')
+    etapa = progresso.get('etapa', 1)
+    aguardando_duvida = progresso.get('aguardando_duvida', False)
+    visao_geral = progresso.get('visao_geral', False)
+
+    saudacao = random.choice(GREETINGS) if is_first_question else ""
+    fechamento = random.choice(CLOSINGS)
+    cenario = detectar_cenario(question)
+
+    mensagem_generica = question.strip().lower()
+    saudacoes_vagas = [
+        "olá", "ola", "oi", "bom dia", "boa tarde", "boa noite", "pode me ajudar?", "oi, tudo bem?",
+        "olá bom dia", "tudo bem?", "tudo certo?", "como vai?", "você pode me ajudar?", "me ajuda?", "olá, boa noite"
+    ]
+    apresentacoes_vagas = ["meu nome é", "sou ", "me apresentando", "me apresento", "me chamo"]
+
+    # Se mensagem vaga/menu
+    if (
+        mensagem_generica in saudacoes_vagas
+        or any(mensagem_generica.startswith(apr) for apr in apresentacoes_vagas)
+        or (cenario == "geral" and visao_geral)
+    ):
+        explicacao = (
+            "Olá, Doutor(a)! Que bom te ver por aqui. 😊<br><br>"
+            "Pode perguntar qualquer coisa sobre o curso, sobre aulas, módulos, ou me contar sua realidade no consultório. Se quiser, pode dizer o módulo ou aula que está estudando, ou sua especialidade, que eu adapto a resposta para você.<br><br>"
+            "Se preferir, posso sugerir exemplos práticos, simulações, dicas de experiência ou Health Plan para a sua área.<br><br>"
+            "<b>No que posso te ajudar agora?</b>"
+        )
+        quick_replies = [
+            "Quero tirar uma dúvida específica",
+            "Me mostre um exemplo prático",
+            "Como aplicar o método na minha especialidade",
+            "Por onde começo no curso?"
+        ]
+        if saudacao:
+            resposta = f"{saudacao}<br><br>{explicacao}<br><br>{fechamento}"
+        else:
+            resposta = f"{explicacao}<br><br>{fechamento}"
+        return resposta, quick_replies, progresso
+
+    # Dúvida pontual, exemplo, etc.
+    if cenario in ["duvida_pontual", "exemplo_pratico"]:
+        instruction = (
+            "Ótima pergunta, Doutor(a)!<br>"
+            "Aqui está uma explicação detalhada sobre esse ponto do curso, seguida de um exemplo prático para aplicar no seu consultório, se possível.<br>"
+            "Se quiser aprofundar ou pedir mais exemplos clínicos, é só pedir!<br>"
+            "Fique à vontade para perguntar qualquer coisa relacionada ao método."
+        )
+        prompt = f"""{instruction}
+
+Você é a professora Nanda Mac.ia, uma inteligência artificial altamente didática, criada especificamente para ensinar e tirar dúvidas de Doutores(as) que estudam o Curso Online Consultório High Ticket, ministrado por Nanda Mac Dowell.
+
+Leia atentamente o histórico da conversa antes de responder, compreendendo o contexto exato da interação atual para garantir precisão na sua resposta.
+
+IMPORTANTE: Sempre cite o nome do módulo e título da aula exatamente como está na estrutura abaixo. Não adapte, não resuma, não traduza.
+
+ESTRUTURA COMPLETA DO CURSO – MÓDULOS E AULAS:
+
+{BLOCO_MODULOS}
+
+Histórico da conversa anterior:
+{history}
+
+Pergunta atual do Doutor(a):
+'{question}'
+
+Utilize o conteúdo adicional abaixo, se relevante:
+{context}
+        """
+        try:
+            response = client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[
+                    {"role": "system", "content": "Responda SEMPRE em português do Brasil."},
+                    {"role": "user", "content": prompt}
+                ],
+                temperature=0.4,
+                max_tokens=900
+            )
+            explicacao = response.choices[0].message.content.strip()
+            quick_replies = gerar_quick_replies(question, explicacao, history, progresso)
+        except OpenAIError:
+            explicacao = OUT_OF_SCOPE_MSG
+            quick_replies = []
+            return explicacao, quick_replies, progresso
+        except Exception:
+            explicacao = OUT_OF_SCOPE_MSG
+            quick_replies = []
+            return explicacao, quick_replies, progresso
+
+        if saudacao:
+            resposta = f"{saudacao}<br><br>{explicacao}<br><br>{fechamento}"
+        else:
+            resposta = f"{explicacao}<br><br>{fechamento}"
+
+        return resposta, quick_replies, progresso
+
+    # Navegação/menu – se pedir explicitamente
+    if cenario in ["curso_completo", "navegacao_especifica"]:
+        explicacao = (
+            f"{saudacao}<br><br>"
+            "O curso Consultório High Ticket é composto por 7 módulos principais, cada um trazendo competências-chave para o crescimento do seu consultório e sua carreira como Doutor(a).<br><br>"
+            "<b>Confira os módulos:</b><br>"
+            "<b>Módulo 01 – mentalidade high ticket: como desenvolver uma mente preparada para atrair pacientes high ticket</b><br>"
+            "<b>Módulo 02 – senso estético high ticket: como transformar sua imagem e ambiente para atrair pacientes que valorizam</b><br>"
+            "<b>Módulo 03 – posicionamento presencial high ticket: como construir autoridade sem redes sociais</b><br>"
+            "<b>Módulo 04 – a jornada do paciente high ticket: como transformar atendimento em encantamento e fidelização</b><br>"
+            "<b>Módulo 05 – estratégias de captação e fidelização: como atrair pacientes high ticket sem tráfego ou redes sociais</b><br>"
+            "<b>Módulo 06 – estratégias de vendas high ticket: como apresentar e fechar tratamentos de alto valor com ética</b><br>"
+            "<b>Módulo 07 – estratégias por especialidade</b><br><br>"
+            "Para começar, diga o número do módulo e da aula (ex: 'módulo 2, aula 2.3') ou responda 'sim' para começar do início."
+        )
+        quick_replies = gerar_quick_replies(question, explicacao, history, progresso)
+        return explicacao, quick_replies, progresso
+
+    # Visão geral (apenas se explicitamente perdido)
+    if visao_geral:
+        explicacao = (
+            f"{saudacao}<br><br>"
+            "O curso Consultório High Ticket é composto por 7 módulos principais, cada um trazendo competências-chave para o crescimento do seu consultório e sua carreira como Doutor(a).<br><br>"
+            "<b>Confira os módulos:</b><br>"
+            "<b>Módulo 01 – mentalidade high ticket: como desenvolver uma mente preparada para atrair pacientes high ticket</b><br>"
+            "<b>Módulo 02 – senso estético high ticket: como transformar sua imagem e ambiente para atrair pacientes que valorizam</b><br>"
+            "<b>Módulo 03 – posicionamento presencial high ticket: como construir autoridade sem redes sociais</b><br>"
+            "<b>Módulo 04 – a jornada do paciente high ticket: como transformar atendimento em encantamento e fidelização</b><br>"
+            "<b>Módulo 05 – estratégias de captação e fidelização: como atrair pacientes high ticket sem tráfego ou redes sociais</b><br>"
+            "<b>Módulo 06 – estratégias de vendas high ticket: como apresentar e fechar tratamentos de alto valor com ética</b><br>"
+            "<b>Módulo 07 – estratégias por especialidade</b><br><br>"
+            "Para começar, diga o número do módulo e da aula (ex: 'módulo 2, aula 2.3') ou responda 'sim' para começar do início."
+        )
+        quick_replies = gerar_quick_replies(question, explicacao, history, progresso)
+        return explicacao, quick_replies, progresso
+
+    # Etapas didáticas
+    if etapa in [1, 2, 3] or aguardando_duvida:
+        if etapa == 1:
+            instruction = (
+                f"Você está iniciando a aula {aula} do módulo {modulo}.<br>"
+                "O objetivo desta aula é apresentar a você, Doutor(a), conceitos essenciais e estratégias práticas para transformar seu consultório.<br>"
+                "Durante o conteúdo, posso trazer exemplos reais, simulações de conversa e até um mini-roteiro prático para facilitar a aplicação.<br><br>"
+                "Deseja começar agora mesmo? Responda 'sim' para avançar, ou me pergunte se quiser um exemplo prático logo no início."
+            )
+        elif etapa == 2:
+            instruction = (
+                f"Agora vamos tornar o conteúdo da aula {aula} do módulo {modulo} mais prático para a sua realidade clínica.<br>"
+                "<b>Exemplo prático de aplicação:</b><br>"
+                "- Imagine que você atende um paciente novo e, antes de falar de valores, destaca a importância do vínculo e do acompanhamento contínuo.<br>"
+                "Frase que pode usar: 'Meu objetivo é que cada paciente se sinta seguro e confiante, pois assim conseguimos melhores resultados a longo prazo.'<br>"
+                "- Se quiser um roteiro de abordagem ou um diálogo simulado, é só pedir!"
+            )
+        else:
+            instruction = (
+                f"Você está concluindo a aula {aula} do módulo {modulo}. Recapitule os principais aprendizados de forma sucinta. "
+                "Se quiser, posso fechar com um exemplo prático do que foi ensinado, ou aprofundar algum ponto específico.<br>"
+                "Pergunte se ficou alguma dúvida, ou se o Doutor(a) quer uma explicação extra, voltar, pular ou escolher outro módulo antes de considerar a aula concluída."
+            )
+            progresso['aguardando_duvida'] = True
+
+        prompt = f"""{instruction}
+
+Você é a professora Nanda Mac.ia, uma inteligência artificial altamente didática, criada especificamente para ensinar e tirar dúvidas de Doutores(as) que estudam o Curso Online Consultório High Ticket, ministrado por Nanda Mac Dowell.
+
+Leia atentamente o histórico da conversa antes de responder, compreendendo o contexto exato da interação atual para garantir precisão na sua resposta.
+
+IMPORTANTE: Sempre cite o nome do módulo e título da aula exatamente como está na estrutura abaixo. Não adapte, não resuma, não traduza.
+
+ESTRUTURA COMPLETA DO CURSO – MÓDULOS E AULAS:
+
+{BLOCO_MODULOS}
+
+Histórico da conversa anterior:
+{history}
+
+Pergunta atual do Doutor(a):
+'{question}'
+
+Utilize o conteúdo adicional abaixo, se relevante:
+{context}
+        """
+
+        try:
+            response = client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[
+                    {"role": "system", "content": "Responda SEMPRE em português do Brasil."},
+                    {"role": "user", "content": prompt}
+                ],
+                temperature=0.4,
+                max_tokens=900
+            )
+            explicacao = response.choices[0].message.content.strip()
+            quick_replies = gerar_quick_replies(question, explicacao, history, progresso)
+        except OpenAIError:
+            explicacao = OUT_OF_SCOPE_MSG
+            quick_replies = []
+            return explicacao, quick_replies, progresso
+        except Exception:
+            explicacao = OUT_OF_SCOPE_MSG
+            quick_replies = []
+            return explicacao, quick_replies, progresso
+
+        if saudacao:
+            resposta = f"{saudacao}<br><br>{explicacao}<br><br>{fechamento}"
+        else:
+            resposta = f"{explicacao}<br><br>{fechamento}"
+
+        return resposta, quick_replies, progresso
+
+    # Fallback
+    explicacao = OUT_OF_SCOPE_MSG
+    quick_replies = gerar_quick_replies(question, explicacao, history, progresso)
+    return explicacao, quick_replies, progresso
