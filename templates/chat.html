@@ -7,78 +7,111 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     /* ... todo o seu CSS permanece igual ... */
-    /* (cortei o CSS aqui para resumir) */
-  </style>
-  <script>
-    // Quick reply: envia texto para textarea e submit automático
-    function setQuickReply(text) {
-      document.querySelector('textarea[name="question"]').value = text;
-      document.querySelector('form').submit();
+    :root {
+      --bg-main: #f8fafc;
+      --chat-bubble-ia: #ffffff;
+      --chat-bubble-user: #e7effc;
+      --border-bubble: #e4e6ea;
+      --text-main: #232d3b;
+      --blue-navy: #365486;
+      --blue-accent: #5893df;
+      --chip-bg: #fff;
+      --chip-border: #b4c8e9;
+      --chip-text: #365486;
+      --input-bg: #f4f6fb;
     }
-    // Feedback (dummy visual, para UX)
-    function feedback(btn) {
-      document.querySelectorAll('.feedback button').forEach(b=>b.classList.remove('selected'));
-      btn.classList.add('selected');
+    body {
+      font-family: 'Inter', Arial, sans-serif;
+      background-color: var(--bg-main);
+      margin: 0;
+      padding: 0;
+      color: var(--text-main);
     }
-    // Scroll automático para o topo do chat ao carregar
-    window.onload = function() {
-      var box = document.getElementById('chat-box');
-      if (box) box.scrollTop = 0;
+    .container {
+      max-width: 640px;
+      margin: 2.5rem auto;
+      background: #fff;
+      border-radius: 24px;
+      box-shadow: 0 4px 28px rgba(54,84,134,0.07);
+      padding: 0;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      min-height: 80vh;
     }
-  </script>
-</head>
-<body>
-  <div class="container">
-    <div class="header">
-      <span class="emoji">🤖</span>
-      <h1>IA - Nanda Mac</h1>
-    </div>
-
-    {% if history|length == 0 %}
-      <div class="intro">
-        <!-- ... intro igual ... -->
-      </div>
-    {% endif %}
-
-    <div class="chat-box" id="chat-box">
-      {% for msg in history %}
-        <div class="message user">
-          <div class="avatar" title="Você">👤</div>
-          <div class="bubble"><strong>Você:</strong> {{ msg.user }}</div>
-        </div>
-        <div class="message assistant">
-          <div class="avatar" title="Nanda Mac.ia">🤖</div>
-          <div class="bubble">{{ msg.ai | safe }}</div>
-        </div>
-        {% if msg.quick_replies %}
-          <div class="quick-replies">
-            {% for reply in msg.quick_replies %}
-              <span class="chip" onclick="setQuickReply('{{ reply }}')">{{ reply }}</span>
-            {% endfor %}
-          </div>
-        {% endif %}
-        <div class="feedback">
-          <button type="button" onclick="feedback(this)" title="Me ajudou!">👍</button>
-          <button type="button" onclick="feedback(this)" title="Preciso de mais detalhes">👎</button>
-        </div>
-      {% endfor %}
-    </div>
-
-    <form method="POST" action="/ask" autocomplete="off">
-      <input type="hidden" name="history" value='{{ history | tojson }}'>
-      <textarea name="question" rows="2" placeholder="Digite sua dúvida, peça para iniciar o curso ou informe o módulo/aula desejado. (Ex: 'Quero começar o curso desde o início', 'Tenho uma dúvida sobre o módulo 2, aula 2.1' ou 'Me mostre um exemplo prático para ginecologia.')"></textarea>
-      <button type="submit">Enviar</button>
-    </form>
-  </div>
-  <script>
-    // Sempre que houver alteração no chat-box, rola para o topo
-    const chatBox = document.getElementById('chat-box');
-    if (chatBox) {
-      const observer = new MutationObserver(() => {
-        chatBox.scrollTop = 0;
-      });
-      observer.observe(chatBox, { childList: true, subtree: true });
+    .header {
+      text-align: center;
+      padding: 2rem 2rem 1.5rem 2rem;
+      border-bottom: 1px solid #f1f3f8;
+      background: var(--bg-main);
     }
-  </script>
-</body>
-</html>
+    .header .emoji {
+      font-size: 2.1rem;
+      margin-bottom: 0.25rem;
+      display: block;
+    }
+    .header h1 {
+      font-size: 2.1rem;
+      color: var(--blue-navy);
+      font-weight: 700;
+      margin: 0;
+      letter-spacing: -1px;
+    }
+    .intro {
+      background-color: #f8fafc;
+      border-left: 4px solid var(--blue-accent);
+      padding: 1.1rem 1.1rem 1.1rem 1.4rem;
+      border-radius: 0 18px 18px 0;
+      margin: 1.3rem 0 1.0rem 0;
+      color: var(--blue-navy);
+      font-size: 1.03rem;
+      box-shadow: 0 2px 8px rgba(54,84,134,0.04);
+    }
+    .intro .quick-replies {
+      margin: 1.1rem 0 0.1rem 0;
+      gap: 0.4rem;
+    }
+    .chat-box {
+      flex: 1;
+      max-height: 50vh;
+      min-height: 300px;
+      overflow-y: auto;
+      padding: 1rem 2rem 0.5rem 2rem;
+      background: #f8fafc;
+      display: flex;
+      flex-direction: column;
+    }
+    .message {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.85rem;
+      margin-bottom: 0.6rem;
+      line-height: 1.6;
+    }
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #e3e8f1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.7rem;
+      color: var(--blue-navy);
+      font-weight: 700;
+    }
+    .message.assistant .bubble {
+      background: var(--chat-bubble-ia);
+      color: var(--text-main);
+      border-radius: 20px 20px 20px 8px;
+      border: 1.5px solid var(--border-bubble);
+      box-shadow: 0 1px 4px rgba(54,84,134,0.06);
+      padding: 1.05rem 1.2rem;
+      font-size: 1.06rem;
+      min-width: 0;
+      max-width: 85%;
+    }
+    .message.user {
+      flex-direction: row-reverse;
+      justify-content: flex-end;
+    }
