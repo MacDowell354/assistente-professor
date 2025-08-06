@@ -6,7 +6,6 @@
   <title>IA - Nanda Mac</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
-    /* (todo o seu CSS permanece igual) */
     :root {
       --bg-main: #f8fafc;
       --chat-bubble-ia: #ffffff;
@@ -230,10 +229,18 @@
       document.querySelectorAll('.feedback button').forEach(b=>b.classList.remove('selected'));
       btn.classList.add('selected');
     }
-    // Scroll automático para o INÍCIO do chat
+    // Ao carregar, rola para o início da última resposta da IA (não para o final do chat)
     window.onload = function() {
-      var box = document.getElementById('chat-box');
-      if (box) box.scrollTop = 0;
+      const chatBox = document.getElementById('chat-box');
+      if (chatBox) {
+        // Seleciona todas as respostas da IA
+        const msgs = chatBox.querySelectorAll('.message.assistant');
+        if (msgs.length > 0) {
+          // Última resposta da IA
+          const ultima = msgs[msgs.length - 1];
+          ultima.scrollIntoView({ behavior: "auto", block: "start" });
+        }
+      }
     }
   </script>
 </head>
@@ -296,15 +303,5 @@
       <button type="submit">Enviar</button>
     </form>
   </div>
-  <script>
-    // Garante rolagem para o topo toda vez que o chat é alterado!
-    const chatBox = document.getElementById('chat-box');
-    if (chatBox) {
-      const observer = new MutationObserver(() => {
-        chatBox.scrollTop = 0;
-      });
-      observer.observe(chatBox, { childList: true, subtree: true });
-    }
-  </script>
 </body>
 </html>
