@@ -55,8 +55,32 @@ def resposta_link(titulo, url, icone="📄"):
 def resposta_link_externo(titulo, url, icone="🔗"):
     return f"<br><a class='chip' href='{url}' target='_blank'>{icone} {titulo}</a>"
 
+# >>>>> MELHORIA APENAS NA DETECÇÃO DE CENÁRIOS DE DÚVIDAS PRÁTICAS <<<<<
 def detectar_cenario(pergunta: str) -> str:
     pergunta = pergunta.lower()
+    
+    # Especialidades médicas reconhecidas para o método
+    especialidades = [
+        "dermatologista", "psicóloga", "psicologo", "pediatra", "dentista",
+        "fonoaudióloga", "fonoaudiologo", "nutricionista", "veterinário", "veterinaria",
+        "psicanalista", "fisioterapeuta", "terapeuta", "acupunturista"
+    ]
+    # Termos que sugerem intenção de atrair, crescer, captar, faturar etc
+    termos_acao = [
+        "atrair", "captar", "faturar", "paciente high ticket", "crescer", "aplicar",
+        "ter mais pacientes", "dobrar faturamento", "ganhar mais", "aumentar", "consultório cheio",
+        "lotar agenda", "consultorio", "atendimento particular"
+    ]
+
+    # Se mencionar especialidade + intenção prática, é dúvida pontual
+    if any(f"sou {esp}" in pergunta for esp in especialidades) and any(
+        t in pergunta for t in termos_acao
+    ):
+        return "duvida_pontual"
+    # Detecta perguntas tipo "como faço para", "como atrair", "quero aumentar"
+    if re.search(r"como\s+faço|como\s+atrair|quero\s+(aumentar|dobrar|captar|faturar|ter mais|consultório|consultorio|lotar)", pergunta):
+        return "duvida_pontual"
+    # Detecta dúvidas sobre módulos, aulas, navegação (MANTÉM O FLUXO DE MÓDULOS)
     if any(p in pergunta for p in [
         "quero fazer o curso completo", "começar do início", "me ensina tudo",
         "fazer o curso com você", "menu", "ver módulos", "ver o curso", "ver estrutura", "iniciar o curso", "quero começar o curso"
@@ -78,6 +102,7 @@ def detectar_cenario(pergunta: str) -> str:
         return "exemplo_pratico"
     else:
         return "geral"
+# <<<<< FIM DA MELHORIA APENAS NA DETECÇÃO DE CENÁRIOS DE DÚVIDAS PRÁTICAS >>>>>
 
 def encontrar_modulo_aula(pergunta):
     pergunta = pergunta.lower()
