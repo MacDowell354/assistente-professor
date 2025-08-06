@@ -262,8 +262,13 @@
       }
     }
     // Loader: mostra o loader ao enviar pergunta
-    function showLoader() {
+    function showLoaderAndSubmit(form) {
       document.getElementById("loader").style.display = "flex";
+      // Pequeno delay para garantir que o loader aparece antes do submit
+      setTimeout(function() {
+        form.submit();
+      }, 120); // 120ms, só para garantir renderização
+      return false; // Impede o submit imediato do navegador
     }
   </script>
 </head>
@@ -326,7 +331,7 @@
       <span style="margin-left: 14px; color: #365486; font-weight: 500; font-size:1.08rem;">Aguarde, gerando resposta...</span>
     </div>
 
-    <form method="POST" action="/ask" autocomplete="off" onsubmit="showLoader()">
+    <form method="POST" action="/ask" autocomplete="off" onsubmit="return showLoaderAndSubmit(this)">
       <input type="hidden" name="history" value='{{ history | tojson }}'>
       <textarea name="question" rows="2" placeholder="Digite sua dúvida, peça para iniciar o curso ou informe o módulo/aula desejado. (Ex: 'Quero começar o curso desde o início', 'Tenho uma dúvida sobre o módulo 2, aula 2.1' ou 'Me mostre um exemplo prático para ginecologia.')"></textarea>
       <button type="submit">Enviar</button>
