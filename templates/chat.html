@@ -213,6 +213,21 @@
     button:hover {
       background-color: var(--blue-accent);
     }
+    /* Loader spinner */
+    .spinner {
+      border: 4px solid #e3e8f1;
+      border-top: 4px solid #5893df;
+      border-radius: 50%;
+      width: 28px;
+      height: 28px;
+      animation: spin 1s linear infinite;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg);}
+      100% { transform: rotate(360deg);}
+    }
     @media (max-width: 768px) {
       .container { max-width: 98vw; }
       .header, .chat-box, form { padding-left: 0.7rem; padding-right: 0.7rem; }
@@ -231,6 +246,10 @@
     }
     // Ao carregar, rola para o início da última resposta da IA (não para o final do chat)
     window.onload = function() {
+      // Esconde o loader ao recarregar/responder
+      var loader = document.getElementById("loader");
+      if(loader) loader.style.display = "none";
+
       const chatBox = document.getElementById('chat-box');
       if (chatBox) {
         // Seleciona todas as respostas da IA
@@ -241,6 +260,10 @@
           ultima.scrollIntoView({ behavior: "auto", block: "start" });
         }
       }
+    }
+    // Loader: mostra o loader ao enviar pergunta
+    function showLoader() {
+      document.getElementById("loader").style.display = "flex";
     }
   </script>
 </head>
@@ -297,7 +320,13 @@
       {% endfor %}
     </div>
 
-    <form method="POST" action="/ask" autocomplete="off">
+    <!-- Loader de resposta da IA -->
+    <div id="loader" style="display:none; justify-content: center; align-items: center; margin: 18px 0;">
+      <div class="spinner"></div>
+      <span style="margin-left: 14px; color: #365486; font-weight: 500; font-size:1.08rem;">Aguarde, gerando resposta...</span>
+    </div>
+
+    <form method="POST" action="/ask" autocomplete="off" onsubmit="showLoader()">
       <input type="hidden" name="history" value='{{ history | tojson }}'>
       <textarea name="question" rows="2" placeholder="Digite sua dúvida, peça para iniciar o curso ou informe o módulo/aula desejado. (Ex: 'Quero começar o curso desde o início', 'Tenho uma dúvida sobre o módulo 2, aula 2.1' ou 'Me mostre um exemplo prático para ginecologia.')"></textarea>
       <button type="submit">Enviar</button>
