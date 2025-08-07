@@ -3,7 +3,7 @@ import json
 from datetime import datetime, timedelta
 from typing import Optional
 from fastapi import FastAPI, Request, Form, Depends
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.responses import HTMLResponse, RedirectResponse, StreamingResponse
 from fastapi.templating import Jinja2Templates
 from passlib.context import CryptContext
 from jose import jwt
@@ -16,6 +16,12 @@ from logs_route import router as logs_router
 from auth_utils import get_current_user
 from prompt_router import inferir_tipo_de_prompt
 from healthplan_log import registrar_healthplan
+
+# ======= IMPORTS PARA O DASHBOARD =======
+from sqlalchemy import create_engine, text
+from io import StringIO
+import csv
+# ========================================
 
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
@@ -132,3 +138,109 @@ async def ask(
         "request": request,
         "history": new_history
     })
+
+# =============== INÍCIO DASHBOARD LOGS =================
+
+# Caminho do seu banco SQLite de logs
+DATABASE_URL = "sqlite:///logs.db"
+engine = create_engine(DATABASE_URL)
+
+def get_current_admin_user():
+    # Controle de acesso: adapte conforme seu login/admin!
+    return True
+
+@app.get("/dashboard", response_class=HTMLResponse)
+async def dashboard(request: Request, user=Depends(get_current_admin_user)):
+    filtro_usuario = request.query_params.get("usuario", "")
+    filtro_modulo = request.query_params.get("modulo", "")
+    filtro_palavra = request.query_params.get("palavra", "")
+    filtro_data_inicio = request.query_params.get("data_inicio", "")
+    filtro_data_fim = request.query_params.get("data_fim", "")
+
+    sql = "SELECT * FROM logs WHERE 1=1"
+    params = {}
+
+    if filtro_usuario:
+        sql += " AND usuario LIKE :usuario"
+        params["usuario"] = f"%{filtro_usuario}%"
+    if filtro_modulo:
+        sql += " AND modulo = :modulo"
+        params["modulo"] = filtro_modulo
+    if filtro_palavra:
+        sql += " AND (pergunta LIKE :palavra OR resposta LIKE :palavra)"
+        params["palavra"] = f"%{filtro_palavra}%"
+    if filtro_data_inicio:
+        sql += " AND data >= :data_inicio"
+        params["data_inicio"] = filtro_data_inicio
+    if filtro_data_fim:
+        sql += " AND data <= :data_fim"
+        params["data_fim"] = filtro_data_fim
+
+    sql += " ORDER BY data DESC"
+
+    with engine.connect() as conn:
+        logs = conn.execute(text(sql), params).fetchall()
+        total_usuarios = conn.execute(text("SELECT COUNT(DISTINCT usuario) FROM logs")).scalar()
+        total_perguntas = conn.execute(text("SELECT COUNT(*) FROM logs")).scalar()
+        perguntas_por_dia = conn.execute(text("SELECT strftime('%Y-%m-%d', data) as dia, COUNT(*) as total FROM logs GROUP BY dia ORDER BY dia DESC")).fetchall()
+        perguntas_mais_frequentes = conn.execute(text("SELECT pergunta, COUNT(*) as total FROM logs GROUP BY pergunta ORDER BY total DESC LIMIT 5")).fetchall()
+
+    return templates.TemplateResponse("dashboard.html", {
+        "request": request,
+        "logs": logs,
+        "total_usuarios": total_usuarios,
+        "total_perguntas": total_perguntas,
+        "perguntas_por_dia": perguntas_por_dia,
+        "perguntas_mais_frequentes": perguntas_mais_frequentes,
+        "filtro_usuario": filtro_usuario,
+        "filtro_modulo": filtro_modulo,
+        "filtro_palavra": filtro_palavra,
+        "filtro_data_inicio": filtro_data_inicio,
+        "filtro_data_fim": filtro_data_fim
+    })
+
+@app.get("/dashboard/export", response_class=StreamingResponse)
+async def dashboard_export(request: Request, user=Depends(get_current_admin_user)):
+    filtro_usuario = request.query_params.get("usuario", "")
+    filtro_modulo = request.query_params.get("modulo", "")
+    filtro_palavra = request.query_params.get("palavra", "")
+    filtro_data_inicio = request.query_params.get("data_inicio", "")
+    filtro_data_fim = request.query_params.get("data_fim", "")
+
+    sql = "SELECT * FROM logs WHERE 1=1"
+    params = {}
+
+    if filtro_usuario:
+        sql += " AND usuario LIKE :usuario"
+        params["usuario"] = f"%{filtro_usuario}%"
+    if filtro_modulo:
+        sql += " AND modulo = :modulo"
+        params["modulo"] = filtro_modulo
+    if filtro_palavra:
+        sql += " AND (pergunta LIKE :palavra OR resposta LIKE :palavra)"
+        params["palavra"] = f"%{filtro_palavra}%"
+    if filtro_data_inicio:
+        sql += " AND data >= :data_inicio"
+        params["data_inicio"] = filtro_data_inicio
+    if filtro_data_fim:
+        sql += " AND data <= :data_fim"
+        params["data_fim"] = filtro_data_fim
+
+    sql += " ORDER BY data DESC"
+
+    with engine.connect() as conn:
+        logs = conn.execute(text(sql), params).fetchall()
+        headers = logs[0].keys() if logs else ["usuario","modulo","aula","pergunta","resposta","data"]
+
+    def iter_csv():
+        si = StringIO()
+        cw = csv.writer(si)
+        cw.writerow(headers)
+        for row in logs:
+            cw.writerow([row[c] for c in headers])
+        yield si.getvalue()
+
+    return StreamingResponse(iter_csv(), media_type="text/csv", headers={"Content-Disposition": "attachment; filename=logs_export.csv"})
+
+# =============== FIM DASHBOARD LOGS ===================
+
