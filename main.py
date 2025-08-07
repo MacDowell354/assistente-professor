@@ -114,7 +114,7 @@ async def ask(
 
     # 🧾 Salva log da conversa
     registrar_log(
-        username=user,
+        usuario=user,
         pergunta=question,
         resposta=answer_html,
         contexto=context,
