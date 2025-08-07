@@ -83,17 +83,18 @@
       </tr>
     </thead>
     <tbody>
-      {% for row in logs %}
-      <tr>
-        <td>{{ row.data }}</td>
-        <td>{{ row.usuario }}</td>
-        <td>{{ row.modulo }}</td>
-        <td>{{ row.aula }}</td>
-        <td>{{ row.pergunta }}</td>
-        <td>{{ row.resposta[:120] }}{% if row.resposta|length > 120 %}...{% endif %}</td>
-      </tr>
-      {% endfor %}
-    </tbody>
+  {% for row in logs %}
+  <tr>
+    <td>{{ row.data }}</td>
+    <td>{{ row.usuario }}</td>
+    <td>{{ row.modulo }}</td>
+    <td>{{ row.aula }}</td>
+    <td>{{ row.pergunta[:80] }}{% if row.pergunta|length > 80 %}...{% endif %}</td>
+    <td>{{ row.resposta|striptags|truncate(120) }}</td>
+  </tr>
+  {% endfor %}
+</tbody>
+
   </table>
 </div>
 
