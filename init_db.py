@@ -6,16 +6,18 @@ cursor = conn.cursor()
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS logs (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    username TEXT,
+    usuario TEXT,
     pergunta TEXT,
     resposta TEXT,
     tipo_prompt TEXT,
     contexto TEXT,
-    data_hora TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    modulo TEXT,
+    aula TEXT,
+    data TEXT DEFAULT CURRENT_TIMESTAMP
 )
 """)
 
 conn.commit()
 conn.close()
 
-print("✅ Tabela 'logs' criada com sucesso.")
+print("✅ Tabela 'logs' criada ou ajustada com sucesso.")
