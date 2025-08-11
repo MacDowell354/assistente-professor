@@ -66,6 +66,7 @@ def login_post(request: Request, username: str = Form(...), password: str = Form
 def chat_get(request: Request, user: str = Depends(get_current_user)):
     return templates.TemplateResponse("chat.html", {"request": request, "history": []})
 
+# ===================== FUNÇÃO ASK (alteração pontual – com fallback/robustez) =====================
 @app.post("/ask", response_class=HTMLResponse)
 async def ask(
     request: Request,
@@ -82,17 +83,30 @@ async def ask(
     except Exception:
         history = []
 
-    # 🔍 Recupera o contexto com base na transcrição
-    context = retrieve_relevant_context(question)
+    # 🔍 Recupera o contexto com base na pergunta (protegido)
+    try:
+        print(f"🔎 DEBUG — Pergunta para contexto: {question}")
+        context = retrieve_relevant_context(question)
+        print(f"🔎 DEBUG — Contexto final aceito: {context}")
+    except Exception as e:
+        print(f"⚠️ DEBUG — Falha ao recuperar contexto: {e}")
+        context = ""
 
-    # 🧠 Inferência automática do tipo de prompt
-    tipo_de_prompt = inferir_tipo_de_prompt(question)
+    # 🧠 Inferência automática do tipo de prompt (protegido)
+    try:
+        tipo_de_prompt = inferir_tipo_de_prompt(question)
+    except Exception as e:
+        print(f"⚠️ DEBUG — Falha inferindo tipo_de_prompt: {e}")
+        tipo_de_prompt = "explicacao"
 
-    # 📝 Registra se for relacionado a Health Plan
+    # 📝 Registro health plan (não deixa quebrar o fluxo)
     if tipo_de_prompt == "health_plan":
-        registrar_healthplan(pergunta=question, usuario=user)
+        try:
+            registrar_healthplan(pergunta=question, usuario=user)
+        except Exception as e:
+            print(f"⚠️ DEBUG — Falha ao registrar healthplan: {e}")
 
-    # 🚩 Controle refinado para saudação premium e chips/quick replies
+    # 🚩 Controle de chips e 1ª pergunta (igual ao seu fluxo)
     chip_perguntas = [
         "Ver Exemplo de Plano", "Modelo no Canva", "Modelo PDF", "Novo Tema",
         "Preciso de exemplo", "Exemplo para Acne", "Tratamento Oral", "Cuidados Diários"
@@ -100,44 +114,70 @@ async def ask(
     is_chip = str(question).strip() in chip_perguntas
     is_first_question = (len(history) == 0) and (not is_chip)
 
-    # 🧠 Gera resposta (AGORA SALVA PROGRESSO!)
-    answer_markdown, quick_replies, progresso = generate_answer(
-        question=question,
-        context=context,
-        history=history,
-        tipo_de_prompt=tipo_de_prompt,
-        is_first_question=is_first_question
-    )
+    # 🧠 Geração da resposta (protegida) — aceita tupla ou string
+    answer_markdown = ""
+    quick_replies = []
+    progresso = None
+    try:
+        result = generate_answer(
+            question=question,
+            context=context,
+            history=history,
+            tipo_de_prompt=tipo_de_prompt,
+            is_first_question=is_first_question
+        )
+        if isinstance(result, tuple):
+            tmp = list(result) + ["", "", ""]
+            answer_markdown, quick_replies, progresso = tmp[:3]
+        else:
+            answer_markdown = result
+        if answer_markdown is None:
+            answer_markdown = ""
+    except Exception as e:
+        print(f"🔥 DEBUG — Erro em generate_answer: {e}")
+        answer_markdown = ""
 
-    # 🖥️ Renderiza markdown como HTML
-    answer_html = markdown2.markdown(answer_markdown)
+    # ✅ Fallback se vier vazio
+    if not isinstance(answer_markdown, str) or not answer_markdown.strip():
+        answer_markdown = (
+            "Desculpe, tive um problema para gerar a resposta agora. "
+            "Pode repetir sua pergunta ou dizer o módulo/aula que quer explorar?"
+        )
 
-    # 🧾 Salva log da conversa
-    registrar_log(
-        usuario=user,
-        pergunta=question,
-        resposta=answer_html,
-        contexto=context,
-        tipo_prompt=tipo_de_prompt
-    )
+    # 🖥️ Renderiza markdown como HTML (protegido)
+    try:
+        answer_html = markdown2.markdown(str(answer_markdown))
+    except Exception as e:
+        print(f"⚠️ DEBUG — Falha no markdown2: {e}")
+        answer_html = f"<p>{str(answer_markdown)}</p>"
 
-    # Adiciona quick replies e PROGRESSO ao histórico da resposta
-    chip = None
-    if str(question).strip() in chip_perguntas:
-        chip = str(question).strip()
+    # 🧾 Salva log (protegido)
+    try:
+        registrar_log(
+            usuario=user,
+            pergunta=question,
+            resposta=answer_html,
+            contexto=context,
+            tipo_prompt=tipo_de_prompt
+        )
+    except Exception as e:
+        print(f"⚠️ DEBUG — Falha ao registrar log: {e}")
 
+    # Histórico (igual ao seu, com quick_replies/progresso)
+    chip = str(question).strip() if is_chip else None
     new_history = history + [{
         "user": question,
         "ai": answer_html,
-        "quick_replies": quick_replies,
+        "quick_replies": quick_replies or [],
         "chip": chip,
-        "progresso": progresso   # <- ESSENCIAL: progresso salvo a cada interação!
+        "progresso": progresso
     }]
 
     return templates.TemplateResponse("chat.html", {
         "request": request,
         "history": new_history
     })
+# =================== FIM DA ALTERAÇÃO PONTUAL NA FUNÇÃO ASK ===================
 
 # =============== INÍCIO DASHBOARD LOGS =================
 
@@ -243,4 +283,3 @@ async def dashboard_export(request: Request, user=Depends(get_current_admin_user
     return StreamingResponse(iter_csv(), media_type="text/csv", headers={"Content-Disposition": "attachment; filename=logs_export.csv"})
 
 # =============== FIM DASHBOARD LOGS ===================
-
