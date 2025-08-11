@@ -335,7 +335,107 @@
       <input type="hidden" name="history" value='{{ history | tojson }}'>
       <textarea name="question" rows="2" placeholder="Digite sua dúvida, peça para iniciar o curso ou informe o módulo/aula desejado. (Ex: 'Quero começar o curso desde o início', 'Tenho uma dúvida sobre o módulo 2, aula 2.1' ou 'Me mostre um exemplo prático para ginecologia.')"></textarea>
       <button type="submit">Enviar</button>
+
+      <!-- Botão de gravar (adição) -->
+      <button type="button" id="btn-mic" title="Gravar voz" style="background:#5893df; margin-left:8px;">🎙️</button>
+      <!-- Player para ouvir a resposta de voz (adição) -->
+      <audio id="voice-player" style="display:none; margin-left:8px; max-width:200px;" controls></audio>
     </form>
   </div>
+
+  <!-- JS de voz (adição, não remove nada do que já existe) -->
+  <script>
+    (function(){
+      const micBtn = document.getElementById('btn-mic');
+      if(!micBtn) return;
+
+      let mediaRecorder, chunks = [];
+      let recording = false;
+
+      async function startRec(){
+        const stream = await navigator.mediaDevices.getUserMedia({audio:true});
+        mediaRecorder = new MediaRecorder(stream);
+        chunks = [];
+        mediaRecorder.ondataavailable = e => { if(e.data.size>0) chunks.push(e.data); };
+        mediaRecorder.onstop = sendAudio;
+        mediaRecorder.start();
+        recording = true;
+        micBtn.textContent = "⏹️";
+        micBtn.style.background = "#d14b4b";
+      }
+
+      function stopRec(){
+        if(mediaRecorder && recording){
+          mediaRecorder.stop();
+          recording = false;
+          micBtn.textContent = "🎙️";
+          micBtn.style.background = "#5893df";
+        }
+      }
+
+      async function sendAudio(){
+        const blob = new Blob(chunks, {type: 'audio/webm'});
+        const fd = new FormData();
+        fd.append('audio', blob, 'audio.webm');
+
+        const historyInput = document.querySelector('input[name="history"]');
+        if(historyInput) fd.append('history', historyInput.value || '[]');
+
+        fd.append('context', '');
+
+        const box = document.getElementById('chat-box');
+
+        // Bolha de processamento
+        const bubble = document.createElement('div');
+        bubble.className = 'message assistant';
+        bubble.innerHTML = `<div class="avatar">🤖</div><div class="bubble">Processando áudio... ⏳</div>`;
+        box.appendChild(bubble);
+        if (box) { box.scrollTop = 0; }
+
+        try {
+          const resp = await fetch('/ask-voice', { method:'POST', body: fd });
+          const data = await resp.json();
+
+          bubble.remove();
+
+          // Pergunta transcrita (lado do usuário)
+          const userMsg = document.createElement('div');
+          userMsg.className = 'message user';
+          userMsg.innerHTML = `<div class="avatar">👤</div><div class="bubble"><strong>Você (voz):</strong> ${data.question_text || '(sem transcrição)'}</div>`;
+          box.appendChild(userMsg);
+
+          // Resposta da IA
+          const iaMsg = document.createElement('div');
+          iaMsg.className = 'message assistant';
+          iaMsg.innerHTML = `<div class="avatar">🤖</div><div class="bubble">${data.answer_html || '...'}</div>`;
+          box.appendChild(iaMsg);
+
+          // Se veio áudio, tocar
+          if (data.audio_url){
+            const player = document.getElementById('voice-player');
+            player.style.display = 'block';
+            player.src = data.audio_url;
+            player.play().catch(()=>{});
+          }
+
+          // Atualizar histórico oculto
+          try {
+            const h = JSON.parse(historyInput?.value || "[]");
+            h.push({user: data.question_text || '', ai: data.answer_html || ''});
+            if(historyInput) historyInput.value = JSON.stringify(h);
+          } catch(e){}
+
+          if (box) { box.scrollTop = 0; }
+        } catch(e) {
+          bubble.remove();
+          alert('Falha ao processar áudio. Tente novamente.');
+        }
+      }
+
+      micBtn.addEventListener('click', ()=>{
+        if(!recording) startRec(); else stopRec();
+      });
+    })();
+  </script>
 </body>
 </html>
