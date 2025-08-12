@@ -21,6 +21,7 @@ from healthplan_log import registrar_healthplan
 from sqlalchemy import create_engine, text
 from io import StringIO
 import csv
+import re
 # ========================================
 
 app = FastAPI()
@@ -66,6 +67,57 @@ def login_post(request: Request, username: str = Form(...), password: str = Form
 def chat_get(request: Request, user: str = Depends(get_current_user)):
     return templates.TemplateResponse("chat.html", {"request": request, "history": []})
 
+# ---------- Helper de interpretação de módulo/aula (NÃO altera a lógica dos módulos) ----------
+_MOD_RE = re.compile(r"\bm[óo]dulo\s*0*(\d{1,2})\b", re.IGNORECASE)
+_AULA_RE = re.compile(r"\baula\s*0*(\d{1,2})(?:\.(\d{1,2}))?(?:\.(\d{1,2}))?\b", re.IGNORECASE)
+_CURTA_RE = re.compile(r"\b(\d{1,2})\.(\d{1,2})(?:\.(\d{1,2}))?\b")
+
+def _normalizar_comando_modulo_aula(texto: str):
+    """
+    Converte pedidos livres para forma canônica entendida pelo generate_answer:
+      - "quero o módulo 07" -> ("módulo 7")
+      - "aula 7.2.2" / "7.2.2" -> ("aula 7.2.2")
+      - "módulo 7 aula 02.03" -> ("módulo 7, aula 2.3")
+    Sem detecção: retorna None para não interferir no restante.
+    """
+    if not isinstance(texto, str):
+        return None
+    t = texto.strip().lower()
+
+    modulo = None
+    aula_str = None
+
+    m = _MOD_RE.search(t)
+    if m:
+        modulo = int(m.group(1))
+
+    a = _AULA_RE.search(t)
+    if a:
+        partes = [p for p in a.groups() if p]
+        aula_str = ".".join(str(int(p)) for p in partes)
+
+    if aula_str is None:
+        c = _CURTA_RE.search(t)
+        if c:
+            partes = [p for p in c.groups() if p]
+            aula_str = ".".join(str(int(p)) for p in partes)
+
+    # Frases como "ver módulo 7" sem bater no _MOD_RE por acentuação
+    if modulo is None and ("módulo" in t or "modulo" in t):
+        n = re.search(r"\b0*(\d{1,2})\b", t)
+        if n:
+            modulo = int(n.group(1))
+
+    if modulo is None and aula_str is None:
+        return None
+
+    if modulo is not None and aula_str:
+        return f"módulo {modulo}, aula {aula_str}"
+    if modulo is not None:
+        return f"módulo {modulo}"
+    return f"aula {aula_str}"
+# -----------------------------------------------------------------------------------------------
+
 @app.post("/ask", response_class=HTMLResponse)
 async def ask(
     request: Request,
@@ -82,55 +134,52 @@ async def ask(
     except Exception:
         history = []
 
-    # ---------- ALTERAÇÃO PONTUAL (início): normalizar histórico ----------
-    # Remove tags HTML do campo 'ai' para não confundir a continuidade da IA
-    import re as _re
-    _TAG_RE = _re.compile(r"<[^>]+>")
+    # 🔹 Normaliza comandos livres para forma canônica (antes de tudo)
+    canon = _normalizar_comando_modulo_aula(question)
+    if canon:
+        question = canon
 
-    def _strip_tags(text: str) -> str:
-        if not isinstance(text, str):
-            return ""
-        return _TAG_RE.sub(" ", text).strip()
+    # 🔹 Normaliza o histórico (remove HTML do 'ai' e preserva 'progresso')
+    TAG_RE = re.compile(r"<[^>]+>")
+    def strip_tags(text: str) -> str:
+        return TAG_RE.sub(" ", text).strip() if isinstance(text, str) else ""
 
-    def _normalize_history(hist_list):
+    def normalize_history(hist_list):
         safe = []
         for item in (hist_list or []):
             safe.append({
                 "user": item.get("user", ""),
-                "ai": _strip_tags(item.get("ai", "")),  # IA sem HTML
+                "ai": strip_tags(item.get("ai", "")),
                 "quick_replies": item.get("quick_replies", []),
-                "progresso": item.get("progresso"),
                 "chip": item.get("chip"),
+                "progresso": item.get("progresso")
             })
         return safe
 
-    history_norm = _normalize_history(history)
-    # ---------- ALTERAÇÃO PONTUAL (fim) -----------------------------------
+    history_norm = normalize_history(history)
 
-    # 🔍 Recupera o contexto com base na transcrição
+    # 🔍 Recupera o contexto
     context = retrieve_relevant_context(question)
 
-    # 🧠 Inferência automática do tipo de prompt
+    # 🧠 Tipo de prompt
     tipo_de_prompt = inferir_tipo_de_prompt(question)
 
-    # 📝 Registra se for relacionado a Health Plan
+    # 📝 Log específico de health plan (não interfere no fluxo)
     if tipo_de_prompt == "health_plan":
         registrar_healthplan(pergunta=question, usuario=user)
 
-    # 🚩 Controle refinado para saudação premium e chips/quick replies
     chip_perguntas = [
         "Ver Exemplo de Plano", "Modelo no Canva", "Modelo PDF", "Novo Tema",
         "Preciso de exemplo", "Exemplo para Acne", "Tratamento Oral", "Cuidados Diários"
     ]
     is_chip = str(question).strip() in chip_perguntas
-    is_first_question = (len(history) == 0) and (not is_chip)
+    is_first_question = (len(history_norm) == 0) and (not is_chip)
 
-    # 🧠 Gera resposta (AGORA SALVA PROGRESSO!)
-    # (única mudança aqui é usar 'history_norm' em vez de 'history')
+    # 🧠 Gera resposta preservando continuidade
     answer_markdown, quick_replies, progresso = generate_answer(
         question=question,
         context=context,
-        history=history_norm,      # <<< usa o histórico normalizado
+        history=history_norm,
         tipo_de_prompt=tipo_de_prompt,
         is_first_question=is_first_question
     )
@@ -138,7 +187,7 @@ async def ask(
     # 🖥️ Renderiza markdown como HTML
     answer_html = markdown2.markdown(answer_markdown)
 
-    # 🧾 Salva log da conversa
+    # 🧾 Log
     registrar_log(
         usuario=user,
         pergunta=question,
@@ -147,7 +196,7 @@ async def ask(
         tipo_prompt=tipo_de_prompt
     )
 
-    # Adiciona quick replies e PROGRESSO ao histórico da resposta
+    # Histórico mantido como já estava
     chip = None
     if str(question).strip() in chip_perguntas:
         chip = str(question).strip()
@@ -157,7 +206,7 @@ async def ask(
         "ai": answer_html,
         "quick_replies": quick_replies,
         "chip": chip,
-        "progresso": progresso   # <- ESSENCIAL: progresso salvo a cada interação!
+        "progresso": progresso
     }]
 
     return templates.TemplateResponse("chat.html", {
@@ -167,12 +216,10 @@ async def ask(
 
 # =============== INÍCIO DASHBOARD LOGS =================
 
-# Caminho do seu banco SQLite de logs
 DATABASE_URL = "sqlite:///logs.db"
 engine = create_engine(DATABASE_URL)
 
 def get_current_admin_user():
-    # Controle de acesso: adapte conforme seu login/admin!
     return True
 
 @app.get("/dashboard", response_class=HTMLResponse)
