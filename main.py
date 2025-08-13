@@ -75,9 +75,9 @@ _CURTA_RE = re.compile(r"\b(\d{1,2})\.(\d{1,2})(?:\.(\d{1,2}))?\b")
 def _normalizar_comando_modulo_aula(texto: str):
     """
     Converte pedidos livres para forma canônica entendida pelo generate_answer:
-      - "quero o módulo 07" -> ("módulo 7")
-      - "aula 7.2.2" / "7.2.2" -> ("aula 7.2.2")
-      - "módulo 7 aula 02.03" -> ("módulo 7, aula 2.3")
+      - "quero o módulo 07" -> "módulo 7"
+      - "aula 7.2.2" / "7.2.2" -> "aula 7.2.2"
+      - "módulo 7 aula 02.03" -> "módulo 7, aula 2.3"
     Sem detecção: retorna None para não interferir no restante.
     """
     if not isinstance(texto, str):
@@ -102,7 +102,7 @@ def _normalizar_comando_modulo_aula(texto: str):
             partes = [p for p in c.groups() if p]
             aula_str = ".".join(str(int(p)) for p in partes)
 
-    # Frases como "ver módulo 7" sem bater no _MOD_RE por acentuação
+    # Frases como "ver módulo 7" que não pegam pelo acento
     if modulo is None and ("módulo" in t or "modulo" in t):
         n = re.search(r"\b0*(\d{1,2})\b", t)
         if n:
@@ -117,6 +117,13 @@ def _normalizar_comando_modulo_aula(texto: str):
         return f"módulo {modulo}"
     return f"aula {aula_str}"
 # -----------------------------------------------------------------------------------------------
+
+def _parece_lista_modulos(texto: str) -> bool:
+    """Heurística leve para detectar quando a resposta voltou com a lista de módulos."""
+    if not isinstance(texto, str):
+        return False
+    t = texto.lower()
+    return ("composto por 7 módulos" in t) or ("módulo 01" in t and "módulo 07" in t)
 
 @app.post("/ask", response_class=HTMLResponse)
 async def ask(
@@ -137,7 +144,7 @@ async def ask(
     # 🔹 Normaliza comandos livres para forma canônica (antes de tudo)
     canon = _normalizar_comando_modulo_aula(question)
     if canon:
-        question = canon
+        question = canon  # ex.: "módulo 7" ou "módulo 7, aula 2.3" ou "aula 7.2.2"
 
     # 🔹 Normaliza o histórico (remove HTML do 'ai' e preserva 'progresso')
     TAG_RE = re.compile(r"<[^>]+>")
@@ -175,7 +182,7 @@ async def ask(
     is_chip = str(question).strip() in chip_perguntas
     is_first_question = (len(history_norm) == 0) and (not is_chip)
 
-    # 🧠 Gera resposta preservando continuidade
+    # 🧠 Gera resposta preservando continuidade (com 1 retry se cair na lista geral)
     answer_markdown, quick_replies, progresso = generate_answer(
         question=question,
         context=context,
@@ -183,6 +190,21 @@ async def ask(
         tipo_de_prompt=tipo_de_prompt,
         is_first_question=is_first_question
     )
+
+    # Se usuário pediu módulo/aula e a resposta voltou com a lista,
+    # faz um retry direcionado (sem mudar a lógica interna do seu generate_answer)
+    if canon and _parece_lista_modulos(answer_markdown or ""):
+        reforco = (
+            f"{question}. Ir diretamente para este conteúdo agora. "
+            "Não repita a lista de módulos; apresente a aula ou o módulo solicitado e continue a trilha."
+        )
+        answer_markdown, quick_replies, progresso = generate_answer(
+            question=reforco,
+            context=context,
+            history=history_norm,
+            tipo_de_prompt=tipo_de_prompt,
+            is_first_question=False
+        )
 
     # 🖥️ Renderiza markdown como HTML
     answer_html = markdown2.markdown(answer_markdown)
