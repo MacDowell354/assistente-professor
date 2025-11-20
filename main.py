@@ -6,6 +6,7 @@ from fastapi import FastAPI, Request, Form, Depends
 from fastapi.responses import HTMLResponse, RedirectResponse, StreamingResponse
 from fastapi.templating import Jinja2Templates
 from passlib.context import CryptContext
+from passlib.hash import sha256_crypt
 from jose import jwt
 import markdown2
 
@@ -32,19 +33,30 @@ app.include_router(logs_router)
 SECRET_KEY = "segredo-teste"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
+
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-fake_users = {"aluno1": pwd_context.hash("N4nd@M4c#2025")}
+
+# ❤️ CORREÇÃO bcrypt 72 bytes → usa SHA256 antes do bcrypt
+def hash_for_bcrypt(password: str) -> str:
+    return pwd_context.hash(sha256_crypt.hash(password))
+
+fake_users = {
+    "aluno1": hash_for_bcrypt("N4nd@M4c#2025")
+}
 
 def authenticate_user(username: str, password: str):
     if username not in fake_users:
         return False
-    return pwd_context.verify(password, fake_users[username])
+    return pwd_context.verify(sha256_crypt.hash(password), fake_users[username])
 
 def create_access_token(data: dict):
     to_encode = data.copy()
     expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     to_encode.update({"exp": expire})
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+
+
+# ROTAS ================================
 
 @app.get("/")
 def root():
@@ -57,7 +69,10 @@ def login_get(request: Request):
 @app.post("/login")
 def login_post(request: Request, username: str = Form(...), password: str = Form(...)):
     if not authenticate_user(username, password):
-        return templates.TemplateResponse("login.html", {"request": request, "error": "Usuário ou senha inválidos."})
+        return templates.TemplateResponse(
+            "login.html",
+            {"request": request, "error": "Usuário ou senha inválidos."}
+        )
     token = create_access_token({"sub": username})
     response = RedirectResponse(url="/chat", status_code=302)
     response.set_cookie(key="token", value=token, httponly=True)
@@ -67,19 +82,13 @@ def login_post(request: Request, username: str = Form(...), password: str = Form
 def chat_get(request: Request, user: str = Depends(get_current_user)):
     return templates.TemplateResponse("chat.html", {"request": request, "history": []})
 
-# ---------- Helper de interpretação de módulo/aula (NÃO altera a lógica dos módulos) ----------
+
+# ---------- MÓDULO INTELIGENTE ----------
 _MOD_RE = re.compile(r"\bm[óo]dulo\s*0*(\d{1,2})\b", re.IGNORECASE)
 _AULA_RE = re.compile(r"\baula\s*0*(\d{1,2})(?:\.(\d{1,2}))?(?:\.(\d{1,2}))?\b", re.IGNORECASE)
 _CURTA_RE = re.compile(r"\b(\d{1,2})\.(\d{1,2})(?:\.(\d{1,2}))?\b")
 
 def _normalizar_comando_modulo_aula(texto: str):
-    """
-    Converte pedidos livres para forma canônica entendida pelo generate_answer:
-      - "quero o módulo 07" -> "módulo 7"
-      - "aula 7.2.2" / "7.2.2" -> "aula 7.2.2"
-      - "módulo 7 aula 02.03" -> "módulo 7, aula 2.3"
-    Sem detecção: retorna None para não interferir no restante.
-    """
     if not isinstance(texto, str):
         return None
     t = texto.strip().lower()
@@ -102,7 +111,6 @@ def _normalizar_comando_modulo_aula(texto: str):
             partes = [p for p in c.groups() if p]
             aula_str = ".".join(str(int(p)) for p in partes)
 
-    # Frases como "ver módulo 7" que não pegam pelo acento
     if modulo is None and ("módulo" in t or "modulo" in t):
         n = re.search(r"\b0*(\d{1,2})\b", t)
         if n:
@@ -116,14 +124,14 @@ def _normalizar_comando_modulo_aula(texto: str):
     if modulo is not None:
         return f"módulo {modulo}"
     return f"aula {aula_str}"
-# -----------------------------------------------------------------------------------------------
+
 
 def _parece_lista_modulos(texto: str) -> bool:
-    """Heurística leve para detectar quando a resposta voltou com a lista de módulos."""
     if not isinstance(texto, str):
         return False
     t = texto.lower()
     return ("composto por 7 módulos" in t) or ("módulo 01" in t and "módulo 07" in t)
+
 
 @app.post("/ask", response_class=HTMLResponse)
 async def ask(
@@ -141,12 +149,10 @@ async def ask(
     except Exception:
         history = []
 
-    # 🔹 Normaliza comandos livres para forma canônica (antes de tudo)
     canon = _normalizar_comando_modulo_aula(question)
     if canon:
-        question = canon  # ex.: "módulo 7" ou "módulo 7, aula 2.3" ou "aula 7.2.2"
+        question = canon
 
-    # 🔹 Normaliza o histórico (remove HTML do 'ai' e preserva 'progresso')
     TAG_RE = re.compile(r"<[^>]+>")
     def strip_tags(text: str) -> str:
         return TAG_RE.sub(" ", text).strip() if isinstance(text, str) else ""
@@ -165,13 +171,9 @@ async def ask(
 
     history_norm = normalize_history(history)
 
-    # 🔍 Recupera o contexto
     context = retrieve_relevant_context(question)
-
-    # 🧠 Tipo de prompt
     tipo_de_prompt = inferir_tipo_de_prompt(question)
 
-    # 📝 Log específico de health plan (não interfere no fluxo)
     if tipo_de_prompt == "health_plan":
         registrar_healthplan(pergunta=question, usuario=user)
 
@@ -182,7 +184,6 @@ async def ask(
     is_chip = str(question).strip() in chip_perguntas
     is_first_question = (len(history_norm) == 0) and (not is_chip)
 
-    # 🧠 Gera resposta preservando continuidade (com 1 retry se cair na lista geral)
     answer_markdown, quick_replies, progresso = generate_answer(
         question=question,
         context=context,
@@ -191,8 +192,6 @@ async def ask(
         is_first_question=is_first_question
     )
 
-    # Se usuário pediu módulo/aula e a resposta voltou com a lista,
-    # faz um retry direcionado (sem mudar a lógica interna do seu generate_answer)
     if canon and _parece_lista_modulos(answer_markdown or ""):
         reforco = (
             f"{question}. Ir diretamente para este conteúdo agora. "
@@ -206,10 +205,8 @@ async def ask(
             is_first_question=False
         )
 
-    # 🖥️ Renderiza markdown como HTML
     answer_html = markdown2.markdown(answer_markdown)
 
-    # 🧾 Log
     registrar_log(
         usuario=user,
         pergunta=question,
@@ -218,7 +215,6 @@ async def ask(
         tipo_prompt=tipo_de_prompt
     )
 
-    # Histórico mantido como já estava
     chip = None
     if str(question).strip() in chip_perguntas:
         chip = str(question).strip()
@@ -236,7 +232,8 @@ async def ask(
         "history": new_history
     })
 
-# =============== INÍCIO DASHBOARD LOGS =================
+
+# =============== DASHBOARD ==================
 
 DATABASE_URL = "sqlite:///logs.db"
 engine = create_engine(DATABASE_URL)
@@ -277,8 +274,12 @@ async def dashboard(request: Request, user=Depends(get_current_admin_user)):
         logs = conn.execute(text(sql), params).fetchall()
         total_usuarios = conn.execute(text("SELECT COUNT(DISTINCT usuario) FROM logs")).scalar()
         total_perguntas = conn.execute(text("SELECT COUNT(*) FROM logs")).scalar()
-        perguntas_por_dia = conn.execute(text("SELECT strftime('%Y-%m-%d', data) as dia, COUNT(*) as total FROM logs GROUP BY dia ORDER BY dia DESC")).fetchall()
-        perguntas_mais_frequentes = conn.execute(text("SELECT pergunta, COUNT(*) as total FROM logs GROUP BY pergunta ORDER BY total DESC LIMIT 5")).fetchall()
+        perguntas_por_dia = conn.execute(
+            text("SELECT strftime('%Y-%m-%d', data) as dia, COUNT(*) as total FROM logs GROUP BY dia ORDER BY dia DESC")
+        ).fetchall()
+        perguntas_mais_frequentes = conn.execute(
+            text("SELECT pergunta, COUNT(*) as total FROM logs GROUP BY pergunta ORDER BY total DESC LIMIT 5")
+        ).fetchall()
 
     return templates.TemplateResponse("dashboard.html", {
         "request": request,
@@ -293,6 +294,7 @@ async def dashboard(request: Request, user=Depends(get_current_admin_user)):
         "filtro_data_inicio": filtro_data_inicio,
         "filtro_data_fim": filtro_data_fim
     })
+
 
 @app.get("/dashboard/export", response_class=StreamingResponse)
 async def dashboard_export(request: Request, user=Depends(get_current_admin_user)):
@@ -335,6 +337,8 @@ async def dashboard_export(request: Request, user=Depends(get_current_admin_user
             cw.writerow([row[c] for c in headers])
         yield si.getvalue()
 
-    return StreamingResponse(iter_csv(), media_type="text/csv", headers={"Content-Disposition": "attachment; filename=logs_export.csv"})
-
-# =============== FIM DASHBOARD LOGS ===================
+    return StreamingResponse(
+        iter_csv(),
+        media_type="text/csv",
+        headers={"Content-Disposition": "attachment; filename=logs_export.csv"}
+    )
