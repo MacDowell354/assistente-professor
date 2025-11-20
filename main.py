@@ -31,51 +31,31 @@ SECRET_KEY = "segredo-teste"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
 
-# Bcrypt
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+# 🔥 SOLUÇÃO DEFINITIVA — SEM BCRYPT
+pwd_context = CryptContext(schemes=["sha256_crypt"], deprecated="auto")
 
-# ================================
-# 🔥 CORREÇÃO FINAL — SEMPRE FUNCIONA NO RENDER
-# SHA256 RAW (digest = 32 bytes) → SEMPRE abaixo do limite do bcrypt
-# ================================
-def pre_hash(password: str) -> bytes:
-    """Gera hash SHA256 RAW (32 bytes) antes do bcrypt — seguro e compatível."""
-    return hashlib.sha256(password.encode("utf-8")).digest()
-
-
-# Usuário padrão
 fake_users = {
-    "aluno1": pwd_context.hash(pre_hash("N4nd@M4c#2025"))
+    "aluno1": pwd_context.hash("N4nd@M4c#2025")
 }
 
-
-# Verificação de senha
 def authenticate_user(username: str, password: str):
     if username not in fake_users:
         return False
-    return pwd_context.verify(pre_hash(password), fake_users[username])
+    return pwd_context.verify(password, fake_users[username])
 
-
-# Token JWT
 def create_access_token(data: dict):
     to_encode = data.copy()
     expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     to_encode.update({"exp": expire})
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
-
-# ================================
-# LOGIN
-# ================================
 @app.get("/")
 def root():
     return RedirectResponse(url="/login")
 
-
 @app.get("/login", response_class=HTMLResponse)
 def login_get(request: Request):
     return templates.TemplateResponse("login.html", {"request": request})
-
 
 @app.post("/login")
 def login_post(request: Request, username: str = Form(...), password: str = Form(...)):
@@ -89,10 +69,6 @@ def login_post(request: Request, username: str = Form(...), password: str = Form
     response.set_cookie(key="token", value=token, httponly=True)
     return response
 
-
-# ================================
-# CHAT
-# ================================
 @app.get("/chat", response_class=HTMLResponse)
 def chat_get(request: Request, user: str = Depends(get_current_user)):
     return templates.TemplateResponse("chat.html", {"request": request, "history": []})
